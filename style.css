@@ -2089,3 +2089,36 @@ button,
     height: 42px;
   }
 }
+/* Chỉnh logo trên thanh menu */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo img {
+  height: 64px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Giữ header cân đối với logo */
+.header {
+  min-height: 88px;
+  padding: 0 56px;
+  display: flex;
+  align-items: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .logo img {
+    height: 52px;
+  }
+
+  .header {
+    min-height: 76px;
+    padding: 0 18px;
+  }
+}
