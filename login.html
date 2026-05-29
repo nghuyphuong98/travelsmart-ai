@@ -86,6 +86,12 @@
       box-shadow: 0 0 0 3px rgba(11, 94, 215, 0.12);
     }
 
+    .auth-form input:disabled {
+      background: #e5e7eb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+
     .auth-actions {
       display: flex;
       gap: 12px;
@@ -177,6 +183,17 @@
       margin-top: 15px;
     }
 
+    .loading-box {
+      background: #f0f7ff;
+      border: 1px solid #bfdbfe;
+      color: #0b5ed7;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-bottom: 18px;
+      display: none;
+    }
+
     @media (max-width: 700px) {
       .auth-container {
         padding: 22px;
@@ -217,8 +234,12 @@
   <div class="auth-container">
     <h1 class="auth-title">Tài khoản khách hàng</h1>
     <p class="auth-desc">
-      Đăng ký hoặc đăng nhập tài khoản để lưu thông tin cá nhân. Sau khi đăng nhập, thông tin của bạn sẽ được tự động điền khi thanh toán.
+      Đăng ký hoặc đăng nhập tài khoản để lưu thông tin cá nhân. Tài khoản được lưu online bằng Supabase nên có thể đăng nhập ở máy khác hoặc điện thoại khác.
     </p>
+
+    <div class="loading-box" id="loadingBox">
+      Đang xử lý dữ liệu tài khoản...
+    </div>
 
     <!-- KHU VỰC CHƯA ĐĂNG NHẬP -->
     <div id="guestArea">
@@ -230,6 +251,7 @@
       <!-- ĐĂNG NHẬP -->
       <div class="auth-box" id="loginBox">
         <h2>Đăng nhập</h2>
+
         <div class="auth-form">
           <input id="loginEmail" type="email" placeholder="Email">
           <input id="loginPassword" type="password" placeholder="Mật khẩu">
@@ -245,6 +267,7 @@
       <!-- ĐĂNG KÝ -->
       <div class="auth-box" id="registerBox" style="display: none;">
         <h2>Đăng ký tài khoản</h2>
+
         <div class="auth-form">
           <input id="registerName" type="text" placeholder="Họ và tên">
           <input id="registerPhone" type="text" placeholder="Số điện thoại">
@@ -262,7 +285,7 @@
       </div>
 
       <div class="warning-note">
-        Bạn vẫn có thể xem sản phẩm và đặt tour mà không cần đăng nhập. Tuy nhiên, muốn sửa và lưu thông tin cá nhân thì cần đăng nhập tài khoản.
+        Bạn vẫn có thể xem sản phẩm và đặt tour mà không cần đăng nhập. Tuy nhiên, muốn lưu và sửa thông tin cá nhân trên nhiều thiết bị thì cần đăng nhập tài khoản.
       </div>
     </div>
 
@@ -280,12 +303,13 @@
         </div>
 
         <div class="login-note">
-          Thông tin này sẽ được tự động điền ở trang thanh toán.
+          Thông tin này sẽ tự động điền ở trang thanh toán.
         </div>
       </div>
 
       <div class="auth-box">
         <h2>Chỉnh sửa thông tin cá nhân</h2>
+
         <div class="auth-form">
           <input id="profileName" type="text" placeholder="Họ và tên">
           <input id="profilePhone" type="text" placeholder="Số điện thoại">
@@ -294,7 +318,7 @@
 
           <div class="auth-actions">
             <button class="auth-btn blue" onclick="updateProfile()">Lưu thông tin</button>
-            <button class="auth-btn pink" onclick="changePassword()">Đổi mật khẩu</button>
+            <button class="auth-btn pink" onclick="showPasswordBox()">Đổi mật khẩu</button>
             <button class="auth-btn red" onclick="logoutUser()">Đăng xuất</button>
           </div>
 
@@ -304,8 +328,8 @@
 
       <div class="auth-box" id="passwordBox" style="display: none;">
         <h2>Đổi mật khẩu</h2>
+
         <div class="auth-form">
-          <input id="oldPassword" type="password" placeholder="Mật khẩu hiện tại">
           <input id="newPassword" type="password" placeholder="Mật khẩu mới">
           <input id="confirmNewPassword" type="password" placeholder="Nhập lại mật khẩu mới">
 
@@ -321,30 +345,31 @@
   </div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-  function getUsers() {
-    return JSON.parse(localStorage.getItem("users")) || [];
+  const SUPABASE_URL = "https://dnvhhyjpeipirgdczijr.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_i8-Jqg_EONk5o_pWWoPOGw_BWBabrHf";
+
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let currentUser = null;
+  let currentProfile = null;
+
+  function showLoading(message = "Đang xử lý dữ liệu tài khoản...") {
+    const loadingBox = document.getElementById("loadingBox");
+    loadingBox.innerText = message;
+    loadingBox.style.display = "block";
   }
 
-  function saveUsers(users) {
-    localStorage.setItem("users", JSON.stringify(users));
+  function hideLoading() {
+    document.getElementById("loadingBox").style.display = "none";
   }
 
-  function getCurrentUserEmail() {
-    return localStorage.getItem("currentUserEmail");
-  }
-
-  function setCurrentUser(email) {
-    localStorage.setItem("currentUserEmail", email);
-  }
-
-  function clearCurrentUser() {
-    localStorage.removeItem("currentUserEmail");
-  }
-
-  function findUserByEmail(email) {
-    const users = getUsers();
-    return users.find(user => user.email.toLowerCase() === email.toLowerCase());
+  function setStatus(elementId, message, isSuccess = true) {
+    const element = document.getElementById(elementId);
+    element.innerText = message;
+    element.style.color = isSuccess ? "#16a34a" : "#dc2626";
   }
 
   function showAuthTab(tab) {
@@ -366,119 +391,172 @@
     }
   }
 
-  function registerUser() {
+  async function registerUser() {
     const name = document.getElementById("registerName").value.trim();
     const phone = document.getElementById("registerPhone").value.trim();
     const email = document.getElementById("registerEmail").value.trim();
     const address = document.getElementById("registerAddress").value.trim();
     const password = document.getElementById("registerPassword").value;
     const confirmPassword = document.getElementById("registerConfirmPassword").value;
-    const status = document.getElementById("registerStatus");
 
     if (!name || !phone || !email || !address || !password || !confirmPassword) {
-      status.innerText = "Vui lòng nhập đầy đủ thông tin.";
-      status.style.color = "#dc2626";
+      setStatus("registerStatus", "Vui lòng nhập đầy đủ thông tin.", false);
       return;
     }
 
     if (!email.includes("@")) {
-      status.innerText = "Email chưa hợp lệ.";
-      status.style.color = "#dc2626";
+      setStatus("registerStatus", "Email chưa hợp lệ.", false);
       return;
     }
 
     if (password.length < 6) {
-      status.innerText = "Mật khẩu cần ít nhất 6 ký tự.";
-      status.style.color = "#dc2626";
+      setStatus("registerStatus", "Mật khẩu cần ít nhất 6 ký tự.", false);
       return;
     }
 
     if (password !== confirmPassword) {
-      status.innerText = "Mật khẩu nhập lại không khớp.";
-      status.style.color = "#dc2626";
+      setStatus("registerStatus", "Mật khẩu nhập lại không khớp.", false);
       return;
     }
 
-    const users = getUsers();
+    showLoading("Đang tạo tài khoản...");
 
-    const existedUser = users.find(user => user.email.toLowerCase() === email.toLowerCase());
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password
+    });
 
-    if (existedUser) {
-      status.innerText = "Email này đã được đăng ký. Vui lòng đăng nhập.";
-      status.style.color = "#dc2626";
+    if (error) {
+      hideLoading();
+      setStatus("registerStatus", "Lỗi đăng ký: " + error.message, false);
       return;
     }
 
-    const newUser = {
+    const user = data.user;
+
+    if (!user) {
+      hideLoading();
+      setStatus("registerStatus", "Đăng ký chưa hoàn tất. Vui lòng kiểm tra lại email.", false);
+      return;
+    }
+
+    const profileData = {
+      id: user.id,
       name: name,
       phone: phone,
       email: email,
       address: address,
-      password: password,
-      createdAt: new Date().toLocaleString("vi-VN")
+      updated_at: new Date().toISOString()
     };
 
-    users.push(newUser);
-    saveUsers(users);
+    const { error: profileError } = await supabaseClient
+      .from("profiles")
+      .upsert(profileData);
 
-    status.innerText = "Đăng ký thành công. Bạn có thể đăng nhập ngay.";
-    status.style.color = "#16a34a";
+    hideLoading();
+
+    if (profileError) {
+      setStatus(
+        "registerStatus",
+        "Tài khoản đã tạo nhưng chưa lưu được profile. Hãy đăng nhập lại rồi cập nhật thông tin.",
+        false
+      );
+      showAuthTab("login");
+      return;
+    }
+
+    setStatus("registerStatus", "Đăng ký thành công. Bạn có thể đăng nhập ngay.", true);
 
     document.getElementById("loginEmail").value = email;
     document.getElementById("loginPassword").value = "";
     showAuthTab("login");
   }
 
-  function loginUser() {
+  async function loginUser() {
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
-    const status = document.getElementById("loginStatus");
 
     if (!email || !password) {
-      status.innerText = "Vui lòng nhập email và mật khẩu.";
-      status.style.color = "#dc2626";
+      setStatus("loginStatus", "Vui lòng nhập email và mật khẩu.", false);
       return;
     }
 
-    const user = findUserByEmail(email);
+    showLoading("Đang đăng nhập...");
 
-    if (!user || user.password !== password) {
-      status.innerText = "Email hoặc mật khẩu không đúng.";
-      status.style.color = "#dc2626";
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      hideLoading();
+      setStatus("loginStatus", "Email hoặc mật khẩu không đúng.", false);
       return;
     }
 
-    setCurrentUser(user.email);
+    currentUser = data.user;
 
-    const profile = {
-      name: user.name,
-      phone: user.phone,
-      email: user.email,
-      address: user.address
+    await loadProfile();
+
+    hideLoading();
+    setStatus("loginStatus", "", true);
+    renderLoginState();
+  }
+
+  async function logoutUser() {
+    showLoading("Đang đăng xuất...");
+
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+    currentProfile = null;
+
+    localStorage.removeItem("profile");
+    localStorage.removeItem("currentUserEmail");
+
+    hideLoading();
+    renderLoginState();
+  }
+
+  async function loadProfile() {
+    if (!currentUser) {
+      return;
+    }
+
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id", currentUser.id)
+      .single();
+
+    if (error || !data) {
+      currentProfile = {
+        id: currentUser.id,
+        name: "",
+        phone: "",
+        email: currentUser.email,
+        address: ""
+      };
+
+      return;
+    }
+
+    currentProfile = data;
+
+    const profileForCheckout = {
+      name: data.name || "",
+      phone: data.phone || "",
+      email: data.email || currentUser.email || "",
+      address: data.address || ""
     };
 
-    localStorage.setItem("profile", JSON.stringify(profile));
-
-    status.innerText = "";
-    renderLoginState();
+    localStorage.setItem("profile", JSON.stringify(profileForCheckout));
+    localStorage.setItem("currentUserEmail", currentUser.email);
   }
 
-  function logoutUser() {
-    clearCurrentUser();
-    localStorage.removeItem("profile");
-
-    document.getElementById("loginEmail").value = "";
-    document.getElementById("loginPassword").value = "";
-    renderLoginState();
-  }
-
-  function updateProfile() {
-    const currentEmail = getCurrentUserEmail();
-    const status = document.getElementById("profileStatus");
-
-    if (!currentEmail) {
-      status.innerText = "Bạn cần đăng nhập để sửa thông tin.";
-      status.style.color = "#dc2626";
+  async function updateProfile() {
+    if (!currentUser) {
+      setStatus("profileStatus", "Bạn cần đăng nhập để sửa thông tin.", false);
       return;
     }
 
@@ -487,128 +565,91 @@
     const address = document.getElementById("profileAddress").value.trim();
 
     if (!name || !phone || !address) {
-      status.innerText = "Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ.";
-      status.style.color = "#dc2626";
+      setStatus("profileStatus", "Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ.", false);
       return;
     }
 
-    const users = getUsers();
+    showLoading("Đang lưu thông tin cá nhân...");
 
-    const updatedUsers = users.map(user => {
-      if (user.email === currentEmail) {
-        return {
-          ...user,
-          name: name,
-          phone: phone,
-          address: address,
-          updatedAt: new Date().toLocaleString("vi-VN")
-        };
-      }
-
-      return user;
-    });
-
-    saveUsers(updatedUsers);
-
-    const user = findUserByEmail(currentEmail);
-
-    const profile = {
-      name: user.name,
-      phone: user.phone,
-      email: user.email,
-      address: user.address
+    const profileData = {
+      id: currentUser.id,
+      name: name,
+      phone: phone,
+      email: currentUser.email,
+      address: address,
+      updated_at: new Date().toISOString()
     };
 
-    localStorage.setItem("profile", JSON.stringify(profile));
+    const { error } = await supabaseClient
+      .from("profiles")
+      .upsert(profileData);
 
-    status.innerText = "Đã cập nhật thông tin cá nhân.";
-    status.style.color = "#16a34a";
+    if (error) {
+      hideLoading();
+      setStatus("profileStatus", "Không lưu được thông tin: " + error.message, false);
+      return;
+    }
 
+    await loadProfile();
+
+    hideLoading();
+    setStatus("profileStatus", "Đã cập nhật thông tin cá nhân.", true);
     renderLoginState();
   }
 
-  function changePassword() {
+  function showPasswordBox() {
     document.getElementById("passwordBox").style.display = "block";
     document.getElementById("passwordStatus").innerText = "";
   }
 
   function hidePasswordBox() {
     document.getElementById("passwordBox").style.display = "none";
-    document.getElementById("oldPassword").value = "";
     document.getElementById("newPassword").value = "";
     document.getElementById("confirmNewPassword").value = "";
   }
 
-  function saveNewPassword() {
-    const currentEmail = getCurrentUserEmail();
-    const oldPassword = document.getElementById("oldPassword").value;
+  async function saveNewPassword() {
+    if (!currentUser) {
+      setStatus("passwordStatus", "Bạn cần đăng nhập để đổi mật khẩu.", false);
+      return;
+    }
+
     const newPassword = document.getElementById("newPassword").value;
     const confirmNewPassword = document.getElementById("confirmNewPassword").value;
-    const status = document.getElementById("passwordStatus");
-
-    if (!currentEmail) {
-      status.innerText = "Bạn cần đăng nhập để đổi mật khẩu.";
-      status.style.color = "#dc2626";
-      return;
-    }
-
-    const user = findUserByEmail(currentEmail);
-
-    if (!user || user.password !== oldPassword) {
-      status.innerText = "Mật khẩu hiện tại không đúng.";
-      status.style.color = "#dc2626";
-      return;
-    }
 
     if (newPassword.length < 6) {
-      status.innerText = "Mật khẩu mới cần ít nhất 6 ký tự.";
-      status.style.color = "#dc2626";
+      setStatus("passwordStatus", "Mật khẩu mới cần ít nhất 6 ký tự.", false);
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
-      status.innerText = "Mật khẩu mới nhập lại không khớp.";
-      status.style.color = "#dc2626";
+      setStatus("passwordStatus", "Mật khẩu mới nhập lại không khớp.", false);
       return;
     }
 
-    const users = getUsers();
+    showLoading("Đang đổi mật khẩu...");
 
-    const updatedUsers = users.map(item => {
-      if (item.email === currentEmail) {
-        return {
-          ...item,
-          password: newPassword,
-          updatedAt: new Date().toLocaleString("vi-VN")
-        };
-      }
-
-      return item;
+    const { error } = await supabaseClient.auth.updateUser({
+      password: newPassword
     });
 
-    saveUsers(updatedUsers);
+    hideLoading();
 
-    status.innerText = "Đổi mật khẩu thành công.";
-    status.style.color = "#16a34a";
+    if (error) {
+      setStatus("passwordStatus", "Không đổi được mật khẩu: " + error.message, false);
+      return;
+    }
+
+    setStatus("passwordStatus", "Đổi mật khẩu thành công.", true);
 
     setTimeout(hidePasswordBox, 900);
   }
 
   function renderLoginState() {
-    const currentEmail = getCurrentUserEmail();
     const guestArea = document.getElementById("guestArea");
     const userArea = document.getElementById("userArea");
 
-    if (!currentEmail) {
-      guestArea.style.display = "block";
-      userArea.style.display = "none";
-      return;
-    }
-
-    const user = findUserByEmail(currentEmail);
-
-    if (!user) {
-      clearCurrentUser();
+    if (!currentUser) {
       guestArea.style.display = "block";
       userArea.style.display = "none";
       return;
@@ -617,27 +658,34 @@
     guestArea.style.display = "none";
     userArea.style.display = "block";
 
-    document.getElementById("viewName").innerText = user.name;
-    document.getElementById("viewPhone").innerText = user.phone;
-    document.getElementById("viewEmail").innerText = user.email;
-    document.getElementById("viewAddress").innerText = user.address;
+    const profile = currentProfile || {};
 
-    document.getElementById("profileName").value = user.name;
-    document.getElementById("profilePhone").value = user.phone;
-    document.getElementById("profileEmail").value = user.email;
-    document.getElementById("profileAddress").value = user.address;
+    document.getElementById("viewName").innerText = profile.name || "Chưa cập nhật";
+    document.getElementById("viewPhone").innerText = profile.phone || "Chưa cập nhật";
+    document.getElementById("viewEmail").innerText = profile.email || currentUser.email || "";
+    document.getElementById("viewAddress").innerText = profile.address || "Chưa cập nhật";
 
-    const profile = {
-      name: user.name,
-      phone: user.phone,
-      email: user.email,
-      address: user.address
-    };
-
-    localStorage.setItem("profile", JSON.stringify(profile));
+    document.getElementById("profileName").value = profile.name || "";
+    document.getElementById("profilePhone").value = profile.phone || "";
+    document.getElementById("profileEmail").value = profile.email || currentUser.email || "";
+    document.getElementById("profileAddress").value = profile.address || "";
   }
 
-  renderLoginState();
+  async function initAuthPage() {
+    showLoading("Đang kiểm tra trạng thái đăng nhập...");
+
+    const { data } = await supabaseClient.auth.getSession();
+
+    if (data.session && data.session.user) {
+      currentUser = data.session.user;
+      await loadProfile();
+    }
+
+    hideLoading();
+    renderLoginState();
+  }
+
+  initAuthPage();
 </script>
 
 </body>
