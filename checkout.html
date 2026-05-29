@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thanh toán - TravelSmart AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">TravelSmart AI</div>
+  <nav>
+    <a href="index.html">Trang chủ</a>
+    <a href="products.html">Sản phẩm</a>
+    <a href="cart.html">Giỏ hàng</a>
+    <a href="checkout.html">Thanh toán</a>
+    <a href="login.html">Đăng nhập</a>
+  </nav>
+</header>
+
+<section class="page-title">
+  <h1>Thanh toán và giao hàng</h1>
+  <p>Hoàn tất thông tin để gửi yêu cầu đặt tour.</p>
+</section>
+
+<section class="checkout-layout">
+  <div class="form-box checkout-form">
+    <h2>Thông tin khách hàng</h2>
+    <p>Nếu bạn đã lưu profile, hệ thống sẽ tự điền thông tin.</p>
+
+    <input id="customerName" type="text" placeholder="Họ và tên">
+    <input id="customerPhone" type="text" placeholder="Số điện thoại">
+    <input id="customerEmail" type="email" placeholder="Email">
+    <input id="customerAddress" type="text" placeholder="Địa chỉ / nơi nhận vé">
+
+    <select id="paymentMethod">
+      <option value="Thanh toán khi nhân viên xác nhận">Thanh toán khi nhân viên xác nhận</option>
+      <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
+      <option value="Ví điện tử">Ví điện tử</option>
+    </select>
+
+    <select id="deliveryMethod">
+      <option value="Gửi vé qua email">Gửi vé qua email</option>
+      <option value="Gửi thông tin qua Zalo/SMS">Gửi thông tin qua Zalo/SMS</option>
+      <option value="Nhận tư vấn trực tiếp">Nhận tư vấn trực tiếp</option>
+    </select>
+
+    <textarea id="note" placeholder="Ghi chú thêm"></textarea>
+
+    <button class="btn" onclick="submitOrder()">Xác nhận đặt tour</button>
+
+    <p id="checkoutStatus"></p>
+  </div>
+
+  <div class="order-summary" id="orderSummary"></div>
+</section>
+
+<script src="products.js"></script>
+<script src="checkout.js"></script>
+</body>
+</html>

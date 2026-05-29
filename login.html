@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng nhập - TravelSmart AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">TravelSmart AI</div>
+  <nav>
+    <a href="index.html">Trang chủ</a>
+    <a href="products.html">Sản phẩm</a>
+    <a href="cart.html">Giỏ hàng</a>
+    <a href="checkout.html">Thanh toán</a>
+    <a href="login.html">Đăng nhập</a>
+  </nav>
+</header>
+
+<section class="form-box">
+  <h1>Đăng nhập / Tạo profile</h1>
+  <p>Website không bắt buộc đăng nhập. Nếu bạn lưu profile, thông tin sẽ tự điền khi thanh toán.</p>
+
+  <input id="profileName" type="text" placeholder="Họ và tên">
+  <input id="profilePhone" type="text" placeholder="Số điện thoại">
+  <input id="profileEmail" type="email" placeholder="Email">
+  <input id="profileAddress" type="text" placeholder="Địa chỉ nhận thông tin/vé">
+
+  <button class="btn" onclick="saveProfile()">Lưu profile</button>
+  <button class="btn secondary" onclick="logout()">Xóa profile</button>
+
+  <p id="loginStatus"></p>
+</section>
+
+<script>
+  const savedProfile = JSON.parse(localStorage.getItem("profile"));
+
+  if (savedProfile) {
+    document.getElementById("profileName").value = savedProfile.name || "";
+    document.getElementById("profilePhone").value = savedProfile.phone || "";
+    document.getElementById("profileEmail").value = savedProfile.email || "";
+    document.getElementById("profileAddress").value = savedProfile.address || "";
+    document.getElementById("loginStatus").innerText = "Đã có profile trên website.";
+  }
+
+  function saveProfile() {
+    const profile = {
+      name: document.getElementById("profileName").value,
+      phone: document.getElementById("profilePhone").value,
+      email: document.getElementById("profileEmail").value,
+      address: document.getElementById("profileAddress").value
+    };
+
+    localStorage.setItem("profile", JSON.stringify(profile));
+    document.getElementById("loginStatus").innerText = "Đã lưu profile thành công!";
+  }
+
+  function logout() {
+    localStorage.removeItem("profile");
+    document.getElementById("profileName").value = "";
+    document.getElementById("profilePhone").value = "";
+    document.getElementById("profileEmail").value = "";
+    document.getElementById("profileAddress").value = "";
+    document.getElementById("loginStatus").innerText = "Đã xóa profile.";
+  }
+</script>
+
+</body>
+</html>

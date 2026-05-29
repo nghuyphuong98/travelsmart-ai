@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách sản phẩm - TravelSmart AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">TravelSmart AI</div>
+  <nav>
+    <a href="index.html">Trang chủ</a>
+    <a href="products.html">Sản phẩm</a>
+    <a href="cart.html">Giỏ hàng</a>
+    <a href="checkout.html">Thanh toán</a>
+    <a href="login.html">Đăng nhập</a>
+  </nav>
+</header>
+
+<section class="page-title">
+  <h1>Danh sách 100 sản phẩm tour</h1>
+  <p>Chọn tour phù hợp, xem chi tiết, so sánh đối thủ và hỏi AI tư vấn.</p>
+</section>
+
+<section class="toolbar">
+  <input type="text" id="searchInput" placeholder="Tìm tour theo tên hoặc địa điểm...">
+
+  <select id="priceFilter">
+    <option value="">Tất cả mức giá</option>
+    <option value="low">Dưới 5 triệu</option>
+    <option value="medium">5 - 10 triệu</option>
+    <option value="high">Trên 10 triệu</option>
+  </select>
+</section>
+
+<section class="product-count" id="productCount"></section>
+
+<section class="product-grid" id="productGrid"></section>
+
+<div id="aiWidget"></div>
+
+<script src="products.js"></script>
+<script src="app.js"></script>
+<script src="ai.js"></script>
+</body>
+</html>
