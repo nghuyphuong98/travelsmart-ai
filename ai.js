@@ -18,7 +18,7 @@ function createAIWidget() {
     <div class="ai-chat-box" id="aiChatBox">
       <div class="ai-chat-header">
         <div>
-          <b>Linh AI</b>
+          <b>Trần Hà Linh</b>
           <p>Trợ lý tư vấn TravelSmart</p>
         </div>
         <button type="button" onclick="closeAiChat()">×</button>
@@ -26,7 +26,7 @@ function createAIWidget() {
 
       <div class="ai-messages" id="aiMessages">
         <div class="ai-bot">
-          Xin chào! Mình là Linh AI 💖 Bạn cần tư vấn tour nào?
+          Xin chào! Mình là Trần Hà Linh 💖 Bạn cần tư vấn tour nào?
         </div>
       </div>
 
@@ -152,7 +152,7 @@ function createLocalAIReply(message) {
   }
 
   return `
-    Mình là Linh AI, mình có thể hỗ trợ bạn chọn tour, so sánh tour, xem giá, lịch trình và hướng dẫn đặt tour.
+    Mình là Trần Hà Linh, mình có thể hỗ trợ bạn chọn tour, so sánh tour, xem giá, lịch trình và hướng dẫn đặt tour.
     Bạn hãy nhập tên tour hoặc điểm đến bạn quan tâm nhé.
   `;
 }
