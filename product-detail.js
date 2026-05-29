@@ -1,5 +1,5 @@
 /* =========================================================
-   TRAVELSMART AI - PRODUCT DETAIL FULL CODE
+   TRAVELSMART - PRODUCT DETAIL FULL CODE
    File: product-detail.js
    Xóa toàn bộ code cũ trong product-detail.js rồi dán nguyên file này
    ========================================================= */
@@ -156,7 +156,7 @@ function getProductImage(product) {
 }
 
 function getProductName(product) {
-  return product.name || product.title || "Tour TravelSmart AI";
+  return product.name || product.title || "Tour TravelSmart";
 }
 
 function getProductPrice(product) {
@@ -389,9 +389,9 @@ function renderCompareSection() {
       <h2>So sánh với đối thủ tham khảo</h2>
 
       <div class="tsai-compare-intro">
-        <strong>TravelSmart AI nổi bật hơn nhờ AI tư vấn, đặt tour nhanh và quy trình tự động.</strong>
+        <strong>TravelSmart nổi bật hơn nhờ AI tư vấn, đặt tour nhanh và quy trình tự động.</strong>
         <p>
-          Bảng dưới đây giúp khách hàng thấy rõ ưu điểm của TravelSmart AI so với một tour tương tự trên thị trường.
+          Bảng dưới đây giúp khách hàng thấy rõ ưu điểm của TravelSmart so với một tour tương tự trên thị trường.
         </p>
       </div>
 
@@ -400,7 +400,7 @@ function renderCompareSection() {
           <thead>
             <tr>
               <th>Tiêu chí</th>
-              <th>TravelSmart AI</th>
+              <th>TravelSmart</th>
               <th>Đối thủ tham khảo</th>
             </tr>
           </thead>
@@ -414,7 +414,7 @@ function renderCompareSection() {
               </td>
               <td>
                 <b>${competitor.name}</b>
-                <p class="tsai-bad">Chỉ dùng để tham khảo, trải nghiệm đặt tour chưa nổi bật bằng TravelSmart AI.</p>
+                <p class="tsai-bad">Chỉ dùng để tham khảo, trải nghiệm đặt tour chưa nổi bật bằng TravelSmart.</p>
               </td>
             </tr>
 
@@ -525,7 +525,7 @@ function renderCompareSection() {
             <tr class="tsai-final-row">
               <td>Kết luận</td>
               <td>
-                <b>TravelSmart AI vượt trội hơn về giá, AI tư vấn, đặt tour, thanh toán và quản lý đơn hàng.</b>
+                <b>TravelSmart vượt trội hơn về giá, AI tư vấn, đặt tour, thanh toán và quản lý đơn hàng.</b>
               </td>
               <td>
                 <b>Đối thủ chỉ phù hợp để tham khảo, chưa nổi bật về tự động hóa và trải nghiệm khách hàng.</b>
