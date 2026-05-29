@@ -32,7 +32,7 @@
     }
 
     .qr-area img {
-      width: 230px;
+      width: 240px;
       height: 300px;
       object-fit: contain;
       background: white;
@@ -149,7 +149,7 @@
           <p><b>Mã cửa hàng:</b> TravelSmartAI</p>
 
           <p><b>Nội dung chuyển khoản tự động:</b></p>
-          <p class="transfer-note" id="transferNote">TravelSmartAI SoDienThoai</p>
+          <p class="transfer-note" id="transferNote">TravelSmartAI</p>
 
           <p class="qr-warning">
             Khi quét mã QR, app ngân hàng sẽ tự điền số tài khoản và nội dung chuyển khoản.
@@ -178,18 +178,19 @@
 <script src="checkout.js"></script>
 
 <script>
+  // Thông tin tài khoản ngân hàng
   const BANK_ID = "MB";
   const ACCOUNT_NO = "856789898989";
   const ACCOUNT_NAME = "NGUYEN HUY PHUONG";
   const QR_TEMPLATE = "compact2";
 
-  function normalizePhone(phone) {
+  function cleanPhone(phone) {
     return phone.replace(/\s+/g, "").trim();
   }
 
   function createTransferContent() {
     const phoneInput = document.getElementById("customerPhone");
-    const phone = normalizePhone(phoneInput.value || "");
+    const phone = cleanPhone(phoneInput.value || "");
 
     if (phone) {
       return `TravelSmartAI ${phone}`;
@@ -202,14 +203,20 @@
     const qrImage = document.getElementById("vietQrImage");
     const transferNote = document.getElementById("transferNote");
 
+    if (!qrImage || !transferNote) {
+      return;
+    }
+
     const transferContent = createTransferContent();
 
     transferNote.innerText = transferContent;
 
     const qrUrl =
       `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${QR_TEMPLATE}.png` +
-      `?addInfo=${encodeURIComponent(transferContent)}` +
-      `&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+      `?amount=` +
+      `&addInfo=${encodeURIComponent(transferContent)}` +
+      `&accountName=${encodeURIComponent(ACCOUNT_NAME)}` +
+      `&cache=${Date.now()}`;
 
     qrImage.src = qrUrl;
   }
@@ -231,13 +238,18 @@
 
   if (phoneInput) {
     phoneInput.addEventListener("input", updateVietQRImage);
+    phoneInput.addEventListener("change", updateVietQRImage);
+    phoneInput.addEventListener("keyup", updateVietQRImage);
   }
 
   if (paymentMethodInput) {
     paymentMethodInput.addEventListener("change", toggleBankQR);
   }
 
-  toggleBankQR();
+  window.addEventListener("load", function () {
+    toggleBankQR();
+    updateVietQRImage();
+  });
 </script>
 
 </body>
