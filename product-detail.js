@@ -1,8 +1,4 @@
-const params = new URLSearchParams(window.location.search);
-const productId = Number(params.get("id"));
-
-const product = products.find(item => item.id === productId);
-window.currentProduct = product;
+let currentDetailProduct = null;
 
 function formatPrice(price) {
   return Number(price || 0).toLocaleString("vi-VN") + "đ";
@@ -78,6 +74,24 @@ function renderProductDetail() {
     return;
   }
 
+  if (typeof products === "undefined" || !Array.isArray(products)) {
+    detailContainer.innerHTML = `
+      <section class="page-title">
+        <h1>Chưa tải được dữ liệu sản phẩm</h1>
+        <p>Vui lòng kiểm tra file products.js đã được nhúng trước product-detail.js.</p>
+        <a class="btn" href="products.html">Quay lại danh sách sản phẩm</a>
+      </section>
+    `;
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const productId = Number(params.get("id"));
+
+  const product = products.find(item => Number(item.id) === productId);
+  currentDetailProduct = product;
+  window.currentProduct = product;
+
   if (!product) {
     detailContainer.innerHTML = `
       <section class="page-title">
@@ -87,6 +101,8 @@ function renderProductDetail() {
     `;
     return;
   }
+
+  const competitor = product.competitor || {};
 
   detailContainer.innerHTML = `
     <section class="detail-layout">
@@ -105,19 +121,11 @@ function renderProductDetail() {
 
         <p class="price big">${formatPrice(product.price)}</p>
 
-        ${
-          product.oldPrice
-            ? `<p class="old-price">${formatPrice(product.oldPrice)}</p>`
-            : ""
-        }
+        ${product.oldPrice ? `<p class="old-price">${formatPrice(product.oldPrice)}</p>` : ""}
 
         <p>⭐ ${product.rating || "4.5"} | Đã bán ${product.sold || 0}</p>
 
-        ${
-          product.promo
-            ? `<p class="promo">${product.promo}</p>`
-            : ""
-        }
+        ${product.promo ? `<p class="promo">${product.promo}</p>` : ""}
 
         <p>${product.description || ""}</p>
 
@@ -193,25 +201,25 @@ function renderProductDetail() {
           <tr>
             <td>Tên sản phẩm</td>
             <td>${product.name}</td>
-            <td>${product.competitor?.name || "Tour tương tự"}</td>
+            <td>${competitor.name || "Tour tương tự"}</td>
           </tr>
 
           <tr>
             <td>Giá</td>
             <td>${formatPrice(product.price)}</td>
-            <td>${formatPrice(product.competitor?.price || product.price + 300000)}</td>
+            <td>${formatPrice(competitor.price || Number(product.price || 0) + 300000)}</td>
           </tr>
 
           <tr>
             <td>Thời gian</td>
             <td>${product.duration || "Đang cập nhật"}</td>
-            <td>${product.competitor?.duration || product.duration || "Đang cập nhật"}</td>
+            <td>${competitor.duration || product.duration || "Đang cập nhật"}</td>
           </tr>
 
           <tr>
             <td>Ưu điểm</td>
             <td>${product.advantage || "Có AI tư vấn, hỗ trợ đặt tour nhanh và dễ sử dụng."}</td>
-            <td>${product.competitor?.advantage || "Có nhiều chương trình tour tương tự."}</td>
+            <td>${competitor.advantage || "Có nhiều chương trình tour tương tự."}</td>
           </tr>
         </tbody>
       </table>
@@ -220,7 +228,12 @@ function renderProductDetail() {
 }
 
 function addToCart(id) {
-  const selectedProduct = products.find(item => item.id === id);
+  if (typeof products === "undefined" || !Array.isArray(products)) {
+    showToast("Chưa tải được dữ liệu sản phẩm.", "error");
+    return;
+  }
+
+  const selectedProduct = products.find(item => Number(item.id) === Number(id));
 
   if (!selectedProduct) {
     showToast("Không tìm thấy sản phẩm.", "error");
@@ -229,7 +242,7 @@ function addToCart(id) {
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  const existingItem = cart.find(item => item.id === selectedProduct.id);
+  const existingItem = cart.find(item => Number(item.id) === Number(selectedProduct.id));
 
   if (existingItem) {
     existingItem.quantity += 1;
@@ -250,15 +263,23 @@ function addToCart(id) {
 }
 
 function askAIAboutProduct() {
+  const product = currentDetailProduct;
+
+  if (!product) {
+    showToast("Chưa có sản phẩm để tư vấn.", "error");
+    return;
+  }
+
   if (typeof openAIChat === "function") {
     openAIChat();
   }
 
   const aiInput = document.getElementById("aiInput");
+  const competitor = product.competitor || {};
 
   if (aiInput) {
-    aiInput.value = `Hãy tư vấn chi tiết cho tôi về sản phẩm này: ${product.name}. Giá ${formatPrice(product.price)}, thời gian ${product.duration}, khuyến mãi ${product.promo || "không có"}. Hãy so sánh thêm với đối thủ ${product.competitor?.name || "tương tự"}.`;
+    aiInput.value = `Hãy tư vấn chi tiết cho tôi về sản phẩm này: ${product.name}. Giá ${formatPrice(product.price)}, thời gian ${product.duration}, khuyến mãi ${product.promo || "không có"}. Hãy so sánh thêm với đối thủ ${competitor.name || "tương tự"}.`;
   }
 }
 
-renderProductDetail();
+window.addEventListener("load", renderProductDetail);
