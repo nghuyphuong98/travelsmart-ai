@@ -1018,6 +1018,87 @@
 
   initAuthPage();
 </script>
+document.addEventListener("keydown", function (event) {
+  if (event.key !== "Enter") {
+    return;
+  }
+
+  const activeElement = document.activeElement;
+
+  if (!activeElement) {
+    return;
+  }
+
+  const activeId = activeElement.id;
+
+  // Enter ở form đăng nhập
+  if (
+    activeId === "loginEmail" ||
+    activeId === "loginPassword"
+  ) {
+    event.preventDefault();
+    loginUser();
+    return;
+  }
+
+  // Enter ở form đăng ký
+  if (
+    activeId === "registerName" ||
+    activeId === "registerPhone" ||
+    activeId === "registerEmail" ||
+    activeId === "registerProvince" ||
+    activeId === "registerWard" ||
+    activeId === "registerVillage" ||
+    activeId === "registerAddressDetail" ||
+    activeId === "registerPassword" ||
+    activeId === "registerConfirmPassword"
+  ) {
+    event.preventDefault();
+    registerUser();
+    return;
+  }
+
+  // Enter ở form quên mật khẩu
+  if (activeId === "forgotEmail") {
+    event.preventDefault();
+    sendResetPasswordEmail();
+    return;
+  }
+
+  // Enter ở form đổi mật khẩu
+  if (
+    activeId === "oldPassword" ||
+    activeId === "newPassword" ||
+    activeId === "confirmNewPassword"
+  ) {
+    event.preventDefault();
+    saveNewPassword();
+    return;
+  }
+
+  // Enter ở form đặt lại mật khẩu qua Gmail
+  if (
+    activeId === "resetNewPassword" ||
+    activeId === "resetConfirmPassword"
+  ) {
+    event.preventDefault();
+    saveResetPassword();
+    return;
+  }
+
+  // Enter ở form sửa thông tin cá nhân
+  if (
+    activeId === "profileName" ||
+    activeId === "profilePhone" ||
+    activeId === "profileProvince" ||
+    activeId === "profileWard" ||
+    activeId === "profileVillage" ||
+    activeId === "profileAddressDetail"
+  ) {
+    event.preventDefault();
+    updateProfile();
+  }
+});
 
 </body>
 </html>
