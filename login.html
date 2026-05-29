@@ -327,12 +327,8 @@
           <input id="registerPhone" type="text" placeholder="Số điện thoại">
           <input id="registerEmail" type="email" placeholder="Email">
 
-          <div class="address-grid">
-            <select id="registerProvince" onchange="updateWardOptions('register')"></select>
-            <select id="registerWardSelect" onchange="toggleCustomWard('register')"></select>
-          </div>
-
-          <input id="registerWardCustom" type="text" placeholder="Nhập phường/xã khác nếu chưa có trong danh sách" style="display:none;">
+          <select id="registerProvince"></select>
+          <input id="registerWard" type="text" placeholder="Phường / xã">
           <input id="registerVillage" type="text" placeholder="Thôn / tổ dân phố / khu phố">
           <input id="registerAddressDetail" type="text" placeholder="Địa chỉ chi tiết: số nhà, ngõ/ngách, tên đường">
 
@@ -377,12 +373,8 @@
           <input id="profilePhone" type="text" placeholder="Số điện thoại">
           <input id="profileEmail" type="email" placeholder="Email" disabled>
 
-          <div class="address-grid">
-            <select id="profileProvince" onchange="updateWardOptions('profile')"></select>
-            <select id="profileWardSelect" onchange="toggleCustomWard('profile')"></select>
-          </div>
-
-          <input id="profileWardCustom" type="text" placeholder="Nhập phường/xã khác nếu chưa có trong danh sách" style="display:none;">
+          <select id="profileProvince"></select>
+          <input id="profileWard" type="text" placeholder="Phường / xã">
           <input id="profileVillage" type="text" placeholder="Thôn / tổ dân phố / khu phố">
           <input id="profileAddressDetail" type="text" placeholder="Địa chỉ chi tiết: số nhà, ngõ/ngách, tên đường">
 
@@ -462,123 +454,6 @@
     "Cà Mau"
   ];
 
-  const WARDS_BY_PROVINCE = {
-    "Hà Nội": [
-      "Phường Ba Đình",
-      "Phường Hoàn Kiếm",
-      "Phường Cửa Nam",
-      "Phường Hai Bà Trưng",
-      "Phường Đống Đa",
-      "Phường Kim Liên",
-      "Phường Văn Miếu - Quốc Tử Giám",
-      "Phường Giảng Võ",
-      "Phường Ngọc Hà",
-      "Phường Tây Hồ",
-      "Phường Phú Thượng",
-      "Phường Hồng Hà",
-      "Phường Cầu Giấy",
-      "Phường Nghĩa Đô",
-      "Phường Yên Hòa",
-      "Phường Thanh Xuân",
-      "Phường Khương Đình",
-      "Phường Hoàng Mai",
-      "Phường Lĩnh Nam",
-      "Phường Long Biên",
-      "Phường Bồ Đề",
-      "Phường Việt Hưng",
-      "Xã Đông Anh",
-      "Xã Sóc Sơn",
-      "Xã Gia Lâm",
-      "Xã Thanh Trì",
-      "Xã Hoài Đức",
-      "Xã Đan Phượng",
-      "Xã Thạch Thất",
-      "Xã Quốc Oai",
-      "Xã Ba Vì",
-      "Xã Phúc Thọ",
-      "Xã Mỹ Đức",
-      "Xã Ứng Hòa",
-      "Xã Phú Xuyên",
-      "Xã Thường Tín"
-    ],
-    "TP. Hồ Chí Minh": [
-      "Phường Sài Gòn",
-      "Phường Bến Thành",
-      "Phường Cầu Ông Lãnh",
-      "Phường Tân Định",
-      "Phường Gia Định",
-      "Phường Bình Thạnh",
-      "Phường Thạnh Mỹ Tây",
-      "Phường An Khánh",
-      "Phường Thủ Đức",
-      "Phường Linh Xuân",
-      "Phường Hiệp Bình",
-      "Phường Tăng Nhơn Phú",
-      "Phường Long Bình",
-      "Phường Chợ Lớn",
-      "Phường Bình Tây",
-      "Phường Phú Lâm",
-      "Phường Tân Sơn Nhất",
-      "Phường Tân Bình",
-      "Phường Bảy Hiền",
-      "Phường Tân Phú",
-      "Phường Phú Thọ Hòa",
-      "Xã Bình Chánh",
-      "Xã Hóc Môn",
-      "Xã Củ Chi",
-      "Xã Nhà Bè",
-      "Xã Cần Giờ"
-    ],
-    "Đà Nẵng": [
-      "Phường Hải Châu",
-      "Phường Thanh Khê",
-      "Phường Sơn Trà",
-      "Phường Ngũ Hành Sơn",
-      "Phường Liên Chiểu",
-      "Phường Cẩm Lệ",
-      "Xã Hòa Vang",
-      "Xã Bà Nà",
-      "Xã Hoàng Sa"
-    ],
-    "Hải Phòng": [
-      "Phường Hồng Bàng",
-      "Phường Lê Chân",
-      "Phường Ngô Quyền",
-      "Phường Hải An",
-      "Phường Kiến An",
-      "Phường Đồ Sơn",
-      "Xã An Dương",
-      "Xã An Lão",
-      "Xã Kiến Thụy",
-      "Xã Tiên Lãng",
-      "Xã Vĩnh Bảo",
-      "Đặc khu Cát Hải"
-    ],
-    "Huế": [
-      "Phường Thuận Hóa",
-      "Phường Phú Xuân",
-      "Phường Hương Trà",
-      "Phường Hương Thủy",
-      "Phường Phú Bài",
-      "Xã Phú Vang",
-      "Xã Quảng Điền",
-      "Xã Phong Điền",
-      "Xã A Lưới",
-      "Xã Nam Đông"
-    ],
-    "Cần Thơ": [
-      "Phường Ninh Kiều",
-      "Phường Cái Răng",
-      "Phường Bình Thủy",
-      "Phường Ô Môn",
-      "Phường Thốt Nốt",
-      "Xã Phong Điền",
-      "Xã Cờ Đỏ",
-      "Xã Thới Lai",
-      "Xã Vĩnh Thạnh"
-    ]
-  };
-
   let currentUser = null;
   let currentProfile = null;
 
@@ -605,11 +480,9 @@
   function fillProvinceSelect(selectId, selectedValue = "") {
     const select = document.getElementById(selectId);
 
-    if (!select) {
-      return;
-    }
+    if (!select) return;
 
-    select.innerHTML = `<option value="">Chọn tỉnh / thành phố sau sáp nhập</option>`;
+    select.innerHTML = `<option value="">Chọn tỉnh / thành phố</option>`;
 
     PROVINCES.forEach(province => {
       const option = document.createElement("option");
@@ -622,86 +495,6 @@
 
       select.appendChild(option);
     });
-  }
-
-  function updateWardOptions(type, selectedWard = "") {
-    const provinceSelect = document.getElementById(type + "Province");
-    const wardSelect = document.getElementById(type + "WardSelect");
-
-    if (!provinceSelect || !wardSelect) {
-      return;
-    }
-
-    const province = provinceSelect.value;
-    const wards = WARDS_BY_PROVINCE[province] || [];
-
-    wardSelect.innerHTML = "";
-
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.innerText = wards.length > 0
-      ? "Chọn phường / xã mới"
-      : "Chưa có danh sách, vui lòng nhập tay";
-    wardSelect.appendChild(defaultOption);
-
-    wards.forEach(ward => {
-      const option = document.createElement("option");
-      option.value = ward;
-      option.innerText = ward;
-
-      if (ward === selectedWard) {
-        option.selected = true;
-      }
-
-      wardSelect.appendChild(option);
-    });
-
-    const otherOption = document.createElement("option");
-    otherOption.value = "__custom__";
-    otherOption.innerText = "Khác / nhập phường xã thủ công";
-
-    if (selectedWard && !wards.includes(selectedWard)) {
-      otherOption.selected = true;
-    }
-
-    wardSelect.appendChild(otherOption);
-
-    toggleCustomWard(type, selectedWard);
-  }
-
-  function toggleCustomWard(type, selectedWard = "") {
-    const wardSelect = document.getElementById(type + "WardSelect");
-    const customInput = document.getElementById(type + "WardCustom");
-
-    if (!wardSelect || !customInput) {
-      return;
-    }
-
-    if (wardSelect.value === "__custom__") {
-      customInput.style.display = "block";
-
-      if (selectedWard) {
-        customInput.value = selectedWard;
-      }
-    } else {
-      customInput.style.display = "none";
-      customInput.value = "";
-    }
-  }
-
-  function getSelectedWard(type) {
-    const wardSelect = document.getElementById(type + "WardSelect");
-    const customInput = document.getElementById(type + "WardCustom");
-
-    if (!wardSelect) {
-      return "";
-    }
-
-    if (wardSelect.value === "__custom__") {
-      return customInput ? customInput.value.trim() : "";
-    }
-
-    return wardSelect.value.trim();
   }
 
   function showAuthTab(tab) {
@@ -737,14 +530,14 @@
     const phone = document.getElementById("registerPhone").value.trim();
     const email = document.getElementById("registerEmail").value.trim();
     const province = document.getElementById("registerProvince").value.trim();
-    const ward = getSelectedWard("register");
+    const ward = document.getElementById("registerWard").value.trim();
     const village = document.getElementById("registerVillage").value.trim();
     const addressDetail = document.getElementById("registerAddressDetail").value.trim();
     const password = document.getElementById("registerPassword").value;
     const confirmPassword = document.getElementById("registerConfirmPassword").value;
 
     if (!name || !phone || !email || !province || !ward || !village || !addressDetail || !password || !confirmPassword) {
-      setStatus("registerStatus", "Vui lòng nhập đầy đủ thông tin, gồm tỉnh/thành, phường/xã, thôn/tổ dân phố và địa chỉ chi tiết.", false);
+      setStatus("registerStatus", "Vui lòng nhập đầy đủ thông tin địa chỉ.", false);
       return;
     }
 
@@ -841,7 +634,6 @@
     }
 
     currentUser = data.user;
-
     await loadProfile();
 
     hideLoading();
@@ -925,9 +717,7 @@
   }
 
   async function loadProfile() {
-    if (!currentUser) {
-      return;
-    }
+    if (!currentUser) return;
 
     const { data, error } = await supabaseClient
       .from("profiles")
@@ -975,12 +765,12 @@
     const name = document.getElementById("profileName").value.trim();
     const phone = document.getElementById("profilePhone").value.trim();
     const province = document.getElementById("profileProvince").value.trim();
-    const ward = getSelectedWard("profile");
+    const ward = document.getElementById("profileWard").value.trim();
     const village = document.getElementById("profileVillage").value.trim();
     const addressDetail = document.getElementById("profileAddressDetail").value.trim();
 
     if (!name || !phone || !province || !ward || !village || !addressDetail) {
-      setStatus("profileStatus", "Vui lòng nhập đầy đủ họ tên, số điện thoại, tỉnh/thành, phường/xã, thôn/tổ dân phố và địa chỉ chi tiết.", false);
+      setStatus("profileStatus", "Vui lòng nhập đầy đủ thông tin địa chỉ.", false);
       return;
     }
 
@@ -1026,15 +816,10 @@
   function hidePasswordBox() {
     document.getElementById("passwordBox").style.display = "none";
 
-    const oldPasswordInput = document.getElementById("oldPassword");
-    const newPasswordInput = document.getElementById("newPassword");
-    const confirmNewPasswordInput = document.getElementById("confirmNewPassword");
-    const passwordStatus = document.getElementById("passwordStatus");
-
-    if (oldPasswordInput) oldPasswordInput.value = "";
-    if (newPasswordInput) newPasswordInput.value = "";
-    if (confirmNewPasswordInput) confirmNewPasswordInput.value = "";
-    if (passwordStatus) passwordStatus.innerText = "";
+    document.getElementById("oldPassword").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmNewPassword").value = "";
+    document.getElementById("passwordStatus").innerText = "";
   }
 
   async function saveNewPassword() {
@@ -1122,7 +907,6 @@
     userArea.style.display = "block";
 
     const profile = currentProfile || {};
-
     const fullAddress = profile.address || buildFullAddress(profile.address_detail, profile.village, profile.ward, profile.province);
 
     document.getElementById("viewName").innerText = profile.name || "Chưa cập nhật";
@@ -1133,18 +917,17 @@
     document.getElementById("profileName").value = profile.name || "";
     document.getElementById("profilePhone").value = profile.phone || "";
     document.getElementById("profileEmail").value = profile.email || currentUser.email || "";
-    document.getElementById("profileVillage").value = profile.village || "";
-    document.getElementById("profileAddressDetail").value = profile.address_detail || "";
 
     fillProvinceSelect("profileProvince", profile.province || "");
-    updateWardOptions("profile", profile.ward || "");
+
+    document.getElementById("profileWard").value = profile.ward || "";
+    document.getElementById("profileVillage").value = profile.village || "";
+    document.getElementById("profileAddressDetail").value = profile.address_detail || "";
   }
 
   async function initAuthPage() {
     fillProvinceSelect("registerProvince");
     fillProvinceSelect("profileProvince");
-    updateWardOptions("register");
-    updateWardOptions("profile");
 
     showLoading("Đang kiểm tra trạng thái đăng nhập...");
 
