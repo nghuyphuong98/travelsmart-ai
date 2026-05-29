@@ -31,7 +31,7 @@ function createAIWidget() {
       </div>
 
       <div class="ai-input-area">
-        <input id="aiInput" type="text" placeholder="Nhập câu hỏi cho AI..." onkeydown="handleAIEnter(event)">
+        <input id="aiInput" type="text" placeholder="Nhập câu hỏi cho Trần Hà Linh..." onkeydown="handleAIEnter(event)">
         <button type="button" onclick="sendAIMessage()">Gửi</button>
       </div>
     </div>
