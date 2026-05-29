@@ -72,6 +72,14 @@
       background: #6b7280;
     }
 
+    .admin-btn.orange {
+      background: #f97316;
+    }
+
+    .admin-btn.purple {
+      background: #7c3aed;
+    }
+
     .order-card-admin {
       border: 1px solid #e5e7eb;
       border-radius: 16px;
@@ -258,7 +266,7 @@
 
   <div class="admin-panel" id="adminPanel" style="display: none;">
     <h1>Quản lý xác nhận vé</h1>
-    <p>Admin có thể kiểm tra đơn hàng, xác nhận vé hoặc hủy vé tại đây.</p>
+    <p>Admin có thể kiểm tra đơn hàng, xác nhận vé, hủy vé, xuất vé và xuất hóa đơn.</p>
 
     <div class="admin-actions">
       <button class="admin-btn" onclick="renderAdminOrders()">Tải lại danh sách</button>
@@ -306,6 +314,11 @@
 
   function saveOrders(orders) {
     localStorage.setItem("travelOrders", JSON.stringify(orders));
+  }
+
+  function getOrderByCode(orderCode) {
+    const orders = getOrders();
+    return orders.find(order => order.orderCode === orderCode);
   }
 
   function getStatusClass(status) {
@@ -362,6 +375,14 @@
     if (order.orderStatus === "Đã xác nhận vé") {
       return `
         <div class="admin-actions">
+          <button class="admin-btn purple" onclick="printTicket('${order.orderCode}')">
+            Xuất vé
+          </button>
+
+          <button class="admin-btn orange" onclick="printInvoice('${order.orderCode}')">
+            Xuất hóa đơn
+          </button>
+
           <button class="admin-btn red" onclick="cancelTicket('${order.orderCode}')">
             Hủy vé đã xác nhận
           </button>
@@ -524,6 +545,381 @@
 
   function formatPriceAdmin(price) {
     return Number(price || 0).toLocaleString("vi-VN") + "đ";
+  }
+
+  function getProductsHtml(order) {
+    return order.cart.map(item => {
+      const itemTotal = Number(item.price || 0) * Number(item.quantity || 1);
+
+      return `
+        <tr>
+          <td>${item.name}</td>
+          <td>${formatPriceAdmin(item.price)}</td>
+          <td>${item.quantity}</td>
+          <td>${formatPriceAdmin(itemTotal)}</td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  function getProductsText(order) {
+    return order.cart.map(item => {
+      return `${item.name} x ${item.quantity}`;
+    }).join("<br>");
+  }
+
+  function printTicket(orderCode) {
+    const order = getOrderByCode(orderCode);
+
+    if (!order) {
+      alert("Không tìm thấy đơn hàng.");
+      return;
+    }
+
+    if (order.orderStatus !== "Đã xác nhận vé") {
+      alert("Chỉ có thể xuất vé khi đơn hàng đã được xác nhận.");
+      return;
+    }
+
+    const ticketWindow = window.open("", "_blank");
+
+    ticketWindow.document.write(`
+      <!DOCTYPE html>
+      <html lang="vi">
+      <head>
+        <meta charset="UTF-8">
+        <title>Vé tour ${order.orderCode}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            padding: 30px;
+            color: #111827;
+          }
+
+          .ticket {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #dbeafe;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+          }
+
+          .ticket-header {
+            background: linear-gradient(135deg, #0b5ed7, #7c3aed);
+            color: white;
+            padding: 28px;
+          }
+
+          .ticket-header h1 {
+            margin: 0;
+            font-size: 34px;
+          }
+
+          .ticket-body {
+            padding: 28px;
+          }
+
+          .ticket-code-large {
+            display: inline-block;
+            padding: 12px 18px;
+            border: 2px dashed #0b5ed7;
+            color: #0b5ed7;
+            border-radius: 12px;
+            font-size: 26px;
+            font-weight: bold;
+            margin: 14px 0;
+          }
+
+          .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 28px;
+            margin-top: 18px;
+          }
+
+          .box {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 18px;
+          }
+
+          .confirmed {
+            color: #15803d;
+            font-weight: bold;
+          }
+
+          .footer {
+            background: #f0f7ff;
+            padding: 18px 28px;
+            color: #0b5ed7;
+            font-weight: bold;
+          }
+
+          .print-btn {
+            margin: 20px auto;
+            display: block;
+            padding: 12px 20px;
+            border: none;
+            background: #0b5ed7;
+            color: white;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+          }
+
+          @media print {
+            .print-btn {
+              display: none;
+            }
+
+            body {
+              background: white;
+              padding: 0;
+            }
+
+            .ticket {
+              box-shadow: none;
+              border: 1px solid #ddd;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <button class="print-btn" onclick="window.print()">In / Lưu vé PDF</button>
+
+        <div class="ticket">
+          <div class="ticket-header">
+            <h1>VÉ XÁC NHẬN TOUR</h1>
+            <p>TravelSmart AI - Đặt tour thông minh</p>
+          </div>
+
+          <div class="ticket-body">
+            <p><b>Mã vé / mã đơn hàng:</b></p>
+            <div class="ticket-code-large">${order.orderCode}</div>
+
+            <p class="confirmed">Trạng thái: ${order.orderStatus}</p>
+            <p><b>Thời gian xác nhận:</b> ${order.confirmedAt || "Chưa có"}</p>
+
+            <div class="info-grid">
+              <p><b>Khách hàng:</b> ${order.customerName}</p>
+              <p><b>Số điện thoại:</b> ${order.customerPhone}</p>
+              <p><b>Email:</b> ${order.customerEmail}</p>
+              <p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p>
+              <p><b>Hình thức giao vé:</b> ${order.deliveryMethod}</p>
+              <p><b>Thanh toán:</b> ${order.paymentMethod}</p>
+            </div>
+
+            <div class="box">
+              <h3>Thông tin tour</h3>
+              <p>${getProductsText(order)}</p>
+            </div>
+
+            <div class="box">
+              <h3>Lưu ý</h3>
+              <p>Khách hàng vui lòng xuất trình mã vé khi nhân viên liên hệ xác nhận hoặc khi tham gia tour.</p>
+              <p>Vé chỉ có hiệu lực khi trạng thái là <b>Đã xác nhận vé</b>.</p>
+            </div>
+          </div>
+
+          <div class="footer">
+            TravelSmart AI cảm ơn quý khách đã đặt tour.
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+
+    ticketWindow.document.close();
+  }
+
+  function printInvoice(orderCode) {
+    const order = getOrderByCode(orderCode);
+
+    if (!order) {
+      alert("Không tìm thấy đơn hàng.");
+      return;
+    }
+
+    if (order.orderStatus !== "Đã xác nhận vé") {
+      alert("Chỉ có thể xuất hóa đơn khi đơn hàng đã được xác nhận.");
+      return;
+    }
+
+    const invoiceWindow = window.open("", "_blank");
+
+    invoiceWindow.document.write(`
+      <!DOCTYPE html>
+      <html lang="vi">
+      <head>
+        <meta charset="UTF-8">
+        <title>Hóa đơn ${order.orderCode}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            padding: 30px;
+            color: #111827;
+          }
+
+          .invoice {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #dbeafe;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+          }
+
+          .invoice-header {
+            background: #0b5ed7;
+            color: white;
+            padding: 28px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+          }
+
+          .invoice-header h1 {
+            margin: 0;
+            font-size: 34px;
+          }
+
+          .invoice-body {
+            padding: 28px;
+          }
+
+          .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 28px;
+            margin-top: 18px;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+          }
+
+          th,
+          td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: left;
+          }
+
+          th {
+            background: #f0f7ff;
+            color: #0b5ed7;
+          }
+
+          .total {
+            text-align: right;
+            font-size: 24px;
+            color: #dc2626;
+            font-weight: bold;
+            margin-top: 20px;
+          }
+
+          .box {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 18px;
+          }
+
+          .print-btn {
+            margin: 20px auto;
+            display: block;
+            padding: 12px 20px;
+            border: none;
+            background: #0b5ed7;
+            color: white;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+          }
+
+          @media print {
+            .print-btn {
+              display: none;
+            }
+
+            body {
+              background: white;
+              padding: 0;
+            }
+
+            .invoice {
+              box-shadow: none;
+              border: 1px solid #ddd;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <button class="print-btn" onclick="window.print()">In / Lưu hóa đơn PDF</button>
+
+        <div class="invoice">
+          <div class="invoice-header">
+            <div>
+              <h1>HÓA ĐƠN ĐẶT TOUR</h1>
+              <p>TravelSmart AI</p>
+            </div>
+
+            <div>
+              <p><b>Mã hóa đơn:</b> ${order.orderCode}</p>
+              <p><b>Ngày lập:</b> ${new Date().toLocaleString("vi-VN")}</p>
+            </div>
+          </div>
+
+          <div class="invoice-body">
+            <div class="info-grid">
+              <p><b>Khách hàng:</b> ${order.customerName}</p>
+              <p><b>Số điện thoại:</b> ${order.customerPhone}</p>
+              <p><b>Email:</b> ${order.customerEmail}</p>
+              <p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p>
+              <p><b>Thanh toán:</b> ${order.paymentMethod}</p>
+              <p><b>Trạng thái:</b> ${order.orderStatus}</p>
+              <p><b>Thời gian đặt:</b> ${order.createdAt}</p>
+              <p><b>Thời gian xác nhận:</b> ${order.confirmedAt || "Chưa có"}</p>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Sản phẩm</th>
+                  <th>Đơn giá</th>
+                  <th>Số lượng</th>
+                  <th>Thành tiền</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                ${getProductsHtml(order)}
+              </tbody>
+            </table>
+
+            <p class="total">Tổng thanh toán: ${formatPriceAdmin(order.total)}</p>
+
+            <div class="box">
+              <p><b>Ghi chú:</b> ${order.note || "Không có"}</p>
+              <p>Hóa đơn này được tạo từ hệ thống TravelSmart AI sau khi admin xác nhận vé.</p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+
+    invoiceWindow.document.close();
   }
 
   window.addEventListener("load", function () {
