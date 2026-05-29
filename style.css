@@ -2155,3 +2155,27 @@ button,
     padding: 0 18px !important;
   }
 }
+/* Cân đối logo trên máy tính, giữ nguyên mobile */
+@media (min-width: 769px) {
+  .header {
+    min-height: 96px !important;
+    padding: 0 72px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .logo {
+    display: flex !important;
+    align-items: center !important;
+    height: 96px !important;
+    overflow: hidden !important;
+  }
+
+  .logo img {
+    height: 78px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin-top: 0 !important;
+  }
+}
