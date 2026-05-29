@@ -24,7 +24,7 @@ function renderProducts(list) {
         <p class="old-price">${formatPrice(product.oldPrice)}</p>
         <p>⭐ ${product.rating} | Đã bán ${product.sold}</p>
         <p class="promo">${product.promo}</p>
-        <a class="btn" href="product-detail.html?id=${product.id}">Xem chi tiết</a>
+        <a class="btn" href="/product-detail?id=${product.id}">Xem chi tiết</a>
       </div>
     `;
 
