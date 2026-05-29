@@ -1,7 +1,7 @@
 const baseTours = [
   {
     destination: "Đà Nẵng",
-    image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=900&q=80",
+    image: "assets/da-nang.png",
     basePrice: 4990000,
     duration: "3 ngày 2 đêm",
     promo: "Giảm 10%",
@@ -10,7 +10,7 @@ const baseTours = [
   },
   {
     destination: "Phú Quốc",
-    image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=900&q=80",
+    image: "assets/phu-quoc.png",
     basePrice: 6500000,
     duration: "4 ngày 3 đêm",
     promo: "Tặng vé cáp treo",
@@ -19,7 +19,7 @@ const baseTours = [
   },
   {
     destination: "Sapa",
-    image: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=80",
+    image: "assets/sapa.png",
     basePrice: 2990000,
     duration: "2 ngày 1 đêm",
     promo: "Giảm 300.000đ",
@@ -28,7 +28,7 @@ const baseTours = [
   },
   {
     destination: "Đà Lạt",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+    image: "assets/da-lat.png",
     basePrice: 3200000,
     duration: "3 ngày 2 đêm",
     promo: "Tặng buffet sáng",
@@ -37,7 +37,7 @@ const baseTours = [
   },
   {
     destination: "Nha Trang",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
+    image: "assets/nha-trang.png",
     basePrice: 5900000,
     duration: "3 ngày 2 đêm",
     promo: "Giảm 8%",
@@ -46,7 +46,7 @@ const baseTours = [
   },
   {
     destination: "Hạ Long",
-    image: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=80",
+    image: "assets/ha-long.png",
     basePrice: 4200000,
     duration: "2 ngày 1 đêm",
     promo: "Tặng vé du thuyền",
@@ -55,7 +55,7 @@ const baseTours = [
   },
   {
     destination: "Thái Lan",
-    image: "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=900&q=80",
+    image: "assets/thai-lan.png",
     basePrice: 8900000,
     duration: "5 ngày 4 đêm",
     promo: "Tặng bảo hiểm du lịch",
@@ -64,7 +64,7 @@ const baseTours = [
   },
   {
     destination: "Singapore",
-    image: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=900&q=80",
+    image: "assets/singapore.png",
     basePrice: 12900000,
     duration: "4 ngày 3 đêm",
     promo: "Giảm 1.000.000đ",
@@ -73,7 +73,7 @@ const baseTours = [
   },
   {
     destination: "Hàn Quốc",
-    image: "https://images.unsplash.com/photo-1538485399081-7c8edbd4f0c2?auto=format&fit=crop&w=900&q=80",
+    image: "assets/han-quoc.png",
     basePrice: 16900000,
     duration: "5 ngày 4 đêm",
     promo: "Tặng sim 4G",
@@ -82,7 +82,7 @@ const baseTours = [
   },
   {
     destination: "Nhật Bản",
-    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=80",
+    image: "assets/nhat-ban.png",
     basePrice: 24900000,
     duration: "6 ngày 5 đêm",
     promo: "Tặng vé tham quan",
