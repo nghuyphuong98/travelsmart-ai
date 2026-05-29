@@ -2196,3 +2196,29 @@ button,
     object-fit: contain !important;
   }
 }
+/* Căn đều khoảng cách menu sau khi đăng nhập */
+@media (min-width: 769px) {
+  .header nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 34px !important;
+  }
+
+  .nav-account {
+    margin-left: 4px !important;
+    position: relative !important;
+  }
+
+  .nav-account-name {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    padding: 10px 0 !important;
+    display: inline-block !important;
+  }
+
+  .account-dropdown {
+    top: 42px !important;
+    right: 0 !important;
+  }
+}
