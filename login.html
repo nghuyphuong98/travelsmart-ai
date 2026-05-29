@@ -256,7 +256,6 @@
       Đang xử lý dữ liệu tài khoản...
     </div>
 
-    <!-- FORM ĐẶT LẠI MẬT KHẨU -->
     <div class="auth-box" id="resetPasswordBox" style="display: none;">
       <h2>Đặt lại mật khẩu</h2>
       <p>Bạn đang ở chế độ đặt lại mật khẩu. Hãy nhập mật khẩu mới bên dưới.</p>
@@ -273,14 +272,12 @@
       </div>
     </div>
 
-    <!-- KHU VỰC CHƯA ĐĂNG NHẬP -->
     <div id="guestArea">
       <div class="auth-tabs">
         <button class="auth-tab active" id="loginTab" onclick="showAuthTab('login')">Đăng nhập</button>
         <button class="auth-tab" id="registerTab" onclick="showAuthTab('register')">Đăng ký</button>
       </div>
 
-      <!-- ĐĂNG NHẬP -->
       <div class="auth-box" id="loginBox">
         <h2>Đăng nhập</h2>
 
@@ -300,7 +297,6 @@
         </div>
       </div>
 
-      <!-- QUÊN MẬT KHẨU -->
       <div class="auth-box" id="forgotBox" style="display: none;">
         <h2>Quên mật khẩu</h2>
         <p>Nhập email tài khoản của bạn. Hệ thống sẽ gửi link đặt lại mật khẩu qua Gmail.</p>
@@ -317,7 +313,6 @@
         </div>
       </div>
 
-      <!-- ĐĂNG KÝ -->
       <div class="auth-box" id="registerBox" style="display: none;">
         <h2>Đăng ký tài khoản</h2>
 
@@ -347,7 +342,6 @@
       </div>
     </div>
 
-    <!-- KHU VỰC ĐÃ ĐĂNG NHẬP -->
     <div id="userArea" style="display: none;">
       <div class="profile-card">
         <h2>Thông tin tài khoản</h2>
@@ -470,7 +464,6 @@
 
   function setStatus(elementId, message, isSuccess = true) {
     const element = document.getElementById(elementId);
-
     if (!element) return;
 
     element.innerText = message;
@@ -483,7 +476,6 @@
 
   function fillProvinceSelect(selectId, selectedValue = "") {
     const select = document.getElementById(selectId);
-
     if (!select) return;
 
     select.innerHTML = `<option value="">Chọn tỉnh / thành phố</option>`;
@@ -531,7 +523,6 @@
     isResetPasswordMode = false;
 
     const resetPasswordBox = document.getElementById("resetPasswordBox");
-
     if (resetPasswordBox) {
       resetPasswordBox.style.display = "none";
     }
@@ -1016,89 +1007,87 @@
     renderLoginState();
   }
 
+  function setupEnterToSubmit() {
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "Enter") {
+        return;
+      }
+
+      const activeElement = document.activeElement;
+
+      if (!activeElement) {
+        return;
+      }
+
+      const activeId = activeElement.id;
+
+      if (
+        activeId === "loginEmail" ||
+        activeId === "loginPassword"
+      ) {
+        event.preventDefault();
+        loginUser();
+        return;
+      }
+
+      if (
+        activeId === "registerName" ||
+        activeId === "registerPhone" ||
+        activeId === "registerEmail" ||
+        activeId === "registerProvince" ||
+        activeId === "registerWard" ||
+        activeId === "registerVillage" ||
+        activeId === "registerAddressDetail" ||
+        activeId === "registerPassword" ||
+        activeId === "registerConfirmPassword"
+      ) {
+        event.preventDefault();
+        registerUser();
+        return;
+      }
+
+      if (activeId === "forgotEmail") {
+        event.preventDefault();
+        sendResetPasswordEmail();
+        return;
+      }
+
+      if (
+        activeId === "resetNewPassword" ||
+        activeId === "resetConfirmPassword"
+      ) {
+        event.preventDefault();
+        saveResetPassword();
+        return;
+      }
+
+      if (
+        activeId === "profileName" ||
+        activeId === "profilePhone" ||
+        activeId === "profileProvince" ||
+        activeId === "profileWard" ||
+        activeId === "profileVillage" ||
+        activeId === "profileAddressDetail"
+      ) {
+        event.preventDefault();
+        updateProfile();
+        return;
+      }
+
+      if (
+        activeId === "oldPassword" ||
+        activeId === "newPassword" ||
+        activeId === "confirmNewPassword"
+      ) {
+        event.preventDefault();
+        saveNewPassword();
+      }
+    });
+  }
+
   initAuthPage();
+  setupEnterToSubmit();
 </script>
-document.addEventListener("keydown", function (event) {
-  if (event.key !== "Enter") {
-    return;
-  }
-
-  const activeElement = document.activeElement;
-
-  if (!activeElement) {
-    return;
-  }
-
-  const activeId = activeElement.id;
-
-  // Enter ở form đăng nhập
-  if (
-    activeId === "loginEmail" ||
-    activeId === "loginPassword"
-  ) {
-    event.preventDefault();
-    loginUser();
-    return;
-  }
-
-  // Enter ở form đăng ký
-  if (
-    activeId === "registerName" ||
-    activeId === "registerPhone" ||
-    activeId === "registerEmail" ||
-    activeId === "registerProvince" ||
-    activeId === "registerWard" ||
-    activeId === "registerVillage" ||
-    activeId === "registerAddressDetail" ||
-    activeId === "registerPassword" ||
-    activeId === "registerConfirmPassword"
-  ) {
-    event.preventDefault();
-    registerUser();
-    return;
-  }
-
-  // Enter ở form quên mật khẩu
-  if (activeId === "forgotEmail") {
-    event.preventDefault();
-    sendResetPasswordEmail();
-    return;
-  }
-
-  // Enter ở form đổi mật khẩu
-  if (
-    activeId === "oldPassword" ||
-    activeId === "newPassword" ||
-    activeId === "confirmNewPassword"
-  ) {
-    event.preventDefault();
-    saveNewPassword();
-    return;
-  }
-
-  // Enter ở form đặt lại mật khẩu qua Gmail
-  if (
-    activeId === "resetNewPassword" ||
-    activeId === "resetConfirmPassword"
-  ) {
-    event.preventDefault();
-    saveResetPassword();
-    return;
-  }
-
-  // Enter ở form sửa thông tin cá nhân
-  if (
-    activeId === "profileName" ||
-    activeId === "profilePhone" ||
-    activeId === "profileProvince" ||
-    activeId === "profileWard" ||
-    activeId === "profileVillage" ||
-    activeId === "profileAddressDetail"
-  ) {
-    event.preventDefault();
-    updateProfile();
-  }
-});
 
 </body>
 </html>
