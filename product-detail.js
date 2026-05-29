@@ -594,3 +594,317 @@ function renderStrongComparison() {
 document.addEventListener("DOMContentLoaded", function () {
   setTimeout(renderStrongComparison, 300);
 });
+// ===============================
+// FIX BẢNG SO SÁNH - CHỈ HIỆN 1 BẢNG DUY NHẤT
+// Dán nguyên đoạn này vào CUỐI file product-detail.js
+// ===============================
+
+function tsaiFormatPrice(value) {
+  if (value === undefined || value === null || value === "") {
+    return "Đang cập nhật";
+  }
+
+  if (typeof value === "string") {
+    const hasVnd = value.includes("đ") || value.includes("VND");
+    return hasVnd ? value : value + "đ";
+  }
+
+  return Number(value).toLocaleString("vi-VN") + "đ";
+}
+
+function tsaiGetNumberPrice(value) {
+  if (!value) return 0;
+
+  const number = Number(
+    String(value)
+      .replaceAll(".", "")
+      .replaceAll(",", "")
+      .replace(/[^\d]/g, "")
+  );
+
+  return Number.isNaN(number) ? 0 : number;
+}
+
+function tsaiGetCurrentProduct() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = Number(urlParams.get("id"));
+
+  let product = null;
+
+  if (typeof products !== "undefined" && Array.isArray(products)) {
+    product = products.find(item => Number(item.id) === productId);
+  }
+
+  if (!product && typeof PRODUCTS !== "undefined" && Array.isArray(PRODUCTS)) {
+    product = PRODUCTS.find(item => Number(item.id) === productId);
+  }
+
+  if (!product && typeof tours !== "undefined" && Array.isArray(tours)) {
+    product = tours.find(item => Number(item.id) === productId);
+  }
+
+  if (!product) {
+    const nameElement =
+      document.querySelector(".product-title") ||
+      document.querySelector(".detail-title") ||
+      document.querySelector("h1");
+
+    const priceElement =
+      document.querySelector(".price") ||
+      document.querySelector(".product-price") ||
+      document.querySelector(".new-price");
+
+    const durationElement =
+      document.querySelector(".duration") ||
+      document.querySelector(".product-duration");
+
+    product = {
+      name: nameElement ? nameElement.innerText.trim() : "Tour TravelSmart AI",
+      price: priceElement ? priceElement.innerText.trim() : "Đang cập nhật",
+      duration: durationElement ? durationElement.innerText.trim() : "Theo lịch trình tour"
+    };
+  }
+
+  return product;
+}
+
+function tsaiGetCompetitorInfo(product) {
+  const name = product.competitorName ||
+               product.competitor ||
+               product.referenceName ||
+               "Đối thủ tham khảo";
+
+  const currentPrice = tsaiGetNumberPrice(product.price || product.newPrice || product.salePrice);
+  const competitorPrice = product.competitorPrice ||
+                          product.referencePrice ||
+                          (currentPrice ? currentPrice + 450000 : "Cao hơn hoặc chưa tối ưu");
+
+  const duration = product.competitorDuration ||
+                   product.referenceDuration ||
+                   product.duration ||
+                   product.time ||
+                   "Tương đương";
+
+  return {
+    name,
+    price: competitorPrice,
+    duration
+  };
+}
+
+function tsaiRemoveOldComparisonBlocks() {
+  const selectors = [
+    ".compare-section",
+    ".comparison-section",
+    ".compare-box",
+    ".comparison-box",
+    "#compareBox",
+    "#comparisonBox",
+    ".similar-compare",
+    ".product-compare"
+  ];
+
+  selectors.forEach(selector => {
+    document.querySelectorAll(selector).forEach(element => {
+      element.remove();
+    });
+  });
+
+  document.querySelectorAll("section, div, article").forEach(element => {
+    const title = element.querySelector("h2, h3");
+
+    if (!title) return;
+
+    const text = title.innerText.trim().toLowerCase();
+
+    if (
+      text.includes("so sánh với sản phẩm tương tự") ||
+      text.includes("so sánh sản phẩm") ||
+      text.includes("so sánh với đối thủ")
+    ) {
+      element.remove();
+    }
+  });
+}
+
+function tsaiRenderCleanComparison() {
+  tsaiRemoveOldComparisonBlocks();
+
+  const product = tsaiGetCurrentProduct();
+  if (!product) return;
+
+  const competitor = tsaiGetCompetitorInfo(product);
+
+  const productName = product.name || product.title || "Tour TravelSmart AI";
+  const productPrice = product.price || product.newPrice || product.salePrice || "Đang cập nhật";
+  const productDuration = product.duration || product.time || "Theo lịch trình tour";
+
+  const compareSection = document.createElement("section");
+  compareSection.className = "tsai-compare-section";
+  compareSection.id = "tsaiCompareSection";
+
+  compareSection.innerHTML = `
+    <h2>So sánh với đối thủ tham khảo</h2>
+
+    <div class="tsai-compare-intro">
+      <b>TravelSmart AI nổi bật hơn về trải nghiệm đặt tour, hỗ trợ AI và quy trình tự động.</b>
+      <p>
+        Bảng dưới đây giúp khách hàng thấy rõ lợi thế của TravelSmart AI so với một tour tương tự trên thị trường.
+      </p>
+    </div>
+
+    <div class="tsai-compare-table-wrap">
+      <table class="tsai-compare-table">
+        <thead>
+          <tr>
+            <th>Tiêu chí</th>
+            <th>TravelSmart AI</th>
+            <th>Đối thủ tham khảo</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Tên tour</td>
+            <td>
+              <b>${productName}</b>
+              <p class="tsai-good">Thông tin tour rõ ràng, dễ xem và dễ đặt.</p>
+            </td>
+            <td>
+              <b>${competitor.name}</b>
+              <p class="tsai-bad">Chỉ dùng để tham khảo, trải nghiệm đặt tour chưa nổi bật bằng.</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Giá tour</td>
+            <td>
+              <b class="tsai-price-good">${tsaiFormatPrice(productPrice)}</b>
+              <p class="tsai-good">Giá cạnh tranh, phù hợp với khách muốn tiết kiệm chi phí.</p>
+            </td>
+            <td>
+              <b class="tsai-price-bad">${tsaiFormatPrice(competitor.price)}</b>
+              <p class="tsai-bad">Chi phí cao hơn hoặc chưa có lợi thế rõ ràng về giá.</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Thời gian</td>
+            <td>
+              <b>${productDuration}</b>
+              <p class="tsai-good">Lịch trình được trình bày ngắn gọn, dễ hiểu.</p>
+            </td>
+            <td>
+              <b>${competitor.duration}</b>
+              <p class="tsai-bad">Thông tin thường phải đọc nhiều bước mới nắm được đầy đủ.</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Tư vấn khách hàng</td>
+            <td>
+              <b>Có AI tư vấn trực tiếp</b>
+              <p class="tsai-good">
+                Khách có thể hỏi ngay về giá, lịch trình, dịch vụ bao gồm, ưu đãi và cách đặt tour.
+              </p>
+            </td>
+            <td>
+              <b>Phụ thuộc vào tư vấn thủ công</b>
+              <p class="tsai-bad">
+                Khách thường phải tự đọc thông tin hoặc chờ nhân viên phản hồi.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Đặt tour</td>
+            <td>
+              <b>Có giỏ hàng và quy trình thanh toán rõ ràng</b>
+              <p class="tsai-good">
+                Khách có thể thêm tour vào giỏ, kiểm tra đơn hàng và gửi thông tin đặt tour nhanh chóng.
+              </p>
+            </td>
+            <td>
+              <b>Quy trình kém tự động hơn</b>
+              <p class="tsai-bad">
+                Thường phải liên hệ qua tin nhắn, gọi điện hoặc nhập lại thông tin nhiều lần.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Thông tin khách hàng</td>
+            <td>
+              <b>Có tài khoản khách hàng</b>
+              <p class="tsai-good">
+                Khi đăng nhập, hệ thống tự điền họ tên, số điện thoại, email và địa chỉ khi thanh toán.
+              </p>
+            </td>
+            <td>
+              <b>Ít tiện lợi hơn</b>
+              <p class="tsai-bad">
+                Khách dễ phải nhập lại thông tin ở mỗi lần đặt tour.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Quản lý đơn</td>
+            <td>
+              <b>Có trang admin xác nhận vé</b>
+              <p class="tsai-good">
+                Admin có thể kiểm tra đơn, xác nhận vé, hủy vé và hỗ trợ xuất vé/hóa đơn.
+              </p>
+            </td>
+            <td>
+              <b>Quản lý thủ công nhiều hơn</b>
+              <p class="tsai-bad">
+                Dễ bị rời rạc giữa tin nhắn, cuộc gọi và bảng ghi chú.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Thanh toán</td>
+            <td>
+              <b>Hỗ trợ QR ngân hàng và ví điện tử</b>
+              <p class="tsai-good">
+                Khách có thể quét mã thanh toán nhanh, nội dung chuyển khoản được hướng dẫn rõ ràng.
+              </p>
+            </td>
+            <td>
+              <b>Hướng dẫn có thể chưa trực quan</b>
+              <p class="tsai-bad">
+                Khách có thể phải tự nhập nội dung hoặc hỏi lại nhân viên.
+              </p>
+            </td>
+          </tr>
+
+          <tr class="tsai-final-row">
+            <td>Kết luận</td>
+            <td>
+              <b>TravelSmart AI vượt trội hơn về giá, AI tư vấn, đặt tour, thanh toán và quản lý đơn hàng.</b>
+            </td>
+            <td>
+              <b>Đối thủ chỉ phù hợp để tham khảo, chưa nổi bật về tự động hóa và trải nghiệm khách hàng.</b>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  const insertTarget =
+    document.querySelector(".product-detail") ||
+    document.querySelector(".detail-container") ||
+    document.querySelector("main") ||
+    document.querySelector(".container") ||
+    document.body;
+
+  insertTarget.appendChild(compareSection);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(tsaiRenderCleanComparison, 500);
+  setTimeout(tsaiRenderCleanComparison, 1200);
+});
