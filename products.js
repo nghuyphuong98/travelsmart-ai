@@ -1,7 +1,7 @@
 const baseTours = [
   {
     destination: "Đà Nẵng",
-    image: "assets/da-nang.png",
+    image: "assets/danang.png",
     basePrice: 4990000,
     duration: "3 ngày 2 đêm",
     promo: "Giảm 10%",
@@ -10,7 +10,7 @@ const baseTours = [
   },
   {
     destination: "Phú Quốc",
-    image: "assets/phu-quoc.png",
+    image: "assets/phuquoc.png",
     basePrice: 6500000,
     duration: "4 ngày 3 đêm",
     promo: "Tặng vé cáp treo",
@@ -28,7 +28,7 @@ const baseTours = [
   },
   {
     destination: "Đà Lạt",
-    image: "assets/da-lat.png",
+    image: "assets/dalat.png",
     basePrice: 3200000,
     duration: "3 ngày 2 đêm",
     promo: "Tặng buffet sáng",
@@ -37,7 +37,7 @@ const baseTours = [
   },
   {
     destination: "Nha Trang",
-    image: "assets/nha-trang.png",
+    image: "assets/nhatrang.png",
     basePrice: 5900000,
     duration: "3 ngày 2 đêm",
     promo: "Giảm 8%",
@@ -46,7 +46,7 @@ const baseTours = [
   },
   {
     destination: "Hạ Long",
-    image: "assets/ha-long.png",
+    image: "assets/halong.png",
     basePrice: 4200000,
     duration: "2 ngày 1 đêm",
     promo: "Tặng vé du thuyền",
@@ -55,7 +55,7 @@ const baseTours = [
   },
   {
     destination: "Thái Lan",
-    image: "assets/thai-lan.png",
+    image: "assets/thailan.png",
     basePrice: 8900000,
     duration: "5 ngày 4 đêm",
     promo: "Tặng bảo hiểm du lịch",
@@ -73,7 +73,7 @@ const baseTours = [
   },
   {
     destination: "Hàn Quốc",
-    image: "assets/han-quoc.png",
+    image: "assets/hanquoc.png",
     basePrice: 16900000,
     duration: "5 ngày 4 đêm",
     promo: "Tặng sim 4G",
@@ -82,7 +82,7 @@ const baseTours = [
   },
   {
     destination: "Nhật Bản",
-    image: "assets/nhat-ban.png",
+    image: "assets/nhatban.png",
     basePrice: 24900000,
     duration: "6 ngày 5 đêm",
     promo: "Tặng vé tham quan",
