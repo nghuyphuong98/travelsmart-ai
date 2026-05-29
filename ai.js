@@ -8,10 +8,10 @@ function createAIWidget() {
   }
 
   container.innerHTML = `
-    <button class="ai-float-button" onclick="openAIChat()">
-      <span class="ai-emoji">🤖💖</span>
-      <span>Hỏi AI</span>
-    </button>
+   <button class="ai-float-button" onclick="openAiChat()">
+  <img src="assets/ai-girl.png" alt="Linh AI">
+  <span>Hỏi AI</span>
+</button>
 
     <div class="ai-chat-box" id="aiChatBox">
       <div class="ai-chat-header">
