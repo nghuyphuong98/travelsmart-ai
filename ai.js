@@ -38,6 +38,7 @@ function createAIWidget() {
 
 function openAIChat() {
   const box = document.getElementById("aiChatBox");
+
   if (box) {
     box.style.display = "flex";
   }
@@ -45,14 +46,80 @@ function openAIChat() {
 
 function closeAIChat() {
   const box = document.getElementById("aiChatBox");
+
   if (box) {
     box.style.display = "none";
   }
 }
 
+function findProductFromMessage(message) {
+  if (typeof products === "undefined") {
+    return null;
+  }
+
+  const lowerText = message.toLowerCase();
+
+  // Tìm theo mã sản phẩm, ví dụ TS-001
+  let foundProduct = products.find(product => {
+    return lowerText.includes(product.sku.toLowerCase());
+  });
+
+  if (foundProduct) {
+    return foundProduct;
+  }
+
+  // Tìm theo tên tour hoặc điểm đến
+  foundProduct = products.find(product => {
+    return (
+      lowerText.includes(product.name.toLowerCase()) ||
+      lowerText.includes(product.destination.toLowerCase())
+    );
+  });
+
+  if (foundProduct) {
+    return foundProduct;
+  }
+
+  // Tìm theo câu kiểu: gói 1, gói 2, gói 10...
+  const packageMatch = lowerText.match(/gói\s*(\d+)/);
+
+  if (packageMatch) {
+    const packageNumber = Number(packageMatch[1]);
+
+    foundProduct = products.find(product => {
+      return product.name.toLowerCase().includes(`gói ${packageNumber}`);
+    });
+
+    if (foundProduct) {
+      return foundProduct;
+    }
+  }
+
+  // Tìm theo câu kiểu: sản phẩm 1, tour 1, id 1
+  const numberMatch = lowerText.match(/(?:sản phẩm|tour|id)\s*(\d+)/);
+
+  if (numberMatch) {
+    const productId = Number(numberMatch[1]);
+
+    foundProduct = products.find(product => {
+      return product.id === productId;
+    });
+
+    if (foundProduct) {
+      return foundProduct;
+    }
+  }
+
+  return null;
+}
+
 async function sendAIMessage() {
   const input = document.getElementById("aiInput");
   const messages = document.getElementById("aiMessages");
+
+  if (!input || !messages) {
+    return;
+  }
 
   const text = input.value.trim();
 
@@ -66,9 +133,23 @@ async function sendAIMessage() {
   messages.innerHTML += `<div class="ai-bot loading">AI đang tư vấn...</div>`;
   messages.scrollTop = messages.scrollHeight;
 
-  const currentProduct = window.currentProduct || {};
-  const currentUrl = window.location.href;
   const profile = JSON.parse(localStorage.getItem("profile")) || {};
+
+  let currentProduct = window.currentProduct || null;
+  let currentUrl = window.location.href;
+
+  // Nếu đang ở trang chủ hoặc trang danh sách, AI sẽ tự tìm sản phẩm theo câu hỏi
+  if (!currentProduct) {
+    currentProduct = findProductFromMessage(text);
+
+    if (currentProduct) {
+      currentUrl = `${window.location.origin}/product-detail.html?id=${currentProduct.id}`;
+    }
+  }
+
+  if (!currentProduct) {
+    currentProduct = {};
+  }
 
   try {
     const response = await fetch(AI_WEBHOOK_URL, {
@@ -87,6 +168,7 @@ async function sendAIMessage() {
     const data = await response.json();
 
     const loading = document.querySelector(".loading");
+
     if (loading) {
       loading.remove();
     }
@@ -96,13 +178,14 @@ async function sendAIMessage() {
 
   } catch (error) {
     const loading = document.querySelector(".loading");
+
     if (loading) {
       loading.remove();
     }
 
     messages.innerHTML += `
       <div class="ai-bot">
-        Chatbot chưa kết nối được với n8n. Bạn cần tạo workflow AI rồi thay link webhook vào file ai.js.
+        Chatbot chưa kết nối được với n8n. Bạn cần kiểm tra lại webhook AI trong file ai.js.
       </div>
     `;
   }
