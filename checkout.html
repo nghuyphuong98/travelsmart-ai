@@ -138,7 +138,7 @@
 
       <div class="bank-qr-content">
         <div class="qr-area">
-          <img src="assets/qr-bank.png" alt="QR chuyển khoản ngân hàng">
+          <img id="vietQrImage" src="" alt="QR chuyển khoản ngân hàng">
           <p class="qr-hint">Di chuột vào mã QR để phóng to</p>
         </div>
 
@@ -152,7 +152,7 @@
           <p class="transfer-note" id="transferNote">TravelSmartAI SoDienThoai</p>
 
           <p class="qr-warning">
-            Sau khi chuyển khoản, nhân viên sẽ kiểm tra giao dịch và liên hệ xác nhận đơn hàng.
+            Khi quét mã QR, app ngân hàng sẽ tự điền số tài khoản và nội dung chuyển khoản.
           </p>
         </div>
       </div>
@@ -178,32 +178,59 @@
 <script src="checkout.js"></script>
 
 <script>
+  const BANK_ID = "MB";
+  const ACCOUNT_NO = "856789898989";
+  const ACCOUNT_NAME = "NGUYEN HUY PHUONG";
+  const QR_TEMPLATE = "compact2";
+
+  function normalizePhone(phone) {
+    return phone.replace(/\s+/g, "").trim();
+  }
+
+  function createTransferContent() {
+    const phoneInput = document.getElementById("customerPhone");
+    const phone = normalizePhone(phoneInput.value || "");
+
+    if (phone) {
+      return `TravelSmartAI ${phone}`;
+    }
+
+    return "TravelSmartAI";
+  }
+
+  function updateVietQRImage() {
+    const qrImage = document.getElementById("vietQrImage");
+    const transferNote = document.getElementById("transferNote");
+
+    const transferContent = createTransferContent();
+
+    transferNote.innerText = transferContent;
+
+    const qrUrl =
+      `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${QR_TEMPLATE}.png` +
+      `?addInfo=${encodeURIComponent(transferContent)}` +
+      `&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+
+    qrImage.src = qrUrl;
+  }
+
   function toggleBankQR() {
     const paymentMethod = document.getElementById("paymentMethod").value;
     const bankQrBox = document.getElementById("bankQrBox");
 
     if (paymentMethod === "Chuyển khoản ngân hàng") {
       bankQrBox.style.display = "block";
-      updateTransferNote();
+      updateVietQRImage();
     } else {
       bankQrBox.style.display = "none";
     }
-  }
-
-  function updateTransferNote() {
-    const phoneInput = document.getElementById("customerPhone");
-    const transferNote = document.getElementById("transferNote");
-
-    const phone = phoneInput.value.trim() || "SoDienThoai";
-
-    transferNote.innerText = `TravelSmartAI ${phone}`;
   }
 
   const phoneInput = document.getElementById("customerPhone");
   const paymentMethodInput = document.getElementById("paymentMethod");
 
   if (phoneInput) {
-    phoneInput.addEventListener("input", updateTransferNote);
+    phoneInput.addEventListener("input", updateVietQRImage);
   }
 
   if (paymentMethodInput) {
