@@ -10,9 +10,9 @@ function createAIWidget() {
   }
 
   container.innerHTML = `
-    <button class="ai-float-button" onclick="openAiChat()" title="Hỏi Linh AI">
-      <img src="assets/ai-girl.png" alt="Linh AI" onerror="this.style.display='none'; this.parentElement.classList.add('ai-no-image');">
-      <span>Hỏi AI</span>
+    <button class="ai-float-button" onclick="openAiChat()" title="Hỏi Trần Hà Linh">
+      <img src="assets/ai-girl.png" alt="Trần Hà Linh" onerror="this.style.display='none'; this.parentElement.classList.add('ai-no-image');">
+      <span>Hỏi Linh</span>
     </button>
 
     <div class="ai-chat-box" id="aiChatBox">
@@ -173,7 +173,7 @@ async function sendAIMessage() {
   addAIMessage("user", message);
   input.value = "";
 
-  addAIMessage("bot", "Linh AI đang xem thông tin tour cho bạn...");
+  addAIMessage("bot", "Trần Hà Linh đang kiểm tra thông tin tour cho bạn...");
 
   const messages = document.getElementById("aiMessages");
   const loadingMessage = messages ? messages.lastElementChild : null;
