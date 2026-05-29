@@ -21,7 +21,6 @@ function showToast(message, type = "success") {
   }
 
   const toast = document.createElement("div");
-
   const bgColor = type === "success" ? "#16a34a" : "#dc2626";
   const icon = type === "success" ? "✅" : "⚠️";
 
@@ -67,6 +66,11 @@ function showToast(message, type = "success") {
   }, 2600);
 }
 
+function getProductIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return Number(params.get("id"));
+}
+
 function renderProductDetail() {
   const detailContainer = document.getElementById("productDetail");
 
@@ -78,17 +82,28 @@ function renderProductDetail() {
     detailContainer.innerHTML = `
       <section class="page-title">
         <h1>Chưa tải được dữ liệu sản phẩm</h1>
-        <p>Vui lòng kiểm tra file products.js đã được nhúng trước product-detail.js.</p>
+        <p>Vui lòng kiểm tra file products.js.</p>
         <a class="btn" href="products.html">Quay lại danh sách sản phẩm</a>
       </section>
     `;
     return;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const productId = Number(params.get("id"));
+  const productId = getProductIdFromUrl();
 
-  const product = products.find(item => Number(item.id) === productId);
+  if (!productId) {
+    detailContainer.innerHTML = `
+      <section class="page-title">
+        <h1>Không tìm thấy mã sản phẩm</h1>
+        <p>Link sản phẩm cần có dạng product-detail.html?id=1</p>
+        <a class="btn" href="products.html">Quay lại danh sách sản phẩm</a>
+      </section>
+    `;
+    return;
+  }
+
+  const product = products.find(item => Number(item.id) === Number(productId));
+
   currentDetailProduct = product;
   window.currentProduct = product;
 
@@ -282,4 +297,4 @@ function askAIAboutProduct() {
   }
 }
 
-window.addEventListener("load", renderProductDetail);
+renderProductDetail();
