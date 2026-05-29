@@ -111,3 +111,35 @@ async function submitOrder() {
 }
 
 renderOrderSummary();
+function toggleBankQR() {
+  const paymentMethod = document.getElementById("paymentMethod").value;
+  const bankQrBox = document.getElementById("bankQrBox");
+
+  if (!bankQrBox) {
+    return;
+  }
+
+  if (paymentMethod === "Chuyển khoản ngân hàng") {
+    bankQrBox.style.display = "block";
+    updateTransferNote();
+  } else {
+    bankQrBox.style.display = "none";
+  }
+}
+
+function updateTransferNote() {
+  const phone = document.getElementById("customerPhone")?.value || "SoDienThoai";
+  const transferNote = document.getElementById("transferNote");
+
+  if (transferNote) {
+    transferNote.innerText = `TRAVELSMART ${phone}`;
+  }
+}
+
+const customerPhoneInput = document.getElementById("customerPhone");
+
+if (customerPhoneInput) {
+  customerPhoneInput.addEventListener("input", updateTransferNote);
+}
+
+toggleBankQR();
