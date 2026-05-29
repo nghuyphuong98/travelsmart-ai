@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    .payment-box {
+    .payment-box,
+    .delivery-box {
       display: none;
       margin-top: 18px;
       padding: 22px;
@@ -16,9 +17,10 @@
       border-radius: 16px;
     }
 
-    .payment-box h3 {
+    .payment-box h3,
+    .delivery-box h3 {
       color: #0b5ed7;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       font-size: 22px;
     }
 
@@ -69,14 +71,11 @@
       border: 1px solid #e5e7eb;
     }
 
-    .payment-info p {
+    .payment-info p,
+    .delivery-box p {
       margin: 7px 0;
       line-height: 1.45;
       font-size: 15px;
-    }
-
-    .payment-row {
-      margin-bottom: 10px;
     }
 
     .payment-label {
@@ -87,7 +86,7 @@
     .transfer-note,
     .transfer-amount {
       display: inline-block;
-      background: #fff;
+      background: white;
       color: #dc2626;
       padding: 8px 12px;
       border-radius: 8px;
@@ -97,7 +96,8 @@
       margin-top: 5px;
     }
 
-    .payment-warning {
+    .payment-warning,
+    .delivery-success {
       color: #15803d;
       font-weight: bold;
       background: #ecfdf5;
@@ -118,6 +118,24 @@
       border-radius: 10px;
       margin-top: 10px;
       font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .delivery-note {
+      background: white;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .delivery-note ul {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    .delivery-note li {
+      margin: 6px 0;
       line-height: 1.45;
     }
 
@@ -177,21 +195,15 @@
         </div>
 
         <div class="payment-info">
-          <div class="payment-row">
-            <p><span class="payment-label">Ngân hàng:</span> MB Bank</p>
-            <p><span class="payment-label">Chủ tài khoản:</span> NGUYEN HUY PHUONG</p>
-            <p><span class="payment-label">Số tài khoản:</span> 856789898989</p>
-          </div>
+          <p><span class="payment-label">Ngân hàng:</span> MB Bank</p>
+          <p><span class="payment-label">Chủ tài khoản:</span> NGUYEN HUY PHUONG</p>
+          <p><span class="payment-label">Số tài khoản:</span> 856789898989</p>
 
-          <div class="payment-row">
-            <p class="payment-label">Số tiền thanh toán:</p>
-            <p class="transfer-amount" id="bankTransferAmount">0đ</p>
-          </div>
+          <p class="payment-label">Số tiền thanh toán:</p>
+          <p class="transfer-amount" id="bankTransferAmount">0đ</p>
 
-          <div class="payment-row">
-            <p class="payment-label">Nội dung chuyển khoản:</p>
-            <p class="transfer-note" id="bankTransferNote">TravelSmartAI</p>
-          </div>
+          <p class="payment-label">Nội dung chuyển khoản:</p>
+          <p class="transfer-note" id="bankTransferNote">TravelSmartAI</p>
 
           <p class="payment-warning">
             Khi quét mã QR ngân hàng, app ngân hàng sẽ tự điền số tài khoản, số tiền và nội dung chuyển khoản.
@@ -211,21 +223,15 @@
         </div>
 
         <div class="payment-info">
-          <div class="payment-row">
-            <p><span class="payment-label">Ví điện tử:</span> MoMo</p>
-            <p><span class="payment-label">Chủ ví:</span> NGUYEN HUY PHUONG</p>
-            <p><span class="payment-label">Số điện thoại:</span> 0982882206</p>
-          </div>
+          <p><span class="payment-label">Ví điện tử:</span> MoMo</p>
+          <p><span class="payment-label">Chủ ví:</span> NGUYEN HUY PHUONG</p>
+          <p><span class="payment-label">Số điện thoại:</span> 0921032286</p>
 
-          <div class="payment-row">
-            <p class="payment-label">Số tiền cần thanh toán:</p>
-            <p class="transfer-amount" id="momoTransferAmount">0đ</p>
-          </div>
+          <p class="payment-label">Số tiền cần thanh toán:</p>
+          <p class="transfer-amount" id="momoTransferAmount">0đ</p>
 
-          <div class="payment-row">
-            <p class="payment-label">Nội dung cần nhập:</p>
-            <p class="transfer-note" id="momoTransferNote">TravelSmartAI</p>
-          </div>
+          <p class="payment-label">Nội dung cần nhập:</p>
+          <p class="transfer-note" id="momoTransferNote">TravelSmartAI</p>
 
           <p class="momo-warning">
             Lưu ý: QR MoMo cá nhân không tự điền số tiền và nội dung. Vui lòng nhập đúng số tiền và nội dung hiển thị bên trên.
@@ -238,11 +244,62 @@
       </div>
     </div>
 
-    <select id="deliveryMethod">
+    <select id="deliveryMethod" onchange="toggleDeliveryBox()">
       <option value="Gửi vé qua email">Gửi vé qua email</option>
       <option value="Gửi thông tin qua Zalo/SMS">Gửi thông tin qua Zalo/SMS</option>
       <option value="Nhận tư vấn trực tiếp">Nhận tư vấn trực tiếp</option>
     </select>
+
+    <!-- GỬI VÉ QUA EMAIL -->
+    <div class="delivery-box" id="emailDeliveryBox">
+      <h3>Gửi vé qua email</h3>
+      <div class="delivery-note">
+        <p><b>Cách hoạt động:</b> Sau khi đơn hàng được xác nhận, TravelSmart sẽ gửi thông tin tour qua email của khách hàng.</p>
+        <ul>
+          <li>Phiếu xác nhận đặt tour</li>
+          <li>Lịch trình chi tiết</li>
+          <li>Thông tin liên hệ nhân viên phụ trách</li>
+          <li>Các lưu ý trước ngày khởi hành</li>
+        </ul>
+      </div>
+      <p class="delivery-success">
+        Vui lòng nhập chính xác email để nhận thông tin tour nhanh chóng.
+      </p>
+    </div>
+
+    <!-- GỬI QUA ZALO/SMS -->
+    <div class="delivery-box" id="zaloDeliveryBox">
+      <h3>Gửi thông tin qua Zalo/SMS</h3>
+      <div class="delivery-note">
+        <p><b>Cách hoạt động:</b> Nhân viên sẽ gửi thông tin đặt tour qua số điện thoại khách hàng đã nhập.</p>
+        <ul>
+          <li>Xác nhận đơn đặt tour qua Zalo hoặc SMS</li>
+          <li>Gửi lịch trình tóm tắt</li>
+          <li>Thông báo thời gian khởi hành</li>
+          <li>Hỗ trợ nhanh khi khách cần thay đổi thông tin</li>
+        </ul>
+      </div>
+      <p class="delivery-success">
+        Vui lòng nhập đúng số điện thoại đang sử dụng Zalo để được hỗ trợ nhanh nhất.
+      </p>
+    </div>
+
+    <!-- NHẬN TƯ VẤN TRỰC TIẾP -->
+    <div class="delivery-box" id="directDeliveryBox">
+      <h3>Nhận tư vấn trực tiếp</h3>
+      <div class="delivery-note">
+        <p><b>Cách hoạt động:</b> Sau khi gửi yêu cầu, nhân viên TravelSmart sẽ liên hệ trực tiếp để tư vấn và xác nhận thông tin.</p>
+        <ul>
+          <li>Tư vấn tour phù hợp với nhu cầu</li>
+          <li>Xác nhận số lượng khách và lịch trình</li>
+          <li>Hướng dẫn thanh toán</li>
+          <li>Giải đáp các thắc mắc trước khi đặt tour</li>
+        </ul>
+      </div>
+      <p class="delivery-success">
+        Phù hợp với khách hàng muốn được nhân viên tư vấn kỹ trước khi thanh toán.
+      </p>
+    </div>
 
     <textarea id="note" placeholder="Ghi chú thêm"></textarea>
 
@@ -375,8 +432,33 @@
     }
   }
 
+  function toggleDeliveryBox() {
+    const deliveryMethod = document.getElementById("deliveryMethod").value;
+
+    const emailBox = document.getElementById("emailDeliveryBox");
+    const zaloBox = document.getElementById("zaloDeliveryBox");
+    const directBox = document.getElementById("directDeliveryBox");
+
+    emailBox.style.display = "none";
+    zaloBox.style.display = "none";
+    directBox.style.display = "none";
+
+    if (deliveryMethod === "Gửi vé qua email") {
+      emailBox.style.display = "block";
+    }
+
+    if (deliveryMethod === "Gửi thông tin qua Zalo/SMS") {
+      zaloBox.style.display = "block";
+    }
+
+    if (deliveryMethod === "Nhận tư vấn trực tiếp") {
+      directBox.style.display = "block";
+    }
+  }
+
   const phoneInput = document.getElementById("customerPhone");
   const paymentMethodInput = document.getElementById("paymentMethod");
+  const deliveryMethodInput = document.getElementById("deliveryMethod");
 
   if (phoneInput) {
     phoneInput.addEventListener("input", updateAllPaymentInfo);
@@ -388,9 +470,14 @@
     paymentMethodInput.addEventListener("change", togglePaymentBox);
   }
 
+  if (deliveryMethodInput) {
+    deliveryMethodInput.addEventListener("change", toggleDeliveryBox);
+  }
+
   window.addEventListener("load", function () {
     setTimeout(function () {
       togglePaymentBox();
+      toggleDeliveryBox();
       updateAllPaymentInfo();
     }, 800);
   });
