@@ -2122,3 +2122,36 @@ button,
     padding: 0 18px;
   }
 }
+/* Tăng kích thước logo */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo img {
+  height: 90px !important;
+  width: auto !important;
+  object-fit: contain;
+  display: block;
+}
+
+/* Tăng chiều cao thanh menu để logo không bị ép */
+.header {
+  min-height: 105px !important;
+  padding: 0 54px !important;
+  display: flex;
+  align-items: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .logo img {
+    height: 68px !important;
+  }
+
+  .header {
+    min-height: 86px !important;
+    padding: 0 18px !important;
+  }
+}
