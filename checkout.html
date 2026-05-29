@@ -9,7 +9,7 @@
     .payment-box {
       display: none;
       margin-top: 18px;
-      padding: 24px;
+      padding: 22px;
       background: #f0f7ff;
       border: 1px solid #bfdbfe;
       border-radius: 16px;
@@ -17,28 +17,30 @@
 
     .payment-box h3 {
       color: #0b5ed7;
-      margin-bottom: 18px;
-      font-size: 24px;
+      margin-bottom: 16px;
+      font-size: 22px;
     }
 
     .payment-content {
-      display: flex;
-      gap: 26px;
-      align-items: center;
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 22px;
+      align-items: start;
     }
 
     .qr-area {
       text-align: center;
+      background: white;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
     }
 
     .qr-area img {
-      width: 240px;
-      height: 300px;
+      width: 100%;
+      max-width: 205px;
+      height: 245px;
       object-fit: contain;
-      background: white;
-      padding: 10px;
-      border-radius: 14px;
-      border: 1px solid #ddd;
       cursor: zoom-in;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
       position: relative;
@@ -46,67 +48,85 @@
     }
 
     .qr-area img:hover {
-      transform: scale(1.85);
+      transform: scale(1.75);
       box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
       z-index: 999;
+      background: white;
+      border-radius: 12px;
     }
 
     .qr-hint {
-      font-size: 13px;
+      font-size: 12px;
       color: #6b7280;
-      margin-top: 8px;
+      margin-top: 6px;
+    }
+
+    .payment-info {
+      background: white;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
     }
 
     .payment-info p {
-      margin: 9px 0;
-      line-height: 1.55;
-      font-size: 17px;
+      margin: 7px 0;
+      line-height: 1.45;
+      font-size: 15px;
+    }
+
+    .payment-row {
+      margin-bottom: 10px;
+    }
+
+    .payment-label {
+      font-weight: bold;
+      color: #111827;
     }
 
     .transfer-note,
     .transfer-amount {
       display: inline-block;
-      background: white;
+      background: #fff;
       color: #dc2626;
-      padding: 10px 16px;
+      padding: 8px 12px;
       border-radius: 8px;
       font-weight: bold;
       border: 1px dashed #dc2626;
-      font-size: 18px;
-      margin-top: 6px;
+      font-size: 15px;
+      margin-top: 5px;
     }
 
     .payment-warning {
-      color: #16a34a;
+      color: #15803d;
       font-weight: bold;
-      margin-top: 16px;
-      font-size: 18px;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 14px;
+      line-height: 1.45;
     }
 
     .momo-warning {
-      color: #dc2626;
+      color: #b91c1c;
       font-weight: bold;
       background: #fff7ed;
       border: 1px solid #fed7aa;
-      padding: 12px;
+      padding: 10px;
       border-radius: 10px;
-      margin-top: 14px;
-      line-height: 1.5;
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.45;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 900px) {
       .payment-content {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .qr-area img {
-        width: 240px;
-        height: auto;
+        grid-template-columns: 1fr;
       }
 
       .qr-area img:hover {
-        transform: scale(1.25);
+        transform: scale(1.2);
       }
     }
   </style>
@@ -156,15 +176,21 @@
         </div>
 
         <div class="payment-info">
-          <p><b>Ngân hàng:</b> MB Bank</p>
-          <p><b>Chủ tài khoản:</b> NGUYEN HUY PHUONG</p>
-          <p><b>Số tài khoản:</b> 856789898989</p>
+          <div class="payment-row">
+            <p><span class="payment-label">Ngân hàng:</span> MB Bank</p>
+            <p><span class="payment-label">Chủ tài khoản:</span> NGUYEN HUY PHUONG</p>
+            <p><span class="payment-label">Số tài khoản:</span> 856789898989</p>
+          </div>
 
-          <p><b>Số tiền thanh toán:</b></p>
-          <p class="transfer-amount" id="bankTransferAmount">0đ</p>
+          <div class="payment-row">
+            <p class="payment-label">Số tiền thanh toán:</p>
+            <p class="transfer-amount" id="bankTransferAmount">0đ</p>
+          </div>
 
-          <p><b>Nội dung chuyển khoản tự động:</b></p>
-          <p class="transfer-note" id="bankTransferNote">TravelSmartAI</p>
+          <div class="payment-row">
+            <p class="payment-label">Nội dung chuyển khoản:</p>
+            <p class="transfer-note" id="bankTransferNote">TravelSmartAI</p>
+          </div>
 
           <p class="payment-warning">
             Khi quét mã QR ngân hàng, app ngân hàng sẽ tự điền số tài khoản, số tiền và nội dung chuyển khoản.
@@ -184,19 +210,24 @@
         </div>
 
         <div class="payment-info">
-          <p><b>Ví điện tử:</b> MoMo</p>
-          <p><b>Chủ ví:</b> NGUYEN HUY PHUONG</p>
-          <p><b>Số điện thoại MoMo:</b> 0921032286</p>
+          <div class="payment-row">
+            <p><span class="payment-label">Ví điện tử:</span> MoMo</p>
+            <p><span class="payment-label">Chủ ví:</span> NGUYEN HUY PHUONG</p>
+            <p><span class="payment-label">Số điện thoại:</span> 0921032286</p>
+          </div>
 
-          <p><b>Số tiền cần thanh toán:</b></p>
-          <p class="transfer-amount" id="momoTransferAmount">0đ</p>
+          <div class="payment-row">
+            <p class="payment-label">Số tiền cần thanh toán:</p>
+            <p class="transfer-amount" id="momoTransferAmount">0đ</p>
+          </div>
 
-          <p><b>Nội dung thanh toán cần nhập:</b></p>
-          <p class="transfer-note" id="momoTransferNote">TravelSmartAI</p>
+          <div class="payment-row">
+            <p class="payment-label">Nội dung cần nhập:</p>
+            <p class="transfer-note" id="momoTransferNote">TravelSmartAI</p>
+          </div>
 
           <p class="momo-warning">
-            Lưu ý: QR MoMo cá nhân không tự điền số tiền và nội dung thanh toán.
-            Khi thanh toán bằng MoMo, vui lòng nhập đúng số tiền và nội dung hiển thị bên trên để nhân viên dễ xác nhận đơn hàng.
+            Lưu ý: QR MoMo cá nhân không tự điền số tiền và nội dung. Vui lòng nhập đúng số tiền và nội dung hiển thị bên trên.
           </p>
 
           <p class="payment-warning">
