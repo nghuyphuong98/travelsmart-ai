@@ -199,10 +199,12 @@ async function sendAIMessage() {
       }
 
       const reply =
-        data.reply ||
-        data.message ||
-        data.text ||
-        createLocalAIReply(message);
+  data.reply ||
+  data.response_ai_agent ||
+  data.output ||
+  data.message ||
+  data.text ||
+  createLocalAIReply(message);
 
       addAIMessage("bot", reply);
       return;
