@@ -10,10 +10,10 @@ function createAIWidget() {
   }
 
   container.innerHTML = `
-    <button class="ai-float-button" onclick="openAiChat()" title="Hỏi Trần Hà Linh">
-      <img src="assets/ai-girl.png" alt="Trần Hà Linh" onerror="this.style.display='none'; this.parentElement.classList.add('ai-no-image');">
-      <span>Hỏi Linh</span>
-    </button>
+    <button class="ai-float-button" onclick="openAiChat()" title="Tư vấn cùng Trần Hà Linh">
+  <img src="assets/ai-girl.png" alt="Trần Hà Linh" onerror="this.style.display='none'; this.parentElement.classList.add('ai-no-image');">
+  <span>Tư vấn</span>
+</button>
 
     <div class="ai-chat-box" id="aiChatBox">
       <div class="ai-chat-header">
