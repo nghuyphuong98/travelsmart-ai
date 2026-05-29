@@ -1594,3 +1594,115 @@ nav a:hover {
     text-align: center;
   }
 }
+/* =====================================================
+   FIX FONT CHỮ TRANG CHI TIẾT SẢN PHẨM + BẢNG SO SÁNH
+   Dán ở CUỐI style.css
+   ===================================================== */
+
+body,
+.product-detail-wrapper,
+.product-detail-wrapper *,
+.tsai-compare-section,
+.tsai-compare-section * {
+  font-family: Arial, Helvetica, sans-serif !important;
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+  text-transform: none !important;
+  font-stretch: normal !important;
+}
+
+/* Giảm độ đậm chữ để không bị vỡ, dính, khó đọc */
+.product-info-box h1,
+.product-section h2,
+.tsai-compare-section h2 {
+  font-weight: 700 !important;
+  letter-spacing: normal !important;
+}
+
+.product-info-box p,
+.product-section li,
+.tsai-compare-table td,
+.tsai-compare-table p {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 1.6 !important;
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+}
+
+/* Chỉ giữ các nhãn quan trọng đậm vừa phải */
+.product-info-box b,
+.tsai-compare-table b,
+.tsai-compare-table td:first-child {
+  font-weight: 700 !important;
+}
+
+/* Sửa bảng so sánh cho rộng và dễ đọc hơn */
+.tsai-compare-table {
+  width: 100% !important;
+  table-layout: auto !important;
+  border-collapse: collapse !important;
+}
+
+.tsai-compare-table th,
+.tsai-compare-table td {
+  padding: 14px 16px !important;
+  vertical-align: top !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Cột tiêu chí không bị quá hẹp */
+.tsai-compare-table th:nth-child(1),
+.tsai-compare-table td:nth-child(1) {
+  width: 18% !important;
+  min-width: 140px !important;
+}
+
+.tsai-compare-table th:nth-child(2),
+.tsai-compare-table td:nth-child(2),
+.tsai-compare-table th:nth-child(3),
+.tsai-compare-table td:nth-child(3) {
+  width: 41% !important;
+}
+
+/* Màu chữ nhẹ hơn, không bị chói */
+.tsai-good {
+  color: #15803d !important;
+  font-weight: 600 !important;
+}
+
+.tsai-bad {
+  color: #c2410c !important;
+  font-weight: 600 !important;
+}
+
+.tsai-price-good,
+.tsai-price-bad {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+
+/* Sửa riêng phần tiêu đề bên trong bảng */
+.tsai-compare-table td:first-child {
+  font-size: 16px !important;
+  color: #0f172a !important;
+}
+
+/* Mobile/tablet: cho bảng cuộn ngang, không bóp chữ */
+@media (max-width: 900px) {
+  .tsai-compare-table-wrap {
+    overflow-x: auto !important;
+  }
+
+  .tsai-compare-table {
+    min-width: 850px !important;
+  }
+
+  .tsai-compare-table th,
+  .tsai-compare-table td {
+    font-size: 14px !important;
+    padding: 12px !important;
+  }
+}
