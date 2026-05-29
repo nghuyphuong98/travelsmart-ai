@@ -10,6 +10,28 @@ if (profile) {
   document.getElementById("customerAddress").value = profile.address || "";
 }
 
+function formatPrice(price) {
+  return Number(price || 0).toLocaleString("vi-VN") + "đ";
+}
+
+function createOrderCode() {
+  const now = new Date();
+  const datePart =
+    now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    String(now.getDate()).padStart(2, "0");
+
+  const randomPart = Math.floor(1000 + Math.random() * 9000);
+
+  return `TS-${datePart}-${randomPart}`;
+}
+
+function saveOrderToLocal(orderData) {
+  const orders = JSON.parse(localStorage.getItem("travelOrders")) || [];
+  orders.push(orderData);
+  localStorage.setItem("travelOrders", JSON.stringify(orders));
+}
+
 function renderOrderSummary() {
   const orderSummary = document.getElementById("orderSummary");
 
@@ -75,7 +97,11 @@ async function submitOrder() {
     return;
   }
 
+  const orderCode = createOrderCode();
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
   const orderData = {
+    orderCode: orderCode,
     customerName: customerName,
     customerPhone: customerPhone,
     customerEmail: customerEmail,
@@ -84,7 +110,7 @@ async function submitOrder() {
     deliveryMethod: document.getElementById("deliveryMethod").value,
     note: document.getElementById("note").value,
     cart: cart,
-    total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    total: total,
     orderStatus: "Đang chờ xác nhận",
     createdAt: new Date().toLocaleString("vi-VN")
   };
@@ -102,11 +128,24 @@ async function submitOrder() {
 
     const data = await response.json();
 
-    status.innerText = data.message || "Đặt tour thành công! Đơn hàng đang chờ xác nhận.";
+    saveOrderToLocal(orderData);
+
+    status.innerHTML = `
+      <b>Đặt tour thành công! Đơn hàng của bạn đang chờ xác nhận.</b><br>
+      Mã đơn hàng: <span style="color:#0b5ed7;font-weight:bold;">${orderCode}</span><br>
+      Vui lòng lưu mã đơn hàng để nhân viên kiểm tra và xác nhận vé.
+    `;
+
     localStorage.removeItem("cart");
 
   } catch (error) {
-    status.innerText = "Chưa kết nối được hệ thống đặt hàng. Vui lòng kiểm tra lại sau.";
+    saveOrderToLocal(orderData);
+
+    status.innerHTML = `
+      <b>Đặt tour thành công! Đơn hàng của bạn đang chờ xác nhận.</b><br>
+      Mã đơn hàng: <span style="color:#0b5ed7;font-weight:bold;">${orderCode}</span><br>
+      Dữ liệu đơn hàng đã được lưu tạm trên trình duyệt.
+    `;
   }
 }
 

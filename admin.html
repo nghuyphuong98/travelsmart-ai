@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin xác nhận vé - TravelSmart AI</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .admin-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .admin-login,
+    .admin-panel {
+      background: white;
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    .admin-login h1,
+    .admin-panel h1 {
+      color: #0b5ed7;
+      margin-bottom: 16px;
+    }
+
+    .admin-login input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 16px 0 24px;
+    }
+
+    .admin-btn {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      background: #0b5ed7;
+      color: white;
+    }
+
+    .admin-btn.red {
+      background: #dc2626;
+    }
+
+    .admin-btn.green {
+      background: #16a34a;
+    }
+
+    .admin-btn.gray {
+      background: #6b7280;
+    }
+
+    .order-card-admin {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      background: #f9fafb;
+    }
+
+    .order-card-admin h3 {
+      color: #0b5ed7;
+      margin-bottom: 10px;
+    }
+
+    .order-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 22px;
+      margin-top: 10px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .status-pending {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+    }
+
+    .status-confirmed {
+      background: #ecfdf5;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-cancelled {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .ticket-code {
+      display: inline-block;
+      background: white;
+      border: 1px dashed #0b5ed7;
+      color: #0b5ed7;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .empty-admin {
+      background: #f0f7ff;
+      border: 1px solid #bfdbfe;
+      padding: 20px;
+      border-radius: 14px;
+      color: #0b5ed7;
+      font-weight: bold;
+    }
+
+    @media (max-width: 700px) {
+      .order-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-container {
+        margin: 20px auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">TravelSmart AI</div>
+  <nav>
+    <a href="index.html">Trang chủ</a>
+    <a href="products.html">Sản phẩm</a>
+    <a href="cart.html">Giỏ hàng</a>
+    <a href="checkout.html">Thanh toán</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<section class="admin-container">
+
+  <div class="admin-login" id="adminLoginBox">
+    <h1>Đăng nhập Admin</h1>
+    <p>Chỉ quản trị viên mới có quyền kiểm tra và xác nhận vé.</p>
+
+    <input id="adminPassword" type="password" placeholder="Nhập mật khẩu admin">
+
+    <button class="admin-btn" onclick="adminLogin()">Đăng nhập</button>
+
+    <p id="loginStatus"></p>
+  </div>
+
+  <div class="admin-panel" id="adminPanel" style="display: none;">
+    <h1>Quản lý xác nhận vé</h1>
+    <p>Admin có thể kiểm tra đơn hàng, xác nhận vé hoặc hủy vé tại đây.</p>
+
+    <div class="admin-actions">
+      <button class="admin-btn" onclick="renderAdminOrders()">Tải lại danh sách</button>
+      <button class="admin-btn gray" onclick="exportOrders()">Xuất dữ liệu đơn hàng</button>
+      <button class="admin-btn red" onclick="adminLogout()">Đăng xuất</button>
+    </div>
+
+    <div id="adminOrdersList"></div>
+  </div>
+
+</section>
+
+<script>
+  const ADMIN_PASSWORD = "admin123";
+
+  function adminLogin() {
+    const password = document.getElementById("adminPassword").value;
+    const loginStatus = document.getElementById("loginStatus");
+
+    if (password === ADMIN_PASSWORD) {
+      localStorage.setItem("isAdmin", "true");
+      showAdminPanel();
+    } else {
+      loginStatus.innerText = "Sai mật khẩu admin.";
+      loginStatus.style.color = "#dc2626";
+      loginStatus.style.fontWeight = "bold";
+    }
+  }
+
+  function adminLogout() {
+    localStorage.removeItem("isAdmin");
+    document.getElementById("adminPanel").style.display = "none";
+    document.getElementById("adminLoginBox").style.display = "block";
+  }
+
+  function showAdminPanel() {
+    document.getElementById("adminLoginBox").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
+    renderAdminOrders();
+  }
+
+  function getOrders() {
+    return JSON.parse(localStorage.getItem("travelOrders")) || [];
+  }
+
+  function saveOrders(orders) {
+    localStorage.setItem("travelOrders", JSON.stringify(orders));
+  }
+
+  function getStatusClass(status) {
+    if (status === "Đã xác nhận vé") {
+      return "status-confirmed";
+    }
+
+    if (status === "Đã hủy vé") {
+      return "status-cancelled";
+    }
+
+    return "status-pending";
+  }
+
+  function renderAdminOrders() {
+    const ordersList = document.getElementById("adminOrdersList");
+    const orders = getOrders();
+
+    if (orders.length === 0) {
+      ordersList.innerHTML = `
+        <div class="empty-admin">
+          Chưa có đơn hàng nào được lưu trên trình duyệt này.
+        </div>
+      `;
+      return;
+    }
+
+    ordersList.innerHTML = "";
+
+    orders
+      .slice()
+      .reverse()
+      .forEach(order => {
+        const productsText = order.cart.map(item => {
+          return `${item.name} x ${item.quantity}`;
+        }).join("<br>");
+
+        ordersList.innerHTML += `
+          <div class="order-card-admin">
+            <h3>Đơn hàng: <span class="ticket-code">${order.orderCode}</span></h3>
+
+            <p>
+              <b>Trạng thái:</b>
+              <span class="status-badge ${getStatusClass(order.orderStatus)}">
+                ${order.orderStatus}
+              </span>
+            </p>
+
+            <div class="order-grid">
+              <p><b>Khách hàng:</b> ${order.customerName}</p>
+              <p><b>Số điện thoại:</b> ${order.customerPhone}</p>
+              <p><b>Email:</b> ${order.customerEmail}</p>
+              <p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p>
+              <p><b>Thanh toán:</b> ${order.paymentMethod}</p>
+              <p><b>Giao vé:</b> ${order.deliveryMethod}</p>
+              <p><b>Tổng tiền:</b> ${formatPriceAdmin(order.total)}</p>
+              <p><b>Thời gian đặt:</b> ${order.createdAt}</p>
+            </div>
+
+            <p><b>Sản phẩm:</b><br>${productsText}</p>
+            <p><b>Ghi chú:</b> ${order.note || "Không có"}</p>
+
+            <div class="admin-actions">
+              <button class="admin-btn green" onclick="confirmTicket('${order.orderCode}')">
+                Xác nhận vé
+              </button>
+
+              <button class="admin-btn red" onclick="cancelTicket('${order.orderCode}')">
+                Hủy vé
+              </button>
+            </div>
+          </div>
+        `;
+      });
+  }
+
+  function confirmTicket(orderCode) {
+    const orders = getOrders();
+
+    const updatedOrders = orders.map(order => {
+      if (order.orderCode === orderCode) {
+        return {
+          ...order,
+          orderStatus: "Đã xác nhận vé",
+          confirmedAt: new Date().toLocaleString("vi-VN")
+        };
+      }
+
+      return order;
+    });
+
+    saveOrders(updatedOrders);
+    renderAdminOrders();
+    alert("Đã xác nhận vé cho đơn hàng " + orderCode);
+  }
+
+  function cancelTicket(orderCode) {
+    const orders = getOrders();
+
+    const updatedOrders = orders.map(order => {
+      if (order.orderCode === orderCode) {
+        return {
+          ...order,
+          orderStatus: "Đã hủy vé",
+          cancelledAt: new Date().toLocaleString("vi-VN")
+        };
+      }
+
+      return order;
+    });
+
+    saveOrders(updatedOrders);
+    renderAdminOrders();
+    alert("Đã hủy vé cho đơn hàng " + orderCode);
+  }
+
+  function exportOrders() {
+    const orders = getOrders();
+
+    if (orders.length === 0) {
+      alert("Chưa có đơn hàng để xuất.");
+      return;
+    }
+
+    const data = JSON.stringify(orders, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "travelsmart-orders.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  function formatPriceAdmin(price) {
+    return Number(price || 0).toLocaleString("vi-VN") + "đ";
+  }
+
+  window.addEventListener("load", function () {
+    if (localStorage.getItem("isAdmin") === "true") {
+      showAdminPanel();
+    }
+  });
+</script>
+
+</body>
+</html>
