@@ -5,6 +5,200 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng nhập - TravelSmart AI</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    .auth-page {
+      min-height: calc(100vh - 80px);
+      background: linear-gradient(135deg, #eaf3ff, #f8fbff);
+      padding: 50px 16px;
+    }
+
+    .auth-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 22px;
+      padding: 34px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+    }
+
+    .auth-title {
+      color: #0b5ed7;
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .auth-desc {
+      color: #374151;
+      font-size: 17px;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .auth-tab {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: #e5e7eb;
+      color: #111827;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .auth-tab.active {
+      background: #0b5ed7;
+      color: white;
+    }
+
+    .auth-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 24px;
+      margin-top: 15px;
+    }
+
+    .auth-box h2 {
+      color: #0b5ed7;
+      margin-bottom: 14px;
+    }
+
+    .auth-form input {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      margin: 9px 0;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .auth-form input:focus {
+      border-color: #0b5ed7;
+      box-shadow: 0 0 0 3px rgba(11, 94, 215, 0.12);
+    }
+
+    .auth-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .auth-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #ff9800;
+      color: white;
+      transition: 0.2s;
+    }
+
+    .auth-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .auth-btn.blue {
+      background: #0b5ed7;
+    }
+
+    .auth-btn.pink {
+      background: #ec4899;
+    }
+
+    .auth-btn.red {
+      background: #dc2626;
+    }
+
+    .auth-btn.gray {
+      background: #6b7280;
+    }
+
+    .status-text {
+      margin-top: 14px;
+      font-weight: bold;
+      color: #0b5ed7;
+      line-height: 1.5;
+    }
+
+    .profile-card {
+      background: #f0f7ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .profile-card h2 {
+      color: #0b5ed7;
+      margin-bottom: 10px;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+      margin-top: 14px;
+    }
+
+    .profile-grid p {
+      margin: 4px 0;
+      line-height: 1.5;
+    }
+
+    .login-note {
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .warning-note {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #c2410c;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 700px) {
+      .auth-container {
+        padding: 22px;
+      }
+
+      .auth-title {
+        font-size: 29px;
+      }
+
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-actions {
+        flex-direction: column;
+      }
+
+      .auth-btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -19,52 +213,431 @@
   </nav>
 </header>
 
-<section class="form-box">
-  <h1>Đăng nhập / Tạo profile</h1>
-  <p>Website không bắt buộc đăng nhập. Nếu bạn lưu profile, thông tin sẽ tự điền khi thanh toán.</p>
+<section class="auth-page">
+  <div class="auth-container">
+    <h1 class="auth-title">Tài khoản khách hàng</h1>
+    <p class="auth-desc">
+      Đăng ký hoặc đăng nhập tài khoản để lưu thông tin cá nhân. Sau khi đăng nhập, thông tin của bạn sẽ được tự động điền khi thanh toán.
+    </p>
 
-  <input id="profileName" type="text" placeholder="Họ và tên">
-  <input id="profilePhone" type="text" placeholder="Số điện thoại">
-  <input id="profileEmail" type="email" placeholder="Email">
-  <input id="profileAddress" type="text" placeholder="Địa chỉ nhận thông tin/vé">
+    <!-- KHU VỰC CHƯA ĐĂNG NHẬP -->
+    <div id="guestArea">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="loginTab" onclick="showAuthTab('login')">Đăng nhập</button>
+        <button class="auth-tab" id="registerTab" onclick="showAuthTab('register')">Đăng ký</button>
+      </div>
 
-  <button class="btn" onclick="saveProfile()">Lưu profile</button>
-  <button class="btn secondary" onclick="logout()">Xóa profile</button>
+      <!-- ĐĂNG NHẬP -->
+      <div class="auth-box" id="loginBox">
+        <h2>Đăng nhập</h2>
+        <div class="auth-form">
+          <input id="loginEmail" type="email" placeholder="Email">
+          <input id="loginPassword" type="password" placeholder="Mật khẩu">
 
-  <p id="loginStatus"></p>
+          <div class="auth-actions">
+            <button class="auth-btn blue" onclick="loginUser()">Đăng nhập</button>
+          </div>
+
+          <p class="status-text" id="loginStatus"></p>
+        </div>
+      </div>
+
+      <!-- ĐĂNG KÝ -->
+      <div class="auth-box" id="registerBox" style="display: none;">
+        <h2>Đăng ký tài khoản</h2>
+        <div class="auth-form">
+          <input id="registerName" type="text" placeholder="Họ và tên">
+          <input id="registerPhone" type="text" placeholder="Số điện thoại">
+          <input id="registerEmail" type="email" placeholder="Email">
+          <input id="registerAddress" type="text" placeholder="Địa chỉ">
+          <input id="registerPassword" type="password" placeholder="Mật khẩu">
+          <input id="registerConfirmPassword" type="password" placeholder="Nhập lại mật khẩu">
+
+          <div class="auth-actions">
+            <button class="auth-btn" onclick="registerUser()">Tạo tài khoản</button>
+          </div>
+
+          <p class="status-text" id="registerStatus"></p>
+        </div>
+      </div>
+
+      <div class="warning-note">
+        Bạn vẫn có thể xem sản phẩm và đặt tour mà không cần đăng nhập. Tuy nhiên, muốn sửa và lưu thông tin cá nhân thì cần đăng nhập tài khoản.
+      </div>
+    </div>
+
+    <!-- KHU VỰC ĐÃ ĐĂNG NHẬP -->
+    <div id="userArea" style="display: none;">
+      <div class="profile-card">
+        <h2>Thông tin tài khoản</h2>
+        <p>Bạn đang đăng nhập. Bạn có thể chỉnh sửa thông tin cá nhân bên dưới.</p>
+
+        <div class="profile-grid">
+          <p><b>Họ tên:</b> <span id="viewName"></span></p>
+          <p><b>Số điện thoại:</b> <span id="viewPhone"></span></p>
+          <p><b>Email:</b> <span id="viewEmail"></span></p>
+          <p><b>Địa chỉ:</b> <span id="viewAddress"></span></p>
+        </div>
+
+        <div class="login-note">
+          Thông tin này sẽ được tự động điền ở trang thanh toán.
+        </div>
+      </div>
+
+      <div class="auth-box">
+        <h2>Chỉnh sửa thông tin cá nhân</h2>
+        <div class="auth-form">
+          <input id="profileName" type="text" placeholder="Họ và tên">
+          <input id="profilePhone" type="text" placeholder="Số điện thoại">
+          <input id="profileEmail" type="email" placeholder="Email" disabled>
+          <input id="profileAddress" type="text" placeholder="Địa chỉ">
+
+          <div class="auth-actions">
+            <button class="auth-btn blue" onclick="updateProfile()">Lưu thông tin</button>
+            <button class="auth-btn pink" onclick="changePassword()">Đổi mật khẩu</button>
+            <button class="auth-btn red" onclick="logoutUser()">Đăng xuất</button>
+          </div>
+
+          <p class="status-text" id="profileStatus"></p>
+        </div>
+      </div>
+
+      <div class="auth-box" id="passwordBox" style="display: none;">
+        <h2>Đổi mật khẩu</h2>
+        <div class="auth-form">
+          <input id="oldPassword" type="password" placeholder="Mật khẩu hiện tại">
+          <input id="newPassword" type="password" placeholder="Mật khẩu mới">
+          <input id="confirmNewPassword" type="password" placeholder="Nhập lại mật khẩu mới">
+
+          <div class="auth-actions">
+            <button class="auth-btn blue" onclick="saveNewPassword()">Lưu mật khẩu mới</button>
+            <button class="auth-btn gray" onclick="hidePasswordBox()">Hủy</button>
+          </div>
+
+          <p class="status-text" id="passwordStatus"></p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <script>
-  const savedProfile = JSON.parse(localStorage.getItem("profile"));
-
-  if (savedProfile) {
-    document.getElementById("profileName").value = savedProfile.name || "";
-    document.getElementById("profilePhone").value = savedProfile.phone || "";
-    document.getElementById("profileEmail").value = savedProfile.email || "";
-    document.getElementById("profileAddress").value = savedProfile.address || "";
-    document.getElementById("loginStatus").innerText = "Đã có profile trên website.";
+  function getUsers() {
+    return JSON.parse(localStorage.getItem("users")) || [];
   }
 
-  function saveProfile() {
+  function saveUsers(users) {
+    localStorage.setItem("users", JSON.stringify(users));
+  }
+
+  function getCurrentUserEmail() {
+    return localStorage.getItem("currentUserEmail");
+  }
+
+  function setCurrentUser(email) {
+    localStorage.setItem("currentUserEmail", email);
+  }
+
+  function clearCurrentUser() {
+    localStorage.removeItem("currentUserEmail");
+  }
+
+  function findUserByEmail(email) {
+    const users = getUsers();
+    return users.find(user => user.email.toLowerCase() === email.toLowerCase());
+  }
+
+  function showAuthTab(tab) {
+    const loginBox = document.getElementById("loginBox");
+    const registerBox = document.getElementById("registerBox");
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+
+    if (tab === "login") {
+      loginBox.style.display = "block";
+      registerBox.style.display = "none";
+      loginTab.classList.add("active");
+      registerTab.classList.remove("active");
+    } else {
+      loginBox.style.display = "none";
+      registerBox.style.display = "block";
+      loginTab.classList.remove("active");
+      registerTab.classList.add("active");
+    }
+  }
+
+  function registerUser() {
+    const name = document.getElementById("registerName").value.trim();
+    const phone = document.getElementById("registerPhone").value.trim();
+    const email = document.getElementById("registerEmail").value.trim();
+    const address = document.getElementById("registerAddress").value.trim();
+    const password = document.getElementById("registerPassword").value;
+    const confirmPassword = document.getElementById("registerConfirmPassword").value;
+    const status = document.getElementById("registerStatus");
+
+    if (!name || !phone || !email || !address || !password || !confirmPassword) {
+      status.innerText = "Vui lòng nhập đầy đủ thông tin.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    if (!email.includes("@")) {
+      status.innerText = "Email chưa hợp lệ.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    if (password.length < 6) {
+      status.innerText = "Mật khẩu cần ít nhất 6 ký tự.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      status.innerText = "Mật khẩu nhập lại không khớp.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    const users = getUsers();
+
+    const existedUser = users.find(user => user.email.toLowerCase() === email.toLowerCase());
+
+    if (existedUser) {
+      status.innerText = "Email này đã được đăng ký. Vui lòng đăng nhập.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    const newUser = {
+      name: name,
+      phone: phone,
+      email: email,
+      address: address,
+      password: password,
+      createdAt: new Date().toLocaleString("vi-VN")
+    };
+
+    users.push(newUser);
+    saveUsers(users);
+
+    status.innerText = "Đăng ký thành công. Bạn có thể đăng nhập ngay.";
+    status.style.color = "#16a34a";
+
+    document.getElementById("loginEmail").value = email;
+    document.getElementById("loginPassword").value = "";
+    showAuthTab("login");
+  }
+
+  function loginUser() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    const status = document.getElementById("loginStatus");
+
+    if (!email || !password) {
+      status.innerText = "Vui lòng nhập email và mật khẩu.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    const user = findUserByEmail(email);
+
+    if (!user || user.password !== password) {
+      status.innerText = "Email hoặc mật khẩu không đúng.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    setCurrentUser(user.email);
+
     const profile = {
-      name: document.getElementById("profileName").value,
-      phone: document.getElementById("profilePhone").value,
-      email: document.getElementById("profileEmail").value,
-      address: document.getElementById("profileAddress").value
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+      address: user.address
     };
 
     localStorage.setItem("profile", JSON.stringify(profile));
-    document.getElementById("loginStatus").innerText = "Đã lưu profile thành công!";
+
+    status.innerText = "";
+    renderLoginState();
   }
 
-  function logout() {
+  function logoutUser() {
+    clearCurrentUser();
     localStorage.removeItem("profile");
-    document.getElementById("profileName").value = "";
-    document.getElementById("profilePhone").value = "";
-    document.getElementById("profileEmail").value = "";
-    document.getElementById("profileAddress").value = "";
-    document.getElementById("loginStatus").innerText = "Đã xóa profile.";
+
+    document.getElementById("loginEmail").value = "";
+    document.getElementById("loginPassword").value = "";
+    renderLoginState();
   }
+
+  function updateProfile() {
+    const currentEmail = getCurrentUserEmail();
+    const status = document.getElementById("profileStatus");
+
+    if (!currentEmail) {
+      status.innerText = "Bạn cần đăng nhập để sửa thông tin.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    const name = document.getElementById("profileName").value.trim();
+    const phone = document.getElementById("profilePhone").value.trim();
+    const address = document.getElementById("profileAddress").value.trim();
+
+    if (!name || !phone || !address) {
+      status.innerText = "Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    const users = getUsers();
+
+    const updatedUsers = users.map(user => {
+      if (user.email === currentEmail) {
+        return {
+          ...user,
+          name: name,
+          phone: phone,
+          address: address,
+          updatedAt: new Date().toLocaleString("vi-VN")
+        };
+      }
+
+      return user;
+    });
+
+    saveUsers(updatedUsers);
+
+    const user = findUserByEmail(currentEmail);
+
+    const profile = {
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+      address: user.address
+    };
+
+    localStorage.setItem("profile", JSON.stringify(profile));
+
+    status.innerText = "Đã cập nhật thông tin cá nhân.";
+    status.style.color = "#16a34a";
+
+    renderLoginState();
+  }
+
+  function changePassword() {
+    document.getElementById("passwordBox").style.display = "block";
+    document.getElementById("passwordStatus").innerText = "";
+  }
+
+  function hidePasswordBox() {
+    document.getElementById("passwordBox").style.display = "none";
+    document.getElementById("oldPassword").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmNewPassword").value = "";
+  }
+
+  function saveNewPassword() {
+    const currentEmail = getCurrentUserEmail();
+    const oldPassword = document.getElementById("oldPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmNewPassword = document.getElementById("confirmNewPassword").value;
+    const status = document.getElementById("passwordStatus");
+
+    if (!currentEmail) {
+      status.innerText = "Bạn cần đăng nhập để đổi mật khẩu.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    const user = findUserByEmail(currentEmail);
+
+    if (!user || user.password !== oldPassword) {
+      status.innerText = "Mật khẩu hiện tại không đúng.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      status.innerText = "Mật khẩu mới cần ít nhất 6 ký tự.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      status.innerText = "Mật khẩu mới nhập lại không khớp.";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    const users = getUsers();
+
+    const updatedUsers = users.map(item => {
+      if (item.email === currentEmail) {
+        return {
+          ...item,
+          password: newPassword,
+          updatedAt: new Date().toLocaleString("vi-VN")
+        };
+      }
+
+      return item;
+    });
+
+    saveUsers(updatedUsers);
+
+    status.innerText = "Đổi mật khẩu thành công.";
+    status.style.color = "#16a34a";
+
+    setTimeout(hidePasswordBox, 900);
+  }
+
+  function renderLoginState() {
+    const currentEmail = getCurrentUserEmail();
+    const guestArea = document.getElementById("guestArea");
+    const userArea = document.getElementById("userArea");
+
+    if (!currentEmail) {
+      guestArea.style.display = "block";
+      userArea.style.display = "none";
+      return;
+    }
+
+    const user = findUserByEmail(currentEmail);
+
+    if (!user) {
+      clearCurrentUser();
+      guestArea.style.display = "block";
+      userArea.style.display = "none";
+      return;
+    }
+
+    guestArea.style.display = "none";
+    userArea.style.display = "block";
+
+    document.getElementById("viewName").innerText = user.name;
+    document.getElementById("viewPhone").innerText = user.phone;
+    document.getElementById("viewEmail").innerText = user.email;
+    document.getElementById("viewAddress").innerText = user.address;
+
+    document.getElementById("profileName").value = user.name;
+    document.getElementById("profilePhone").value = user.phone;
+    document.getElementById("profileEmail").value = user.email;
+    document.getElementById("profileAddress").value = user.address;
+
+    const profile = {
+      name: user.name,
+      phone: user.phone,
+      email: user.email,
+      address: user.address
+    };
+
+    localStorage.setItem("profile", JSON.stringify(profile));
+  }
+
+  renderLoginState();
 </script>
 
 </body>
