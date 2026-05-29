@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    .bank-qr-box {
+    .payment-box {
       display: none;
       margin-top: 18px;
       padding: 24px;
@@ -15,13 +15,13 @@
       border-radius: 16px;
     }
 
-    .bank-qr-box h3 {
+    .payment-box h3 {
       color: #0b5ed7;
       margin-bottom: 18px;
       font-size: 24px;
     }
 
-    .bank-qr-content {
+    .payment-content {
       display: flex;
       gap: 26px;
       align-items: center;
@@ -57,7 +57,7 @@
       margin-top: 8px;
     }
 
-    .bank-info p {
+    .payment-info p {
       margin: 9px 0;
       line-height: 1.55;
       font-size: 17px;
@@ -76,15 +76,26 @@
       margin-top: 6px;
     }
 
-    .qr-warning {
+    .payment-warning {
       color: #16a34a;
       font-weight: bold;
       margin-top: 16px;
       font-size: 18px;
     }
 
+    .momo-warning {
+      color: #dc2626;
+      font-weight: bold;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
     @media (max-width: 700px) {
-      .bank-qr-content {
+      .payment-content {
         flex-direction: column;
         align-items: flex-start;
       }
@@ -128,34 +139,68 @@
     <input id="customerEmail" type="email" placeholder="Email">
     <input id="customerAddress" type="text" placeholder="Địa chỉ / nơi nhận vé">
 
-    <select id="paymentMethod" onchange="toggleBankQR()">
+    <select id="paymentMethod" onchange="togglePaymentBox()">
       <option value="Thanh toán khi nhân viên xác nhận">Thanh toán khi nhân viên xác nhận</option>
       <option value="Chuyển khoản ngân hàng">Chuyển khoản ngân hàng</option>
-      <option value="Ví điện tử">Ví điện tử</option>
+      <option value="Ví điện tử MoMo">Ví điện tử MoMo</option>
     </select>
 
-    <div class="bank-qr-box" id="bankQrBox">
+    <!-- QR NGÂN HÀNG -->
+    <div class="payment-box" id="bankQrBox">
       <h3>Thanh toán bằng mã QR ngân hàng</h3>
 
-      <div class="bank-qr-content">
+      <div class="payment-content">
         <div class="qr-area">
           <img id="vietQrImage" src="" alt="QR chuyển khoản ngân hàng">
           <p class="qr-hint">Di chuột vào mã QR để phóng to</p>
         </div>
 
-        <div class="bank-info">
+        <div class="payment-info">
           <p><b>Ngân hàng:</b> MB Bank</p>
           <p><b>Chủ tài khoản:</b> NGUYEN HUY PHUONG</p>
           <p><b>Số tài khoản:</b> 856789898989</p>
 
           <p><b>Số tiền thanh toán:</b></p>
-          <p class="transfer-amount" id="transferAmount">0đ</p>
+          <p class="transfer-amount" id="bankTransferAmount">0đ</p>
 
           <p><b>Nội dung chuyển khoản tự động:</b></p>
-          <p class="transfer-note" id="transferNote">TravelSmartAI</p>
+          <p class="transfer-note" id="bankTransferNote">TravelSmartAI</p>
 
-          <p class="qr-warning">
-            Khi quét mã QR, app ngân hàng sẽ tự điền số tài khoản, số tiền và nội dung chuyển khoản.
+          <p class="payment-warning">
+            Khi quét mã QR ngân hàng, app ngân hàng sẽ tự điền số tài khoản, số tiền và nội dung chuyển khoản.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR MOMO -->
+    <div class="payment-box" id="momoQrBox">
+      <h3>Thanh toán bằng ví điện tử MoMo</h3>
+
+      <div class="payment-content">
+        <div class="qr-area">
+          <img id="momoQrImage" src="assets/qr-momo.png" alt="QR thanh toán MoMo">
+          <p class="qr-hint">Di chuột vào mã QR để phóng to</p>
+        </div>
+
+        <div class="payment-info">
+          <p><b>Ví điện tử:</b> MoMo</p>
+          <p><b>Chủ ví:</b> NGUYEN HUY PHUONG</p>
+          <p><b>Số điện thoại MoMo:</b> 0921032286</p>
+
+          <p><b>Số tiền cần thanh toán:</b></p>
+          <p class="transfer-amount" id="momoTransferAmount">0đ</p>
+
+          <p><b>Nội dung thanh toán cần nhập:</b></p>
+          <p class="transfer-note" id="momoTransferNote">TravelSmartAI</p>
+
+          <p class="momo-warning">
+            Lưu ý: QR MoMo cá nhân không tự điền số tiền và nội dung thanh toán.
+            Khi thanh toán bằng MoMo, vui lòng nhập đúng số tiền và nội dung hiển thị bên trên để nhân viên dễ xác nhận đơn hàng.
+          </p>
+
+          <p class="payment-warning">
+            Sau khi thanh toán MoMo, nhân viên sẽ kiểm tra giao dịch và liên hệ xác nhận đơn hàng.
           </p>
         </div>
       </div>
@@ -208,10 +253,8 @@
 
       if (orderSummary) {
         const text = orderSummary.innerText || "";
-
         const matchTongCong = text.match(/Tổng cộng:\s*([\d.]+)đ/i);
         const matchTongTien = text.match(/Tổng tiền:\s*([\d.]+)đ/i);
-
         const match = matchTongCong || matchTongTien;
 
         if (match && match[1]) {
@@ -234,10 +277,10 @@
     return "TravelSmartAI";
   }
 
-  function updateVietQRImage() {
+  function updateBankQR() {
     const qrImage = document.getElementById("vietQrImage");
-    const transferNote = document.getElementById("transferNote");
-    const transferAmount = document.getElementById("transferAmount");
+    const transferNote = document.getElementById("bankTransferNote");
+    const transferAmount = document.getElementById("bankTransferAmount");
 
     if (!qrImage || !transferNote || !transferAmount) {
       return;
@@ -259,17 +302,44 @@
     qrImage.src = qrUrl;
   }
 
-  function toggleBankQR() {
+  function updateMomoQR() {
+    const transferNote = document.getElementById("momoTransferNote");
+    const transferAmount = document.getElementById("momoTransferAmount");
+
+    if (!transferNote || !transferAmount) {
+      return;
+    }
+
+    const totalAmount = getCartTotalAmount();
+    const transferContent = createTransferContent();
+
+    transferNote.innerText = transferContent;
+    transferAmount.innerText = formatVND(totalAmount);
+  }
+
+  function updateAllPaymentInfo() {
+    updateBankQR();
+    updateMomoQR();
+  }
+
+  function togglePaymentBox() {
     const paymentMethod = document.getElementById("paymentMethod").value;
     const bankQrBox = document.getElementById("bankQrBox");
+    const momoQrBox = document.getElementById("momoQrBox");
+
+    bankQrBox.style.display = "none";
+    momoQrBox.style.display = "none";
 
     if (paymentMethod === "Chuyển khoản ngân hàng") {
       bankQrBox.style.display = "block";
+      setTimeout(updateAllPaymentInfo, 300);
+      setTimeout(updateAllPaymentInfo, 800);
+    }
 
-      setTimeout(updateVietQRImage, 300);
-      setTimeout(updateVietQRImage, 800);
-    } else {
-      bankQrBox.style.display = "none";
+    if (paymentMethod === "Ví điện tử MoMo") {
+      momoQrBox.style.display = "block";
+      setTimeout(updateAllPaymentInfo, 300);
+      setTimeout(updateAllPaymentInfo, 800);
     }
   }
 
@@ -277,19 +347,19 @@
   const paymentMethodInput = document.getElementById("paymentMethod");
 
   if (phoneInput) {
-    phoneInput.addEventListener("input", updateVietQRImage);
-    phoneInput.addEventListener("change", updateVietQRImage);
-    phoneInput.addEventListener("keyup", updateVietQRImage);
+    phoneInput.addEventListener("input", updateAllPaymentInfo);
+    phoneInput.addEventListener("change", updateAllPaymentInfo);
+    phoneInput.addEventListener("keyup", updateAllPaymentInfo);
   }
 
   if (paymentMethodInput) {
-    paymentMethodInput.addEventListener("change", toggleBankQR);
+    paymentMethodInput.addEventListener("change", togglePaymentBox);
   }
 
   window.addEventListener("load", function () {
     setTimeout(function () {
-      toggleBankQR();
-      updateVietQRImage();
+      togglePaymentBox();
+      updateAllPaymentInfo();
     }, 800);
   });
 </script>
