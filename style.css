@@ -1990,3 +1990,76 @@ button,
     display: block;
   }
 }
+/* ===============================
+   MENU TÀI KHOẢN SAU KHI ĐĂNG NHẬP
+   =============================== */
+
+.nav-account {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-login-link,
+.nav-account-name {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 0;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: 38px;
+  right: 0;
+  width: 220px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.2);
+  padding: 10px;
+  display: none;
+  z-index: 9999;
+}
+
+.account-dropdown a,
+.account-dropdown button {
+  width: 100%;
+  display: block;
+  padding: 11px 12px;
+  border: none;
+  background: transparent;
+  color: #0f172a;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: #eef6ff;
+  color: #0b5ed7;
+}
+
+.nav-account:hover .account-dropdown {
+  display: block;
+}
+
+.account-logout {
+  color: #dc2626 !important;
+}
+
+@media (max-width: 768px) {
+  .nav-account {
+    width: 100%;
+  }
+
+  .account-dropdown {
+    position: static;
+    width: 100%;
+    margin-top: 6px;
+  }
+}
