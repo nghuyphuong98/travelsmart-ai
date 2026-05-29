@@ -2281,3 +2281,191 @@ button,
     font-size: 13px;
   }
 }
+/* ===============================
+   NÚT HỎI AI FULL ẢNH
+   =============================== */
+
+.ai-float-button {
+  position: fixed !important;
+  right: 26px !important;
+  bottom: 26px !important;
+  width: 108px !important;
+  height: 108px !important;
+  border: none !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.28) !important;
+  z-index: 9999 !important;
+  cursor: pointer !important;
+  display: block !important;
+  transition: 0.25s !important;
+}
+
+.ai-float-button:hover {
+  transform: translateY(-4px) scale(1.04) !important;
+}
+
+.ai-float-button img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  display: block !important;
+}
+
+.ai-float-button span {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  padding: 7px 4px !important;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0)) !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  line-height: 1.1 !important;
+}
+
+.ai-float-button.ai-no-image {
+  background: linear-gradient(135deg, #2563eb, #ec4899) !important;
+}
+
+.ai-float-button.ai-no-image::before {
+  content: "👩‍💼";
+  font-size: 46px;
+  display: block;
+  margin-top: 22px;
+}
+
+.ai-float-button.ai-no-image span {
+  background: transparent !important;
+  bottom: 14px !important;
+}
+
+/* Hộp chat AI */
+.ai-chat-box {
+  position: fixed !important;
+  right: 26px !important;
+  bottom: 150px !important;
+  width: 420px !important;
+  max-width: calc(100vw - 32px) !important;
+  height: 560px !important;
+  background: #ffffff !important;
+  border-radius: 18px !important;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.28) !important;
+  overflow: hidden !important;
+  z-index: 9998 !important;
+  display: none !important;
+}
+
+.ai-chat-box.show {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ai-chat-header {
+  background: linear-gradient(135deg, #0b5ed7, #ec4899) !important;
+  color: #ffffff !important;
+  padding: 15px 16px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.ai-chat-header b {
+  font-size: 18px !important;
+}
+
+.ai-chat-header p {
+  margin: 2px 0 0 !important;
+  font-size: 13px !important;
+}
+
+.ai-chat-header button {
+  width: 34px !important;
+  height: 34px !important;
+  border: none !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  color: #dc2626 !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+}
+
+.ai-messages {
+  flex: 1 !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
+  background: #f8fafc !important;
+}
+
+.ai-bot,
+.ai-user {
+  max-width: 86% !important;
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+  margin-bottom: 12px !important;
+  line-height: 1.5 !important;
+  font-size: 15px !important;
+}
+
+.ai-bot {
+  background: #eaf3ff !important;
+  color: #0f172a !important;
+  margin-right: auto !important;
+}
+
+.ai-user {
+  background: #0b5ed7 !important;
+  color: #ffffff !important;
+  margin-left: auto !important;
+}
+
+.ai-input-area {
+  display: flex !important;
+  border-top: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+}
+
+.ai-input-area input {
+  flex: 1 !important;
+  border: none !important;
+  padding: 14px !important;
+  outline: none !important;
+  font-size: 15px !important;
+}
+
+.ai-input-area button {
+  border: none !important;
+  background: #0b5ed7 !important;
+  color: #ffffff !important;
+  padding: 0 18px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .ai-float-button {
+    width: 86px !important;
+    height: 86px !important;
+    right: 16px !important;
+    bottom: 16px !important;
+  }
+
+  .ai-float-button span {
+    font-size: 12px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .ai-chat-box {
+    right: 12px !important;
+    bottom: 112px !important;
+    width: calc(100vw - 24px) !important;
+    height: 520px !important;
+  }
+}

@@ -1,17 +1,19 @@
-const AI_WEBHOOK_URL = "https://dykp2013.app.n8n.cloud/webhook/travelsmart-ai";
+const AI_WEBHOOK_URL = "";
 
 function createAIWidget() {
-  const container = document.getElementById("aiWidget");
+  let container = document.getElementById("aiWidget");
 
   if (!container) {
-    return;
+    container = document.createElement("div");
+    container.id = "aiWidget";
+    document.body.appendChild(container);
   }
 
   container.innerHTML = `
-   <button class="ai-float-button" onclick="openAiChat()">
-  <img src="assets/ai-girl.png" alt="Linh AI">
-  <span>Hỏi AI</span>
-</button>
+    <button class="ai-float-button" onclick="openAiChat()" title="Hỏi Linh AI">
+      <img src="assets/ai-girl.png" alt="Linh AI" onerror="this.style.display='none'; this.parentElement.classList.add('ai-no-image');">
+      <span>Hỏi AI</span>
+    </button>
 
     <div class="ai-chat-box" id="aiChatBox">
       <div class="ai-chat-header">
@@ -19,7 +21,7 @@ function createAIWidget() {
           <b>Linh AI</b>
           <p>Trợ lý tư vấn TravelSmart</p>
         </div>
-        <button onclick="closeAIChat()">×</button>
+        <button type="button" onclick="closeAiChat()">×</button>
       </div>
 
       <div class="ai-messages" id="aiMessages">
@@ -29,166 +31,231 @@ function createAIWidget() {
       </div>
 
       <div class="ai-input-area">
-        <input id="aiInput" type="text" placeholder="Nhập câu hỏi cho AI...">
-        <button onclick="sendAIMessage()">Gửi</button>
+        <input id="aiInput" type="text" placeholder="Nhập câu hỏi cho AI..." onkeydown="handleAIEnter(event)">
+        <button type="button" onclick="sendAIMessage()">Gửi</button>
       </div>
     </div>
   `;
 }
 
-function openAIChat() {
+function openAiChat() {
+  const chatBox = document.getElementById("aiChatBox");
+
+  if (!chatBox) {
+    createAIWidget();
+  }
+
   const box = document.getElementById("aiChatBox");
 
   if (box) {
-    box.style.display = "flex";
+    box.classList.add("show");
+  }
+
+  setTimeout(function () {
+    const input = document.getElementById("aiInput");
+    if (input) {
+      input.focus();
+    }
+  }, 100);
+}
+
+function closeAiChat() {
+  const chatBox = document.getElementById("aiChatBox");
+
+  if (chatBox) {
+    chatBox.classList.remove("show");
   }
 }
 
-function closeAIChat() {
-  const box = document.getElementById("aiChatBox");
-
-  if (box) {
-    box.style.display = "none";
+function handleAIEnter(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendAIMessage();
   }
 }
 
-function findProductFromMessage(message) {
-  if (typeof products === "undefined") {
-    return null;
+function addAIMessage(type, text) {
+  const messages = document.getElementById("aiMessages");
+
+  if (!messages) {
+    return;
   }
 
-  const lowerText = message.toLowerCase();
+  const div = document.createElement("div");
+  div.className = type === "user" ? "ai-user" : "ai-bot";
+  div.innerHTML = text.replace(/\n/g, "<br>");
 
-  // Tìm theo mã sản phẩm, ví dụ TS-001
-  let foundProduct = products.find(product => {
-    return lowerText.includes(product.sku.toLowerCase());
-  });
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
 
-  if (foundProduct) {
-    return foundProduct;
+function getCurrentTourInfo() {
+  const title =
+    document.querySelector(".product-info-box h1") ||
+    document.querySelector(".product-title") ||
+    document.querySelector("h1");
+
+  const price =
+    document.querySelector(".product-price") ||
+    document.querySelector(".price");
+
+  const meta =
+    document.querySelector(".product-meta") ||
+    document.querySelector(".meta");
+
+  return {
+    name: title ? title.innerText.trim() : "",
+    price: price ? price.innerText.trim() : "",
+    meta: meta ? meta.innerText.trim() : ""
+  };
+}
+
+function createLocalAIReply(message) {
+  const lower = message.toLowerCase();
+  const tour = getCurrentTourInfo();
+
+  if (
+    lower.includes("tour") ||
+    lower.includes("giá") ||
+    lower.includes("lịch trình") ||
+    lower.includes("tư vấn") ||
+    lower.includes("sapa") ||
+    lower.includes("đà nẵng") ||
+    lower.includes("phú quốc") ||
+    lower.includes("hàn quốc") ||
+    lower.includes("nhật bản")
+  ) {
+    const tourName = tour.name || "tour này";
+    const tourPrice = tour.price || "giá đang hiển thị trên website";
+    const tourMeta = tour.meta || "thời gian theo chương trình tour";
+
+    return `
+      Mình gợi ý bạn tham khảo <b>${tourName}</b> nhé.<br><br>
+      <b>Giá:</b> ${tourPrice}<br>
+      <b>Thông tin:</b> ${tourMeta}<br><br>
+      Tour này phù hợp nếu bạn muốn đặt nhanh, xem thông tin rõ ràng và được hỗ trợ trước khi thanh toán.
+      Bạn có thể bấm <b>Thêm vào giỏ hàng</b>, sau đó vào phần <b>Thanh toán</b> để gửi đơn đặt tour.
+    `;
   }
 
-  // Tìm theo tên tour hoặc điểm đến
-  foundProduct = products.find(product => {
-    return (
-      lowerText.includes(product.name.toLowerCase()) ||
-      lowerText.includes(product.destination.toLowerCase())
-    );
-  });
-
-  if (foundProduct) {
-    return foundProduct;
+  if (lower.includes("thanh toán") || lower.includes("qr") || lower.includes("chuyển khoản")) {
+    return `
+      Bạn có thể thanh toán bằng chuyển khoản ngân hàng hoặc ví điện tử nếu website đã hiển thị mã QR.
+      Khi chuyển khoản, hãy kiểm tra đúng số tiền và nội dung chuyển khoản trước khi xác nhận đơn.
+    `;
   }
 
-  // Tìm theo câu kiểu: gói 1, gói 2, gói 10...
-  const packageMatch = lowerText.match(/gói\s*(\d+)/);
-
-  if (packageMatch) {
-    const packageNumber = Number(packageMatch[1]);
-
-    foundProduct = products.find(product => {
-      return product.name.toLowerCase().includes(`gói ${packageNumber}`);
-    });
-
-    if (foundProduct) {
-      return foundProduct;
-    }
+  if (lower.includes("giỏ hàng")) {
+    return `
+      Bạn có thể thêm nhiều tour vào giỏ hàng, kiểm tra lại số lượng và tổng tiền trước khi sang trang thanh toán.
+    `;
   }
 
-  // Tìm theo câu kiểu: sản phẩm 1, tour 1, id 1
-  const numberMatch = lowerText.match(/(?:sản phẩm|tour|id)\s*(\d+)/);
-
-  if (numberMatch) {
-    const productId = Number(numberMatch[1]);
-
-    foundProduct = products.find(product => {
-      return product.id === productId;
-    });
-
-    if (foundProduct) {
-      return foundProduct;
-    }
-  }
-
-  return null;
+  return `
+    Mình là Linh AI, mình có thể hỗ trợ bạn chọn tour, so sánh tour, xem giá, lịch trình và hướng dẫn đặt tour.
+    Bạn hãy nhập tên tour hoặc điểm đến bạn quan tâm nhé.
+  `;
 }
 
 async function sendAIMessage() {
   const input = document.getElementById("aiInput");
-  const messages = document.getElementById("aiMessages");
 
-  if (!input || !messages) {
+  if (!input) {
     return;
   }
 
-  const text = input.value.trim();
+  const message = input.value.trim();
 
-  if (!text) {
+  if (!message) {
     return;
   }
 
-  messages.innerHTML += `<div class="ai-user">${text}</div>`;
+  addAIMessage("user", message);
   input.value = "";
 
-  messages.innerHTML += `<div class="ai-bot loading">AI đang tư vấn...</div>`;
-  messages.scrollTop = messages.scrollHeight;
+  addAIMessage("bot", "Linh AI đang xem thông tin tour cho bạn...");
 
-  const profile = JSON.parse(localStorage.getItem("profile")) || {};
-
-  let currentProduct = window.currentProduct || null;
-  let currentUrl = window.location.href;
-
-  // Nếu đang ở trang chủ hoặc trang danh sách, AI sẽ tự tìm sản phẩm theo câu hỏi
-  if (!currentProduct) {
-    currentProduct = findProductFromMessage(text);
-
-    if (currentProduct) {
-      currentUrl = `${window.location.origin}/product-detail.html?id=${currentProduct.id}`;
-    }
-  }
-
-  if (!currentProduct) {
-    currentProduct = {};
-  }
+  const messages = document.getElementById("aiMessages");
+  const loadingMessage = messages ? messages.lastElementChild : null;
 
   try {
-    const response = await fetch(AI_WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: text,
-        product: currentProduct,
-        productUrl: currentUrl,
-        profile: profile
-      })
-    });
+    if (AI_WEBHOOK_URL) {
+      const response = await fetch(AI_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: message,
+          page: window.location.href,
+          tour: getCurrentTourInfo()
+        })
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    const loading = document.querySelector(".loading");
+      if (loadingMessage) {
+        loadingMessage.remove();
+      }
 
-    if (loading) {
-      loading.remove();
+      const reply =
+        data.reply ||
+        data.message ||
+        data.text ||
+        createLocalAIReply(message);
+
+      addAIMessage("bot", reply);
+      return;
     }
 
-    messages.innerHTML += `<div class="ai-bot">${data.reply || "AI chưa có câu trả lời phù hợp."}</div>`;
-    messages.scrollTop = messages.scrollHeight;
+    setTimeout(function () {
+      if (loadingMessage) {
+        loadingMessage.remove();
+      }
 
+      addAIMessage("bot", createLocalAIReply(message));
+    }, 500);
   } catch (error) {
-    const loading = document.querySelector(".loading");
-
-    if (loading) {
-      loading.remove();
+    if (loadingMessage) {
+      loadingMessage.remove();
     }
 
-    messages.innerHTML += `
-      <div class="ai-bot">
-        Chatbot chưa kết nối được với n8n. Bạn cần kiểm tra lại webhook AI trong file ai.js.
-      </div>
-    `;
+    addAIMessage("bot", createLocalAIReply(message));
   }
 }
 
-createAIWidget();
+function askAIAboutCurrentTour() {
+  const tour = getCurrentTourInfo();
+
+  openAiChat();
+
+  const input = document.getElementById("aiInput");
+
+  const tourName = tour.name || "tour này";
+  const tourPrice = tour.price ? ` Giá hiện tại là ${tour.price}.` : "";
+  const tourMeta = tour.meta ? ` Thông tin tour: ${tour.meta}.` : "";
+
+  const question = `Hãy tư vấn chi tiết giúp tôi về ${tourName}.${tourPrice}${tourMeta} Tour này phù hợp với ai và có nên đặt không?`;
+
+  if (input) {
+    input.value = question;
+    input.focus();
+  }
+}
+
+/* Tên hàm phụ để các file khác gọi đều chạy được */
+function askAiAboutProduct() {
+  askAIAboutCurrentTour();
+}
+
+function askAIForProduct() {
+  askAIAboutCurrentTour();
+}
+
+function askAiForProduct() {
+  askAIAboutCurrentTour();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  createAIWidget();
+});

@@ -244,7 +244,7 @@ function renderProductDetail() {
 
           <div class="product-actions">
             <button class="btn-cart" onclick="addProductToCart()">Thêm vào giỏ hàng</button>
-            <button class="btn-ai" onclick="askAiAboutProduct()">💖 Hỏi AI về tour này</button>
+            <button class="btn-ai" onclick="askAIAboutCurrentTour()">💖 Hỏi AI về tour này</button>
           </div>
         </div>
       </div>
