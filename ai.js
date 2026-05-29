@@ -259,3 +259,170 @@ function askAiForProduct() {
 document.addEventListener("DOMContentLoaded", function () {
   createAIWidget();
 });
+/* =====================================================
+   THÔNG BÁO ĐẸP TOÀN WEBSITE + MỞ AI MƯỢT
+   Dán ở CUỐI file ai.js
+   ===================================================== */
+
+function createToastContainer() {
+  let container = document.querySelector(".site-toast-container");
+
+  if (!container) {
+    container = document.createElement("div");
+    container.className = "site-toast-container";
+    document.body.appendChild(container);
+  }
+
+  return container;
+}
+
+function showToast(message, type = "success", title = "") {
+  const container = createToastContainer();
+
+  const toast = document.createElement("div");
+  toast.className = `site-toast ${type}`;
+
+  let icon = "✓";
+  let toastTitle = title || "Thông báo";
+
+  if (type === "success") {
+    icon = "✓";
+    toastTitle = title || "Thành công";
+  }
+
+  if (type === "info") {
+    icon = "i";
+    toastTitle = title || "Thông báo";
+  }
+
+  if (type === "warning") {
+    icon = "!";
+    toastTitle = title || "Lưu ý";
+  }
+
+  if (type === "error") {
+    icon = "×";
+    toastTitle = title || "Có lỗi xảy ra";
+  }
+
+  toast.innerHTML = `
+    <div class="site-toast-icon">${icon}</div>
+
+    <div class="site-toast-content">
+      <div class="site-toast-title">${toastTitle}</div>
+      <div class="site-toast-message">${message}</div>
+    </div>
+
+    <button class="site-toast-close" type="button">×</button>
+  `;
+
+  container.appendChild(toast);
+
+  const closeBtn = toast.querySelector(".site-toast-close");
+
+  closeBtn.addEventListener("click", function () {
+    hideToast(toast);
+  });
+
+  setTimeout(function () {
+    toast.classList.add("show");
+  }, 30);
+
+  setTimeout(function () {
+    hideToast(toast);
+  }, 3200);
+}
+
+function hideToast(toast) {
+  if (!toast) return;
+
+  toast.classList.remove("show");
+
+  setTimeout(function () {
+    if (toast.parentElement) {
+      toast.remove();
+    }
+  }, 350);
+}
+
+/* Mở hộp AI mượt */
+function openAiChat() {
+  const chatBox = document.getElementById("aiChatBox");
+
+  if (!chatBox) {
+    if (typeof createAIWidget === "function") {
+      createAIWidget();
+    }
+  }
+
+  const box = document.getElementById("aiChatBox");
+
+  if (box) {
+    box.classList.add("show");
+  }
+
+  setTimeout(function () {
+    const input = document.getElementById("aiInput");
+
+    if (input) {
+      input.focus();
+    }
+  }, 220);
+}
+
+/* Đóng hộp AI mượt */
+function closeAiChat() {
+  const chatBox = document.getElementById("aiChatBox");
+
+  if (chatBox) {
+    chatBox.classList.remove("show");
+  }
+}
+
+/* Nút Hỏi AI về tour này */
+function askAIAboutCurrentTour() {
+  openAiChat();
+
+  setTimeout(function () {
+    const input = document.getElementById("aiInput");
+
+    const title =
+      document.querySelector(".product-info-box h1") ||
+      document.querySelector(".product-title") ||
+      document.querySelector("h1");
+
+    const price =
+      document.querySelector(".product-price") ||
+      document.querySelector(".price");
+
+    const meta =
+      document.querySelector(".product-meta") ||
+      document.querySelector(".meta");
+
+    const tourName = title ? title.innerText.trim() : "tour này";
+    const tourPrice = price ? price.innerText.trim() : "";
+    const tourMeta = meta ? meta.innerText.trim() : "";
+
+    const question = `Hãy tư vấn giúp tôi về ${tourName}. Giá ${tourPrice}. Thông tin: ${tourMeta}. Tour này phù hợp với ai và có nên đặt không?`;
+
+    if (input) {
+      input.value = question;
+      input.focus();
+    }
+
+    showToast("Đã mở Trần Hà Linh để tư vấn tour này cho bạn.", "info", "Trần Hà Linh");
+  }, 260);
+}
+
+/* Tên hàm phụ để nút cũ vẫn chạy */
+function askAiAboutProduct() {
+  askAIAboutCurrentTour();
+}
+
+function askAIForProduct() {
+  askAIAboutCurrentTour();
+}
+
+function askAiForProduct() {
+  askAIAboutCurrentTour();
+}

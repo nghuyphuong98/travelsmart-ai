@@ -367,13 +367,23 @@
 <body>
 
 <header class="header">
-  <div class="logo">TravelSmart</div>
+  <a href="/" class="logo">
+  <img src="assets/logo.png" alt="TravelSmart">
+</a>
   <nav>
   <a href="/">Trang chủ</a>
   <a href="/products">Sản phẩm</a>
   <a href="/cart">Giỏ hàng</a>
   <a href="/checkout">Thanh toán</a>
-  <a href="/login">Đăng nhập</a>
+
+  <div class="nav-account admin-account">
+    <span class="nav-account-name">Xin chào, Admin</span>
+
+    <div class="account-dropdown">
+      <a href="/admin">Quản lý đơn hàng</a>
+      <button type="button" class="account-logout" onclick="adminLogout()">Đăng xuất</button>
+    </div>
+  </div>
 </nav>
 </header>
 
@@ -1172,6 +1182,12 @@
     }
   });
 </script>
-
+<script>
+  function adminLogout() {
+    localStorage.removeItem("isAdmin");
+    localStorage.removeItem("adminLoggedIn");
+    window.location.href = "/login";
+  }
+</script>
 </body>
 </html>

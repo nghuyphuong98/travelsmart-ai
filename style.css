@@ -2469,3 +2469,246 @@ button,
     height: 520px !important;
   }
 }
+/* Logo và menu tài khoản admin */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo img {
+  height: 78px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.nav-account {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-account-name {
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 10px 0;
+  display: inline-block;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  width: 220px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.2);
+  padding: 10px;
+  display: none;
+  z-index: 9999;
+}
+
+.account-dropdown a,
+.account-dropdown button {
+  width: 100%;
+  display: block;
+  padding: 11px 12px;
+  border: none;
+  background: transparent;
+  color: #0f172a;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: #eef6ff;
+  color: #0b5ed7;
+}
+
+.nav-account:hover .account-dropdown {
+  display: block;
+}
+
+.account-logout {
+  color: #dc2626 !important;
+}
+
+@media (max-width: 768px) {
+  .logo img {
+    height: 68px;
+  }
+
+  .nav-account {
+    width: 100%;
+  }
+
+  .account-dropdown {
+    position: static;
+    width: 100%;
+    margin-top: 6px;
+  }
+}
+/* =====================================================
+   THÔNG BÁO ĐẸP KIỂU ADMIN + HIỆU ỨNG MỞ AI MƯỢT
+   Dán ở CUỐI file style.css
+   ===================================================== */
+
+/* Toast thông báo đẹp */
+.site-toast-container {
+  position: fixed;
+  top: 90px;
+  right: 28px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.site-toast {
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  color: #ffffff;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.22);
+  transform: translateX(120%);
+  opacity: 0;
+  transition: 0.35s ease;
+  pointer-events: auto;
+}
+
+.site-toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.site-toast-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.site-toast-content {
+  flex: 1;
+}
+
+.site-toast-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.site-toast-message {
+  font-size: 15px;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.site-toast-close {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.site-toast-close:hover {
+  opacity: 1;
+}
+
+.site-toast.success {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.site-toast.info {
+  background: linear-gradient(135deg, #0b5ed7, #2563eb);
+}
+
+.site-toast.warning {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+}
+
+.site-toast.error {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+/* Ẩn toast cũ nếu còn */
+.tsai-toast {
+  display: none !important;
+}
+
+/* AI chat mở mượt */
+.ai-chat-box {
+  display: flex !important;
+  flex-direction: column !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(26px) scale(0.96) !important;
+  transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s ease !important;
+}
+
+.ai-chat-box.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* Nút AI ảnh full tròn */
+.ai-float-button {
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.ai-float-button img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+}
+
+.ai-float-button span {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  padding: 8px 4px !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent) !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .site-toast-container {
+    top: 82px;
+    left: 16px;
+    right: 16px;
+  }
+
+  .site-toast {
+    width: 100%;
+  }
+}
