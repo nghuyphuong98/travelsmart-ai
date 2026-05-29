@@ -63,7 +63,8 @@
       font-size: 17px;
     }
 
-    .transfer-note {
+    .transfer-note,
+    .transfer-amount {
       display: inline-block;
       background: white;
       color: #dc2626;
@@ -146,13 +147,15 @@
           <p><b>Ngân hàng:</b> MB Bank</p>
           <p><b>Chủ tài khoản:</b> NGUYEN HUY PHUONG</p>
           <p><b>Số tài khoản:</b> 856789898989</p>
-          <p><b>Mã cửa hàng:</b> TravelSmartAI</p>
+
+          <p><b>Số tiền thanh toán:</b></p>
+          <p class="transfer-amount" id="transferAmount">0đ</p>
 
           <p><b>Nội dung chuyển khoản tự động:</b></p>
           <p class="transfer-note" id="transferNote">TravelSmartAI</p>
 
           <p class="qr-warning">
-            Khi quét mã QR, app ngân hàng sẽ tự điền số tài khoản và nội dung chuyển khoản.
+            Khi quét mã QR, app ngân hàng sẽ tự điền số tài khoản, số tiền và nội dung chuyển khoản.
           </p>
         </div>
       </div>
@@ -178,7 +181,6 @@
 <script src="checkout.js"></script>
 
 <script>
-  // Thông tin tài khoản ngân hàng
   const BANK_ID = "MB";
   const ACCOUNT_NO = "856789898989";
   const ACCOUNT_NAME = "NGUYEN HUY PHUONG";
@@ -186,6 +188,20 @@
 
   function cleanPhone(phone) {
     return phone.replace(/\s+/g, "").trim();
+  }
+
+  function getCartTotalAmount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const total = cart.reduce((sum, item) => {
+      return sum + item.price * item.quantity;
+    }, 0);
+
+    return total;
+  }
+
+  function formatVND(amount) {
+    return Number(amount).toLocaleString("vi-VN") + "đ";
   }
 
   function createTransferContent() {
@@ -202,18 +218,21 @@
   function updateVietQRImage() {
     const qrImage = document.getElementById("vietQrImage");
     const transferNote = document.getElementById("transferNote");
+    const transferAmount = document.getElementById("transferAmount");
 
-    if (!qrImage || !transferNote) {
+    if (!qrImage || !transferNote || !transferAmount) {
       return;
     }
 
     const transferContent = createTransferContent();
+    const totalAmount = getCartTotalAmount();
 
     transferNote.innerText = transferContent;
+    transferAmount.innerText = formatVND(totalAmount);
 
     const qrUrl =
       `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${QR_TEMPLATE}.png` +
-      `?amount=` +
+      `?amount=${encodeURIComponent(totalAmount)}` +
       `&addInfo=${encodeURIComponent(transferContent)}` +
       `&accountName=${encodeURIComponent(ACCOUNT_NAME)}` +
       `&cache=${Date.now()}`;
