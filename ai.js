@@ -1,4 +1,4 @@
-const AI_WEBHOOK_URL = "";
+const AI_WEBHOOK_URL = "https://dykp2013.app.n8n.cloud/webhook/travelsmart-ai";
 
 function createAIWidget() {
   let container = document.getElementById("aiWidget");
