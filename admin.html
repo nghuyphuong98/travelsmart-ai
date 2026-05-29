@@ -25,6 +25,7 @@
     .admin-panel h1 {
       color: #0b5ed7;
       margin-bottom: 16px;
+      font-size: 36px;
     }
 
     .admin-login input {
@@ -51,6 +52,12 @@
       font-weight: bold;
       background: #0b5ed7;
       color: white;
+      transition: 0.2s;
+    }
+
+    .admin-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
     .admin-btn.red {
@@ -68,26 +75,43 @@
     .order-card-admin {
       border: 1px solid #e5e7eb;
       border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 16px;
+      padding: 22px;
+      margin-bottom: 18px;
       background: #f9fafb;
+    }
+
+    .order-card-admin.confirmed {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .order-card-admin.cancelled {
+      background: #fef2f2;
+      border-color: #fecaca;
     }
 
     .order-card-admin h3 {
       color: #0b5ed7;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      font-size: 24px;
     }
 
     .order-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px 22px;
-      margin-top: 10px;
+      gap: 8px 28px;
+      margin-top: 12px;
+      margin-bottom: 14px;
+    }
+
+    .order-grid p {
+      margin: 4px 0;
+      line-height: 1.45;
     }
 
     .status-badge {
       display: inline-block;
-      padding: 7px 12px;
+      padding: 7px 14px;
       border-radius: 999px;
       font-weight: bold;
       font-size: 14px;
@@ -119,6 +143,7 @@
       padding: 8px 12px;
       border-radius: 8px;
       font-weight: bold;
+      margin-left: 8px;
     }
 
     .empty-admin {
@@ -130,13 +155,77 @@
       font-weight: bold;
     }
 
+    .confirmed-message {
+      background: #ecfdf5;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+      padding: 13px 15px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 16px;
+    }
+
+    .cancelled-message {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      padding: 13px 15px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 16px;
+    }
+
+    .pending-message {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+      padding: 13px 15px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 16px;
+    }
+
+    .order-products {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      margin: 12px 0;
+    }
+
     @media (max-width: 700px) {
+      .admin-container {
+        margin: 20px auto;
+        padding: 0 12px;
+      }
+
+      .admin-login,
+      .admin-panel {
+        padding: 20px;
+      }
+
+      .admin-login h1,
+      .admin-panel h1 {
+        font-size: 28px;
+      }
+
       .order-grid {
         grid-template-columns: 1fr;
       }
 
-      .admin-container {
-        margin: 20px auto;
+      .admin-actions {
+        flex-direction: column;
+      }
+
+      .admin-btn {
+        width: 100%;
+      }
+
+      .ticket-code {
+        display: block;
+        margin-left: 0;
+        margin-top: 8px;
+        width: fit-content;
       }
     }
   </style>
@@ -158,7 +247,7 @@
 
   <div class="admin-login" id="adminLoginBox">
     <h1>Đăng nhập Admin</h1>
-    <p>Chỉ quản trị viên mới có quyền kiểm tra và xác nhận vé.</p>
+    <p>Chỉ quản trị viên mới có quyền kiểm tra, xác nhận hoặc hủy vé.</p>
 
     <input id="adminPassword" type="password" placeholder="Nhập mật khẩu admin">
 
@@ -231,6 +320,78 @@
     return "status-pending";
   }
 
+  function getCardClass(status) {
+    if (status === "Đã xác nhận vé") {
+      return "confirmed";
+    }
+
+    if (status === "Đã hủy vé") {
+      return "cancelled";
+    }
+
+    return "";
+  }
+
+  function getStatusMessage(order) {
+    if (order.orderStatus === "Đã xác nhận vé") {
+      return `
+        <div class="confirmed-message">
+          Vé đã được admin xác nhận.
+          ${order.confirmedAt ? `<br>Thời gian xác nhận: ${order.confirmedAt}` : ""}
+        </div>
+      `;
+    }
+
+    if (order.orderStatus === "Đã hủy vé") {
+      return `
+        <div class="cancelled-message">
+          Vé đã bị hủy.
+          ${order.cancelledAt ? `<br>Thời gian hủy: ${order.cancelledAt}` : ""}
+        </div>
+      `;
+    }
+
+    return `
+      <div class="pending-message">
+        Đơn hàng đang chờ admin kiểm tra và xác nhận vé.
+      </div>
+    `;
+  }
+
+  function getActionButtons(order) {
+    if (order.orderStatus === "Đã xác nhận vé") {
+      return `
+        <div class="admin-actions">
+          <button class="admin-btn red" onclick="cancelTicket('${order.orderCode}')">
+            Hủy vé đã xác nhận
+          </button>
+        </div>
+      `;
+    }
+
+    if (order.orderStatus === "Đã hủy vé") {
+      return `
+        <div class="admin-actions">
+          <button class="admin-btn green" onclick="confirmTicket('${order.orderCode}')">
+            Xác nhận lại vé
+          </button>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="admin-actions">
+        <button class="admin-btn green" onclick="confirmTicket('${order.orderCode}')">
+          Xác nhận vé
+        </button>
+
+        <button class="admin-btn red" onclick="cancelTicket('${order.orderCode}')">
+          Hủy vé
+        </button>
+      </div>
+    `;
+  }
+
   function renderAdminOrders() {
     const ordersList = document.getElementById("adminOrdersList");
     const orders = getOrders();
@@ -255,8 +416,11 @@
         }).join("<br>");
 
         ordersList.innerHTML += `
-          <div class="order-card-admin">
-            <h3>Đơn hàng: <span class="ticket-code">${order.orderCode}</span></h3>
+          <div class="order-card-admin ${getCardClass(order.orderStatus)}">
+            <h3>
+              Đơn hàng:
+              <span class="ticket-code">${order.orderCode}</span>
+            </h3>
 
             <p>
               <b>Trạng thái:</b>
@@ -264,6 +428,8 @@
                 ${order.orderStatus}
               </span>
             </p>
+
+            ${getStatusMessage(order)}
 
             <div class="order-grid">
               <p><b>Khách hàng:</b> ${order.customerName}</p>
@@ -276,18 +442,14 @@
               <p><b>Thời gian đặt:</b> ${order.createdAt}</p>
             </div>
 
-            <p><b>Sản phẩm:</b><br>${productsText}</p>
+            <div class="order-products">
+              <b>Sản phẩm:</b><br>
+              ${productsText}
+            </div>
+
             <p><b>Ghi chú:</b> ${order.note || "Không có"}</p>
 
-            <div class="admin-actions">
-              <button class="admin-btn green" onclick="confirmTicket('${order.orderCode}')">
-                Xác nhận vé
-              </button>
-
-              <button class="admin-btn red" onclick="cancelTicket('${order.orderCode}')">
-                Hủy vé
-              </button>
-            </div>
+            ${getActionButtons(order)}
           </div>
         `;
       });
@@ -301,7 +463,8 @@
         return {
           ...order,
           orderStatus: "Đã xác nhận vé",
-          confirmedAt: new Date().toLocaleString("vi-VN")
+          confirmedAt: new Date().toLocaleString("vi-VN"),
+          cancelledAt: ""
         };
       }
 
@@ -314,6 +477,12 @@
   }
 
   function cancelTicket(orderCode) {
+    const confirmCancel = confirm("Bạn có chắc muốn hủy vé của đơn hàng này không?");
+
+    if (!confirmCancel) {
+      return;
+    }
+
     const orders = getOrders();
 
     const updatedOrders = orders.map(order => {
