@@ -95,12 +95,6 @@
       cursor: not-allowed;
     }
 
-    .address-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0 14px;
-    }
-
     .auth-actions {
       display: flex;
       gap: 12px;
@@ -223,8 +217,7 @@
         font-size: 29px;
       }
 
-      .profile-grid,
-      .address-grid {
+      .profile-grid {
         grid-template-columns: 1fr;
       }
 
@@ -238,6 +231,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <header class="header">
@@ -262,6 +256,7 @@
       Đang xử lý dữ liệu tài khoản...
     </div>
 
+    <!-- FORM ĐẶT LẠI MẬT KHẨU -->
     <div class="auth-box" id="resetPasswordBox" style="display: none;">
       <h2>Đặt lại mật khẩu</h2>
       <p>Bạn đang ở chế độ đặt lại mật khẩu. Hãy nhập mật khẩu mới bên dưới.</p>
@@ -278,12 +273,14 @@
       </div>
     </div>
 
+    <!-- KHU VỰC CHƯA ĐĂNG NHẬP -->
     <div id="guestArea">
       <div class="auth-tabs">
         <button class="auth-tab active" id="loginTab" onclick="showAuthTab('login')">Đăng nhập</button>
         <button class="auth-tab" id="registerTab" onclick="showAuthTab('register')">Đăng ký</button>
       </div>
 
+      <!-- ĐĂNG NHẬP -->
       <div class="auth-box" id="loginBox">
         <h2>Đăng nhập</h2>
 
@@ -303,6 +300,7 @@
         </div>
       </div>
 
+      <!-- QUÊN MẬT KHẨU -->
       <div class="auth-box" id="forgotBox" style="display: none;">
         <h2>Quên mật khẩu</h2>
         <p>Nhập email tài khoản của bạn. Hệ thống sẽ gửi link đặt lại mật khẩu qua Gmail.</p>
@@ -319,6 +317,7 @@
         </div>
       </div>
 
+      <!-- ĐĂNG KÝ -->
       <div class="auth-box" id="registerBox" style="display: none;">
         <h2>Đăng ký tài khoản</h2>
 
@@ -348,6 +347,7 @@
       </div>
     </div>
 
+    <!-- KHU VỰC ĐÃ ĐĂNG NHẬP -->
     <div id="userArea" style="display: none;">
       <div class="profile-card">
         <h2>Thông tin tài khoản</h2>
@@ -456,6 +456,7 @@
 
   let currentUser = null;
   let currentProfile = null;
+  let isResetPasswordMode = false;
 
   function showLoading(message = "Đang xử lý dữ liệu tài khoản...") {
     const loadingBox = document.getElementById("loadingBox");
@@ -469,6 +470,9 @@
 
   function setStatus(elementId, message, isSuccess = true) {
     const element = document.getElementById(elementId);
+
+    if (!element) return;
+
     element.innerText = message;
     element.style.color = isSuccess ? "#16a34a" : "#dc2626";
   }
@@ -484,7 +488,7 @@
 
     select.innerHTML = `<option value="">Chọn tỉnh / thành phố</option>`;
 
-    PROVINCES.forEach(province => {
+    PROVINCES.forEach(function (province) {
       const option = document.createElement("option");
       option.value = province;
       option.innerText = province;
@@ -497,6 +501,44 @@
     });
   }
 
+  function isRecoveryLink() {
+    const hash = window.location.hash || "";
+    const search = window.location.search || "";
+
+    return (
+      hash.includes("type=recovery") ||
+      search.includes("type=recovery") ||
+      hash.includes("access_token") ||
+      search.includes("access_token")
+    );
+  }
+
+  function showResetPasswordMode() {
+    isResetPasswordMode = true;
+
+    const guestArea = document.getElementById("guestArea");
+    const userArea = document.getElementById("userArea");
+    const resetPasswordBox = document.getElementById("resetPasswordBox");
+
+    if (guestArea) guestArea.style.display = "none";
+    if (userArea) userArea.style.display = "none";
+    if (resetPasswordBox) resetPasswordBox.style.display = "block";
+
+    setStatus("resetPasswordStatus", "Vui lòng nhập mật khẩu mới để hoàn tất đặt lại mật khẩu.", true);
+  }
+
+  function hideResetPasswordMode() {
+    isResetPasswordMode = false;
+
+    const resetPasswordBox = document.getElementById("resetPasswordBox");
+
+    if (resetPasswordBox) {
+      resetPasswordBox.style.display = "none";
+    }
+
+    window.history.replaceState({}, document.title, "login.html");
+  }
+
   function showAuthTab(tab) {
     const loginBox = document.getElementById("loginBox");
     const registerBox = document.getElementById("registerBox");
@@ -507,6 +549,7 @@
     loginBox.style.display = "none";
     registerBox.style.display = "none";
     forgotBox.style.display = "none";
+
     loginTab.classList.remove("active");
     registerTab.classList.remove("active");
 
@@ -537,7 +580,7 @@
     const confirmPassword = document.getElementById("registerConfirmPassword").value;
 
     if (!name || !phone || !email || !province || !ward || !village || !addressDetail || !password || !confirmPassword) {
-      setStatus("registerStatus", "Vui lòng nhập đầy đủ thông tin địa chỉ.", false);
+      setStatus("registerStatus", "Vui lòng nhập đầy đủ thông tin.", false);
       return;
     }
 
@@ -634,6 +677,7 @@
     }
 
     currentUser = data.user;
+
     await loadProfile();
 
     hideLoading();
@@ -669,6 +713,11 @@
     const newPassword = document.getElementById("resetNewPassword").value;
     const confirmPassword = document.getElementById("resetConfirmPassword").value;
 
+    if (!newPassword || !confirmPassword) {
+      setStatus("resetPasswordStatus", "Vui lòng nhập đầy đủ mật khẩu mới.", false);
+      return;
+    }
+
     if (newPassword.length < 6) {
       setStatus("resetPasswordStatus", "Mật khẩu mới cần ít nhất 6 ký tự.", false);
       return;
@@ -694,11 +743,25 @@
 
     setStatus("resetPasswordStatus", "Đổi mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.", true);
 
+    await supabaseClient.auth.signOut();
+
+    currentUser = null;
+    currentProfile = null;
+
+    localStorage.removeItem("profile");
+    localStorage.removeItem("currentUserEmail");
+
     setTimeout(function () {
-      document.getElementById("resetPasswordBox").style.display = "none";
+      hideResetPasswordMode();
+
+      document.getElementById("resetNewPassword").value = "";
+      document.getElementById("resetConfirmPassword").value = "";
+
       document.getElementById("guestArea").style.display = "block";
+      document.getElementById("userArea").style.display = "none";
+
       showAuthTab("login");
-    }, 1200);
+    }, 1300);
   }
 
   async function logoutUser() {
@@ -770,7 +833,7 @@
     const addressDetail = document.getElementById("profileAddressDetail").value.trim();
 
     if (!name || !phone || !province || !ward || !village || !addressDetail) {
-      setStatus("profileStatus", "Vui lòng nhập đầy đủ thông tin địa chỉ.", false);
+      setStatus("profileStatus", "Vui lòng nhập đầy đủ thông tin.", false);
       return;
     }
 
@@ -888,10 +951,8 @@
     const userArea = document.getElementById("userArea");
     const resetPasswordBox = document.getElementById("resetPasswordBox");
 
-    if (window.location.hash.includes("type=recovery")) {
-      guestArea.style.display = "none";
-      userArea.style.display = "none";
-      resetPasswordBox.style.display = "block";
+    if (isResetPasswordMode || isRecoveryLink()) {
+      showResetPasswordMode();
       return;
     }
 
@@ -928,6 +989,19 @@
   async function initAuthPage() {
     fillProvinceSelect("registerProvince");
     fillProvinceSelect("profileProvince");
+
+    if (isRecoveryLink()) {
+      showResetPasswordMode();
+      return;
+    }
+
+    supabaseClient.auth.onAuthStateChange(async function (event, session) {
+      if (event === "PASSWORD_RECOVERY") {
+        currentUser = session && session.user ? session.user : null;
+        showResetPasswordMode();
+        return;
+      }
+    });
 
     showLoading("Đang kiểm tra trạng thái đăng nhập...");
 
