@@ -201,6 +201,116 @@
       margin: 12px 0;
     }
 
+    #adminToastContainer {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .admin-toast {
+      min-width: 320px;
+      max-width: 430px;
+      color: white;
+      padding: 16px 18px;
+      border-radius: 16px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transform: translateX(120%);
+      opacity: 0;
+      transition: all 0.35s ease;
+    }
+
+    .admin-toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .admin-toast.success {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+    }
+
+    .admin-toast.error {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+    }
+
+    .admin-toast.info {
+      background: linear-gradient(135deg, #0b5ed7, #2563eb);
+    }
+
+    .admin-toast.warning {
+      background: linear-gradient(135deg, #f97316, #fb923c);
+    }
+
+    .admin-toast-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .admin-toast-content b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+
+    .admin-toast-content p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.4;
+      opacity: 0.95;
+    }
+
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999998;
+      padding: 20px;
+    }
+
+    .confirm-box {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 20px 55px rgba(0, 0, 0, 0.3);
+      transform: scale(0.92);
+      opacity: 0;
+      transition: all 0.25s ease;
+    }
+
+    .confirm-overlay.show .confirm-box {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .confirm-box h3 {
+      color: #dc2626;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .confirm-box p {
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .confirm-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     @media (max-width: 700px) {
       .admin-container {
         margin: 20px auto;
@@ -235,6 +345,22 @@
         margin-top: 8px;
         width: fit-content;
       }
+
+      #adminToastContainer {
+        left: 12px;
+        right: 12px;
+        top: 14px;
+      }
+
+      .admin-toast {
+        min-width: auto;
+        max-width: none;
+        width: 100%;
+      }
+
+      .confirm-actions {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -250,6 +376,20 @@
     <a href="admin.html">Admin</a>
   </nav>
 </header>
+
+<div id="adminToastContainer"></div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3 id="confirmTitle">Xác nhận thao tác</h3>
+    <p id="confirmMessage">Bạn có chắc muốn thực hiện thao tác này không?</p>
+
+    <div class="confirm-actions">
+      <button class="admin-btn gray" onclick="closeConfirmBox()">Hủy</button>
+      <button class="admin-btn red" id="confirmActionButton">Đồng ý</button>
+    </div>
+  </div>
+</div>
 
 <section class="admin-container">
 
@@ -281,6 +421,86 @@
 
 <script>
   const ADMIN_PASSWORD = "admin123";
+  let pendingConfirmAction = null;
+
+  function showAdminToast(title, message, type = "success") {
+    const container = document.getElementById("adminToastContainer");
+
+    const toast = document.createElement("div");
+    toast.className = `admin-toast ${type}`;
+
+    let icon = "✅";
+
+    if (type === "error") {
+      icon = "⚠️";
+    }
+
+    if (type === "info") {
+      icon = "ℹ️";
+    }
+
+    if (type === "warning") {
+      icon = "🔔";
+    }
+
+    toast.innerHTML = `
+      <div class="admin-toast-icon">${icon}</div>
+      <div class="admin-toast-content">
+        <b>${title}</b>
+        <p>${message}</p>
+      </div>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(function () {
+      toast.classList.add("show");
+    }, 50);
+
+    setTimeout(function () {
+      toast.classList.remove("show");
+
+      setTimeout(function () {
+        toast.remove();
+      }, 350);
+    }, 3200);
+  }
+
+  function openConfirmBox(title, message, onConfirm) {
+    const overlay = document.getElementById("confirmOverlay");
+    const titleEl = document.getElementById("confirmTitle");
+    const messageEl = document.getElementById("confirmMessage");
+    const actionButton = document.getElementById("confirmActionButton");
+
+    titleEl.innerText = title;
+    messageEl.innerText = message;
+    pendingConfirmAction = onConfirm;
+
+    actionButton.onclick = function () {
+      if (typeof pendingConfirmAction === "function") {
+        pendingConfirmAction();
+      }
+
+      closeConfirmBox();
+    };
+
+    overlay.style.display = "flex";
+
+    setTimeout(function () {
+      overlay.classList.add("show");
+    }, 30);
+  }
+
+  function closeConfirmBox() {
+    const overlay = document.getElementById("confirmOverlay");
+
+    overlay.classList.remove("show");
+
+    setTimeout(function () {
+      overlay.style.display = "none";
+      pendingConfirmAction = null;
+    }, 250);
+  }
 
   function adminLogin() {
     const password = document.getElementById("adminPassword").value;
@@ -288,11 +508,14 @@
 
     if (password === ADMIN_PASSWORD) {
       localStorage.setItem("isAdmin", "true");
+      loginStatus.innerText = "";
       showAdminPanel();
+      showAdminToast("Đăng nhập thành công", "Bạn đã vào khu vực quản trị viên.", "success");
     } else {
       loginStatus.innerText = "Sai mật khẩu admin.";
       loginStatus.style.color = "#dc2626";
       loginStatus.style.fontWeight = "bold";
+      showAdminToast("Đăng nhập thất bại", "Mật khẩu admin không chính xác.", "error");
     }
   }
 
@@ -300,6 +523,7 @@
     localStorage.removeItem("isAdmin");
     document.getElementById("adminPanel").style.display = "none";
     document.getElementById("adminLoginBox").style.display = "block";
+    showAdminToast("Đã đăng xuất", "Bạn đã thoát khỏi trang quản trị.", "info");
   }
 
   function showAdminPanel() {
@@ -383,7 +607,7 @@
             Xuất hóa đơn
           </button>
 
-          <button class="admin-btn red" onclick="cancelTicket('${order.orderCode}')">
+          <button class="admin-btn red" onclick="requestCancelTicket('${order.orderCode}')">
             Hủy vé đã xác nhận
           </button>
         </div>
@@ -406,7 +630,7 @@
           Xác nhận vé
         </button>
 
-        <button class="admin-btn red" onclick="cancelTicket('${order.orderCode}')">
+        <button class="admin-btn red" onclick="requestCancelTicket('${order.orderCode}')">
           Hủy vé
         </button>
       </div>
@@ -494,16 +718,25 @@
 
     saveOrders(updatedOrders);
     renderAdminOrders();
-    alert("Đã xác nhận vé cho đơn hàng " + orderCode);
+
+    showAdminToast(
+      "Xác nhận vé thành công",
+      `Đơn hàng ${orderCode} đã được chuyển sang trạng thái Đã xác nhận vé.`,
+      "success"
+    );
+  }
+
+  function requestCancelTicket(orderCode) {
+    openConfirmBox(
+      "Xác nhận hủy vé",
+      `Bạn có chắc muốn hủy vé của đơn hàng ${orderCode} không?`,
+      function () {
+        cancelTicket(orderCode);
+      }
+    );
   }
 
   function cancelTicket(orderCode) {
-    const confirmCancel = confirm("Bạn có chắc muốn hủy vé của đơn hàng này không?");
-
-    if (!confirmCancel) {
-      return;
-    }
-
     const orders = getOrders();
 
     const updatedOrders = orders.map(order => {
@@ -520,14 +753,19 @@
 
     saveOrders(updatedOrders);
     renderAdminOrders();
-    alert("Đã hủy vé cho đơn hàng " + orderCode);
+
+    showAdminToast(
+      "Đã hủy vé",
+      `Đơn hàng ${orderCode} đã được chuyển sang trạng thái Đã hủy vé.`,
+      "warning"
+    );
   }
 
   function exportOrders() {
     const orders = getOrders();
 
     if (orders.length === 0) {
-      alert("Chưa có đơn hàng để xuất.");
+      showAdminToast("Không có dữ liệu", "Chưa có đơn hàng để xuất.", "error");
       return;
     }
 
@@ -541,6 +779,8 @@
     a.click();
 
     URL.revokeObjectURL(url);
+
+    showAdminToast("Xuất dữ liệu thành công", "File dữ liệu đơn hàng đã được tải xuống.", "success");
   }
 
   function formatPriceAdmin(price) {
@@ -572,12 +812,12 @@
     const order = getOrderByCode(orderCode);
 
     if (!order) {
-      alert("Không tìm thấy đơn hàng.");
+      showAdminToast("Không tìm thấy đơn hàng", "Vui lòng tải lại danh sách đơn hàng.", "error");
       return;
     }
 
     if (order.orderStatus !== "Đã xác nhận vé") {
-      alert("Chỉ có thể xuất vé khi đơn hàng đã được xác nhận.");
+      showAdminToast("Chưa thể xuất vé", "Chỉ có thể xuất vé khi đơn hàng đã được xác nhận.", "warning");
       return;
     }
 
@@ -735,18 +975,20 @@
     `);
 
     ticketWindow.document.close();
+
+    showAdminToast("Đã mở vé", `Vé của đơn hàng ${orderCode} đã được mở ở tab mới.`, "info");
   }
 
   function printInvoice(orderCode) {
     const order = getOrderByCode(orderCode);
 
     if (!order) {
-      alert("Không tìm thấy đơn hàng.");
+      showAdminToast("Không tìm thấy đơn hàng", "Vui lòng tải lại danh sách đơn hàng.", "error");
       return;
     }
 
     if (order.orderStatus !== "Đã xác nhận vé") {
-      alert("Chỉ có thể xuất hóa đơn khi đơn hàng đã được xác nhận.");
+      showAdminToast("Chưa thể xuất hóa đơn", "Chỉ có thể xuất hóa đơn khi đơn hàng đã được xác nhận.", "warning");
       return;
     }
 
@@ -920,6 +1162,8 @@
     `);
 
     invoiceWindow.document.close();
+
+    showAdminToast("Đã mở hóa đơn", `Hóa đơn của đơn hàng ${orderCode} đã được mở ở tab mới.`, "info");
   }
 
   window.addEventListener("load", function () {
