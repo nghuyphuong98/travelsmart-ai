@@ -46,12 +46,12 @@ function renderOrderSummary() {
     <div class="process-box">
       <h3>Quy trình thanh toán và giao hàng</h3>
       <ol>
-        <li>Khách hàng gửi đơn đặt tour trên website.</li>
-        <li>n8n tiếp nhận đơn hàng và lưu vào Google Sheet.</li>
-        <li>Nhân viên liên hệ xác nhận thông tin.</li>
-        <li>Khách thanh toán theo phương thức đã chọn.</li>
-        <li>TravelSmart gửi vé/lịch trình qua email, Zalo hoặc SMS.</li>
-        <li>Khách tham gia tour theo ngày khởi hành.</li>
+        <li>Khách hàng gửi yêu cầu đặt tour trên website.</li>
+        <li>TravelSmart tiếp nhận thông tin và kiểm tra tình trạng tour.</li>
+        <li>Nhân viên liên hệ xác nhận lịch trình, số lượng khách và thông tin liên hệ.</li>
+        <li>Khách hàng thanh toán theo phương thức đã chọn.</li>
+        <li>TravelSmart gửi xác nhận đặt tour, lịch trình và thông tin cần thiết qua email, Zalo hoặc SMS.</li>
+        <li>Khách hàng tham gia tour theo thời gian đã xác nhận.</li>
       </ol>
     </div>
   `;
@@ -106,40 +106,8 @@ async function submitOrder() {
     localStorage.removeItem("cart");
 
   } catch (error) {
-    status.innerText = "Chưa kết nối được n8n. Hãy kiểm tra webhook đơn hàng trong file checkout.js.";
+    status.innerText = "Chưa kết nối được hệ thống đặt hàng. Vui lòng kiểm tra lại sau.";
   }
 }
 
 renderOrderSummary();
-function toggleBankQR() {
-  const paymentMethod = document.getElementById("paymentMethod").value;
-  const bankQrBox = document.getElementById("bankQrBox");
-
-  if (!bankQrBox) {
-    return;
-  }
-
-  if (paymentMethod === "Chuyển khoản ngân hàng") {
-    bankQrBox.style.display = "block";
-    updateTransferNote();
-  } else {
-    bankQrBox.style.display = "none";
-  }
-}
-
-function updateTransferNote() {
-  const phone = document.getElementById("customerPhone")?.value || "SoDienThoai";
-  const transferNote = document.getElementById("transferNote");
-
-  if (transferNote) {
-    transferNote.innerText = `TRAVELSMART ${phone}`;
-  }
-}
-
-const customerPhoneInput = document.getElementById("customerPhone");
-
-if (customerPhoneInput) {
-  customerPhoneInput.addEventListener("input", updateTransferNote);
-}
-
-toggleBankQR();
