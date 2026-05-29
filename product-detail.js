@@ -298,3 +298,299 @@ function askAIAboutProduct() {
 }
 
 renderProductDetail();
+// ===============================
+// BẢNG SO SÁNH NÂNG CẤP - TRAVELSMART AI
+// Dán nguyên đoạn này vào CUỐI file product-detail.js
+// ===============================
+
+function formatComparePrice(value) {
+  if (!value) return "Đang cập nhật";
+
+  if (typeof value === "string") {
+    return value.includes("đ") ? value : value + "đ";
+  }
+
+  return Number(value).toLocaleString("vi-VN") + "đ";
+}
+
+function getCurrentProductForCompare() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = Number(urlParams.get("id"));
+
+  let product = null;
+
+  if (typeof products !== "undefined" && Array.isArray(products)) {
+    product = products.find(item => Number(item.id) === id);
+  }
+
+  if (!product && typeof PRODUCTS !== "undefined" && Array.isArray(PRODUCTS)) {
+    product = PRODUCTS.find(item => Number(item.id) === id);
+  }
+
+  if (!product && typeof tours !== "undefined" && Array.isArray(tours)) {
+    product = tours.find(item => Number(item.id) === id);
+  }
+
+  if (!product) {
+    const titleElement =
+      document.querySelector(".product-title") ||
+      document.querySelector("h1") ||
+      document.querySelector(".detail-title");
+
+    const priceElement =
+      document.querySelector(".price") ||
+      document.querySelector(".product-price") ||
+      document.querySelector(".new-price");
+
+    product = {
+      name: titleElement ? titleElement.innerText.trim() : "Tour du lịch TravelSmart AI",
+      price: priceElement ? priceElement.innerText.trim() : "Đang cập nhật",
+      duration: "Theo lịch trình tour",
+      competitorName: "Tour tương tự trên thị trường"
+    };
+  }
+
+  return product;
+}
+
+function getCompetitorPrice(product) {
+  if (product.competitorPrice) {
+    return product.competitorPrice;
+  }
+
+  const priceNumber = Number(
+    String(product.price || "")
+      .replaceAll(".", "")
+      .replaceAll(",", "")
+      .replace(/[^\d]/g, "")
+  );
+
+  if (!priceNumber || Number.isNaN(priceNumber)) {
+    return "Cao hơn hoặc chưa tối ưu";
+  }
+
+  return priceNumber + 450000;
+}
+
+function renderStrongComparison() {
+  const product = getCurrentProductForCompare();
+
+  if (!product) {
+    return;
+  }
+
+  const oldCompareSections = document.querySelectorAll(
+    ".compare-section, .compare-box, #compareBox, #comparisonBox"
+  );
+
+  oldCompareSections.forEach(section => {
+    section.remove();
+  });
+
+  const productName = product.name || product.title || "Tour du lịch TravelSmart AI";
+  const productPrice = product.price || product.newPrice || product.salePrice || "Đang cập nhật";
+  const productDuration = product.duration || product.time || "Theo lịch trình tour";
+  const competitorName = product.competitorName || "Đối thủ tham khảo";
+  const competitorPrice = getCompetitorPrice(product);
+  const competitorDuration = product.competitorDuration || productDuration;
+
+  const compareSection = document.createElement("section");
+  compareSection.className = "compare-section";
+
+  compareSection.innerHTML = `
+    <h2>So sánh với sản phẩm tương tự</h2>
+
+    <div class="compare-highlight">
+      <div>
+        <strong>TravelSmart AI có lợi thế rõ ràng hơn</strong>
+        <p>
+          Không chỉ cung cấp tour, TravelSmart AI còn tích hợp AI tư vấn, giỏ hàng,
+          đặt tour nhanh, lưu thông tin khách hàng và quy trình thanh toán rõ ràng.
+        </p>
+      </div>
+    </div>
+
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Tiêu chí</th>
+            <th>TravelSmart AI</th>
+            <th>Đối thủ tham khảo</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Tên sản phẩm</td>
+            <td>
+              <b>${productName}</b>
+              <br>
+              <span class="win-text">Tour được hiển thị rõ ràng, dễ xem, dễ đặt.</span>
+            </td>
+            <td>
+              ${competitorName}
+              <br>
+              <span class="weak-text">Chỉ dùng để tham khảo, chưa tối ưu trải nghiệm như TravelSmart AI.</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Giá tour</td>
+            <td>
+              <b class="strong-point">${formatComparePrice(productPrice)}</b>
+              <br>
+              <span class="win-text">Mức giá cạnh tranh, phù hợp khách muốn tiết kiệm chi phí.</span>
+            </td>
+            <td>
+              ${formatComparePrice(competitorPrice)}
+              <br>
+              <span class="weak-text">Chi phí thường cao hơn hoặc chưa có lợi thế rõ ràng về giá.</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Thời gian</td>
+            <td>
+              <b>${productDuration}</b>
+              <br>
+              <span class="win-text">Lịch trình được trình bày dễ hiểu, thuận tiện khi lựa chọn.</span>
+            </td>
+            <td>
+              ${competitorDuration}
+              <br>
+              <span class="weak-text">Thông tin lịch trình thường phải đọc nhiều bước mới nắm được.</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Tư vấn sản phẩm</td>
+            <td>
+              <b class="strong-point">Có AI tư vấn ngay trong trang chi tiết tour</b>
+              <br>
+              <span class="win-text">
+                Khách có thể hỏi trực tiếp về giá, lịch trình, ưu đãi, dịch vụ bao gồm
+                và cách đặt tour.
+              </span>
+            </td>
+            <td>
+              <span class="weak-text">
+                Thường chỉ có thông tin cố định, khách phải tự tìm hiểu hoặc chờ nhân viên phản hồi.
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Quy trình đặt tour</td>
+            <td>
+              <b class="strong-point">Có giỏ hàng và thanh toán rõ ràng</b>
+              <br>
+              <span class="win-text">
+                Khách có thể thêm tour vào giỏ, kiểm tra đơn hàng, chọn phương thức thanh toán
+                và gửi đơn nhanh chóng.
+              </span>
+            </td>
+            <td>
+              <span class="weak-text">
+                Thường phải gọi điện, nhắn tin hoặc điền thông tin thủ công nhiều lần.
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Lưu thông tin khách hàng</td>
+            <td>
+              <b class="strong-point">Có tài khoản và tự động điền thông tin khi thanh toán</b>
+              <br>
+              <span class="win-text">
+                Khi đã đăng nhập, hệ thống lấy sẵn họ tên, số điện thoại, email và địa chỉ.
+              </span>
+            </td>
+            <td>
+              <span class="weak-text">
+                Khách dễ phải nhập lại thông tin khi đặt đơn mới.
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Quản lý đơn hàng</td>
+            <td>
+              <b class="strong-point">Có trang admin kiểm tra và xác nhận vé</b>
+              <br>
+              <span class="win-text">
+                Đơn hàng được lưu lại, admin có thể xác nhận vé, hủy vé và xuất vé/hóa đơn.
+              </span>
+            </td>
+            <td>
+              <span class="weak-text">
+                Quản lý đơn hàng thường rời rạc, phụ thuộc nhiều vào thao tác thủ công.
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Thanh toán</td>
+            <td>
+              <b class="strong-point">Hỗ trợ QR ngân hàng và ví điện tử</b>
+              <br>
+              <span class="win-text">
+                Khách có thể quét mã QR, xem nội dung chuyển khoản và hoàn tất thanh toán thuận tiện.
+              </span>
+            </td>
+            <td>
+              <span class="weak-text">
+                Phương thức thanh toán có thể chưa trực quan hoặc thiếu hướng dẫn rõ ràng.
+              </span>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Trải nghiệm website</td>
+            <td>
+              <b class="strong-point">Thiết kế hiện đại, dễ dùng, thân thiện trên điện thoại</b>
+              <br>
+              <span class="win-text">
+                Phù hợp với khách muốn tìm tour nhanh, hỏi nhanh và đặt tour ngay trên web.
+              </span>
+            </td>
+            <td>
+              <span class="weak-text">
+                Trải nghiệm có thể chưa tập trung vào tốc độ, tự động hóa và hỗ trợ khách hàng.
+              </span>
+            </td>
+          </tr>
+
+          <tr class="final-row">
+            <td>Kết luận</td>
+            <td>
+              <b>
+                TravelSmart AI nổi bật hơn nhờ giá cạnh tranh, AI tư vấn, giỏ hàng,
+                thanh toán rõ ràng, quản lý đơn hàng và trải nghiệm hiện đại.
+              </b>
+            </td>
+            <td>
+              <span>
+                Đối thủ chỉ phù hợp để tham khảo, nhưng chưa có nhiều lợi thế tự động hóa
+                và hỗ trợ khách hàng như TravelSmart AI.
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  const detailContainer =
+    document.querySelector(".product-detail") ||
+    document.querySelector(".detail-container") ||
+    document.querySelector(".container") ||
+    document.querySelector("main") ||
+    document.body;
+
+  detailContainer.appendChild(compareSection);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(renderStrongComparison, 300);
+});
