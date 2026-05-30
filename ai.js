@@ -1,9 +1,8 @@
 
-
 const AI_WEBHOOK_URL = "https://dykp2013.app.n8n.cloud/webhook/travelsmart-ai";
 
 /* ===============================
-   TẠO GIAO DIỆN CHAT AI
+   TẠO KHUNG CHAT
    =============================== */
 
 function createAIWidget() {
@@ -93,7 +92,7 @@ function handleAIEnter(event) {
 }
 
 /* ===============================
-   THÊM TIN NHẮN VÀO KHUNG CHAT
+   HIỂN THỊ TIN NHẮN
    =============================== */
 
 function addAIMessage(type, text) {
@@ -106,13 +105,43 @@ function addAIMessage(type, text) {
   const div = document.createElement("div");
   div.className = type === "user" ? "ai-user" : "ai-bot";
 
-  const safeText = String(text || "")
-    .replace(/\n/g, "<br>");
+  const safeText = String(text || "").replace(/\n/g, "<br>");
 
   div.innerHTML = safeText;
 
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
+}
+
+/* ===============================
+   SESSION + LỊCH SỬ CHAT
+   =============================== */
+
+function getOrCreateChatSessionId() {
+  let sessionId = localStorage.getItem("travelsmart_chat_session_id");
+
+  if (!sessionId) {
+    sessionId = "ts_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    localStorage.setItem("travelsmart_chat_session_id", sessionId);
+  }
+
+  return sessionId;
+}
+
+function getAIChatHistory() {
+  const messages = document.querySelectorAll("#aiMessages .ai-user, #aiMessages .ai-bot");
+  const history = [];
+
+  messages.forEach(function (item) {
+    const role = item.classList.contains("ai-user") ? "Khách hàng" : "Trần Hà Linh";
+    const text = item.innerText.trim();
+
+    if (text) {
+      history.push(`${role}: ${text}`);
+    }
+  });
+
+  return history.slice(-10).join("\n");
 }
 
 /* ===============================
@@ -150,7 +179,7 @@ function getCurrentTourInfo() {
 }
 
 /* ===============================
-   TRẢ LỜI DỰ PHÒNG NẾU N8N LỖI
+   TRẢ LỜI DỰ PHÒNG KHI N8N LỖI
    =============================== */
 
 function createLocalAIReply(message) {
@@ -187,7 +216,7 @@ function createLocalAIReply(message) {
 
   if (lower.includes("thanh toán") || lower.includes("qr") || lower.includes("chuyển khoản")) {
     return `
-      Bạn có thể vào trang <b>Thanh toán</b> để xem thông tin chuyển khoản hoặc mã QR nếu đơn hàng đã có trong giỏ. 
+      Bạn có thể vào trang <b>Thanh toán</b> để xem thông tin chuyển khoản hoặc mã QR nếu đơn hàng đã có trong giỏ.
       Trước khi thanh toán, bạn nên kiểm tra lại tên tour, số lượng và tổng tiền.
     `;
   }
@@ -199,7 +228,7 @@ function createLocalAIReply(message) {
   }
 
   return `
-    Linh có thể hỗ trợ bạn chọn tour, xem giá, lịch trình và gợi ý tour phù hợp với nhu cầu. 
+    Linh có thể hỗ trợ bạn chọn tour, xem giá, lịch trình và gợi ý tour phù hợp với nhu cầu.
     Bạn có thể nói cho Linh biết bạn muốn đi đâu, đi mấy ngày, ngân sách khoảng bao nhiêu và đi cùng bao nhiêu người nhé.
   `;
 }
@@ -245,20 +274,22 @@ async function sendAIMessage() {
       return;
     }
 
+    const payload = {
+      message: message,
+      history: getAIChatHistory(),
+      sessionId: getOrCreateChatSessionId(),
+      page: window.location.href,
+      tour: getCurrentTourInfo(),
+      brand: "TravelSmart",
+      assistant: "Trần Hà Linh"
+    };
+
     const response = await fetch(AI_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-     body: JSON.stringify({
-  message: message,
-  page: window.location.href,
-  tour: getCurrentTourInfo(),
-  brand: "TravelSmart",
-  assistant: "Trần Hà Linh",
-  sessionId: getOrCreateChatSessionId(),
-  history: getAIChatHistory()
-})
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
@@ -304,7 +335,7 @@ async function sendAIMessage() {
 }
 
 /* ===============================
-   NÚT "HỎI AI VỀ TOUR NÀY"
+   NÚT "HỎI VỀ TOUR NÀY"
    =============================== */
 
 function askAIAboutCurrentTour() {
@@ -330,7 +361,7 @@ function askAIAboutCurrentTour() {
   }, 260);
 }
 
-/* Các tên hàm phụ để nút cũ vẫn chạy */
+/* Các tên hàm phụ để code cũ vẫn gọi được */
 function askAiAboutProduct() {
   askAIAboutCurrentTour();
 }
@@ -344,7 +375,7 @@ function askAiForProduct() {
 }
 
 /* ===============================
-   TOAST THÔNG BÁO ĐẸP
+   TOAST THÔNG BÁO
    =============================== */
 
 function createToastContainer() {
