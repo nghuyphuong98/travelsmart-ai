@@ -1191,3 +1191,225 @@
 </script>
 </body>
 </html>
+<script>
+  /* =====================================================
+     GỬI VÉ TỰ ĐỘNG QUA GMAIL BẰNG N8N
+     Dán nguyên đoạn này trước </body>
+     ===================================================== */
+
+  const SEND_TICKET_WEBHOOK_URL = "https://dykp2013.app.n8n.cloud/webhook/travelsmart-send-ticket";
+
+  function ticketNotify(message, type = "success") {
+    if (typeof showToast === "function") {
+      showToast(message, type);
+      return;
+    }
+
+    if (typeof showAdminToast === "function") {
+      showAdminToast(message, type);
+      return;
+    }
+
+    console.log(message);
+  }
+
+  function formatMoneyForTicket(value) {
+    const number = Number(String(value || "").replace(/[^\d]/g, "")) || 0;
+    return number.toLocaleString("vi-VN") + "đ";
+  }
+
+  function cleanText(value) {
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function findOrderCardById(orderId) {
+    const cards = document.querySelectorAll(".admin-order-card, .order-card, .ticket-card, .card, div");
+
+    for (const card of cards) {
+      const text = card.innerText || "";
+
+      if (text.includes(orderId) && text.includes("Khách hàng")) {
+        return card;
+      }
+    }
+
+    return null;
+  }
+
+  function getValueFromCard(card, label) {
+    if (!card) return "";
+
+    const text = card.innerText || "";
+    const lines = text.split("\n").map(line => line.trim()).filter(Boolean);
+
+    for (const line of lines) {
+      if (line.toLowerCase().startsWith(label.toLowerCase())) {
+        return cleanText(line.replace(label, "").replace(":", ""));
+      }
+    }
+
+    const regex = new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*:?\\s*(.+)", "i");
+    const match = text.match(regex);
+
+    return match ? cleanText(match[1].split("\n")[0]) : "";
+  }
+
+  function buildItemsTextFromCard(card) {
+    if (!card) {
+      return "<p>Không có thông tin tour.</p>";
+    }
+
+    const text = card.innerText || "";
+    const productMatch = text.match(/Sản phẩm:\s*([\s\S]*?)(Ghi chú:|Xác nhận|Hủy|Xuất|$)/i);
+
+    if (productMatch && productMatch[1]) {
+      return `<p>${cleanText(productMatch[1])}</p>`;
+    }
+
+    return "<p>Không có thông tin tour.</p>";
+  }
+
+  function getOrderDataForTicket(orderId) {
+    const card = findOrderCardById(orderId);
+
+    const customerName =
+      getValueFromCard(card, "Khách hàng") ||
+      getValueFromCard(card, "Họ tên") ||
+      "Khách hàng";
+
+    const phone =
+      getValueFromCard(card, "Số điện thoại") ||
+      getValueFromCard(card, "Điện thoại") ||
+      "Chưa có";
+
+    const email =
+      getValueFromCard(card, "Email") ||
+      "";
+
+    const address =
+      getValueFromCard(card, "Địa chỉ") ||
+      "Chưa có";
+
+    const departureDate =
+      getValueFromCard(card, "Ngày khởi hành") ||
+      "Chưa chọn";
+
+    const paymentMethod =
+      getValueFromCard(card, "Thanh toán") ||
+      "Chưa có";
+
+    const deliveryMethod =
+      getValueFromCard(card, "Giao vé") ||
+      getValueFromCard(card, "Giao hàng") ||
+      "Gửi qua email";
+
+    const totalRaw =
+      getValueFromCard(card, "Tổng tiền") ||
+      "0";
+
+    const note =
+      getValueFromCard(card, "Ghi chú") ||
+      "Không có";
+
+    return {
+      orderId: orderId,
+      customerName: customerName,
+      phone: phone,
+      email: email,
+      address: address,
+      departureDate: departureDate,
+      paymentMethod: paymentMethod,
+      deliveryMethod: deliveryMethod,
+      totalText: totalRaw,
+      itemsText: buildItemsTextFromCard(card),
+      note: note,
+      confirmedAt: new Date().toLocaleString("vi-VN")
+    };
+  }
+
+  async function sendTicketEmailByN8N(orderId) {
+    if (!SEND_TICKET_WEBHOOK_URL || SEND_TICKET_WEBHOOK_URL.includes("DAN_LINK")) {
+      throw new Error("Bạn chưa dán Production URL n8n gửi vé.");
+    }
+
+    const payload = getOrderDataForTicket(orderId);
+
+    if (!payload.email) {
+      throw new Error("Đơn hàng chưa có email khách hàng.");
+    }
+
+    const response = await fetch(SEND_TICKET_WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error("n8n chưa gửi được Gmail.");
+    }
+
+    return await response.json();
+  }
+
+  function isOrderConfirmedOnPage(orderId) {
+    const card = findOrderCardById(orderId);
+
+    if (!card) {
+      return false;
+    }
+
+    const text = card.innerText || "";
+
+    return (
+      text.includes("Đã xác nhận vé") ||
+      text.includes("Vé đã được admin xác nhận") ||
+      text.includes("trạng thái Đã xác nhận")
+    );
+  }
+
+  function wrapConfirmFunction(functionName) {
+    const oldFunction = window[functionName];
+
+    if (typeof oldFunction !== "function") {
+      return;
+    }
+
+    window[functionName] = async function(orderId) {
+      const result = oldFunction.apply(this, arguments);
+
+      await new Promise(resolve => setTimeout(resolve, 900));
+
+      if (!isOrderConfirmedOnPage(orderId)) {
+        return result;
+      }
+
+      try {
+        ticketNotify("Đang gửi vé qua Gmail cho khách...", "info");
+
+        await sendTicketEmailByN8N(orderId);
+
+        ticketNotify("Đã xác nhận vé và gửi Gmail cho khách thành công.", "success");
+      } catch (error) {
+        console.error(error);
+        ticketNotify("Đã xác nhận vé nhưng chưa gửi được Gmail. Kiểm tra lại n8n/Gmail.", "warning");
+      }
+
+      return result;
+    };
+  }
+
+  function initAutoSendTicketEmail() {
+    wrapConfirmFunction("confirmOrder");
+    wrapConfirmFunction("confirmTicket");
+    wrapConfirmFunction("approveOrder");
+    wrapConfirmFunction("confirmBooking");
+  }
+
+  window.addEventListener("load", function() {
+    setTimeout(initAutoSendTicketEmail, 500);
+  });
+</script>
