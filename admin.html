@@ -3,13 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin xác nhận vé - TravelSmart</title>
+  <title>Admin - TravelSmart</title>
   <link rel="stylesheet" href="style.css">
-
   <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #f3f6fb;
+      color: #111827;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      background: #0b5ed7;
+      color: white;
+      padding: 22px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      color: white;
+      text-decoration: none;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .header nav {
+      display: flex;
+      gap: 26px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .header nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
     .admin-container {
-      max-width: 1100px;
-      margin: 40px auto;
+      max-width: 1200px;
+      margin: 38px auto 80px;
       padding: 0 20px;
     }
 
@@ -24,17 +64,20 @@
     .admin-login h1,
     .admin-panel h1 {
       color: #0b5ed7;
-      margin-bottom: 16px;
+      margin: 0 0 12px;
       font-size: 36px;
     }
 
-    .admin-login input {
+    .admin-login input,
+    .admin-tools input,
+    .admin-tools select {
       width: 100%;
       padding: 14px;
       border-radius: 10px;
       border: 1px solid #ddd;
-      margin: 10px 0;
+      margin: 8px 0;
       font-size: 16px;
+      background: white;
     }
 
     .admin-actions {
@@ -53,31 +96,68 @@
       background: #0b5ed7;
       color: white;
       transition: 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .admin-btn:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
+    .admin-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .admin-btn.red { background: #dc2626; }
+    .admin-btn.green { background: #16a34a; }
+    .admin-btn.gray { background: #6b7280; }
+    .admin-btn.orange { background: #f97316; }
+    .admin-btn.purple { background: #7c3aed; }
+    .admin-btn.pink { background: #db2777; }
+
+    .admin-dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 24px 0;
     }
 
-    .admin-btn.red {
-      background: #dc2626;
+    .admin-stat-card {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 18px;
     }
 
-    .admin-btn.green {
-      background: #16a34a;
+    .admin-stat-card h3 {
+      color: #0b5ed7;
+      font-size: 16px;
+      margin: 0 0 8px;
     }
 
-    .admin-btn.gray {
-      background: #6b7280;
+    .admin-stat-card p {
+      color: #e11d48;
+      font-size: 26px;
+      font-weight: bold;
+      margin: 0;
     }
 
-    .admin-btn.orange {
-      background: #f97316;
+    .admin-quick-links,
+    .admin-report-box {
+      background: #f0f7ff;
+      border: 1px solid #bfdbfe;
+      padding: 18px;
+      border-radius: 16px;
+      margin: 18px 0;
     }
 
-    .admin-btn.purple {
-      background: #7c3aed;
+    .admin-quick-links h3,
+    .admin-report-box h3 {
+      color: #0b5ed7;
+      margin: 0 0 12px;
+    }
+
+    .admin-tools {
+      display: grid;
+      grid-template-columns: 1fr 230px;
+      gap: 12px;
+      margin: 18px 0;
     }
 
     .order-card-admin {
@@ -88,19 +168,12 @@
       background: #f9fafb;
     }
 
-    .order-card-admin.confirmed {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-    }
-
-    .order-card-admin.cancelled {
-      background: #fef2f2;
-      border-color: #fecaca;
-    }
+    .order-card-admin.confirmed { background: #f0fdf4; border-color: #bbf7d0; }
+    .order-card-admin.cancelled { background: #fef2f2; border-color: #fecaca; }
 
     .order-card-admin h3 {
       color: #0b5ed7;
-      margin-bottom: 12px;
+      margin: 0 0 12px;
       font-size: 24px;
     }
 
@@ -108,14 +181,10 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px 28px;
-      margin-top: 12px;
-      margin-bottom: 14px;
+      margin: 12px 0 14px;
     }
 
-    .order-grid p {
-      margin: 4px 0;
-      line-height: 1.45;
-    }
+    .order-grid p { margin: 4px 0; line-height: 1.45; }
 
     .status-badge {
       display: inline-block;
@@ -125,23 +194,9 @@
       font-size: 14px;
     }
 
-    .status-pending {
-      background: #fff7ed;
-      color: #c2410c;
-      border: 1px solid #fed7aa;
-    }
-
-    .status-confirmed {
-      background: #ecfdf5;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
-    }
-
-    .status-cancelled {
-      background: #fef2f2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
-    }
+    .status-pending { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+    .status-confirmed { background: #ecfdf5; color: #15803d; border: 1px solid #bbf7d0; }
+    .status-cancelled { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
     .ticket-code {
       display: inline-block;
@@ -163,35 +218,18 @@
       font-weight: bold;
     }
 
-    .confirmed-message {
-      background: #ecfdf5;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
-      padding: 13px 15px;
-      border-radius: 12px;
-      font-weight: bold;
-      margin-top: 16px;
-    }
-
-    .cancelled-message {
-      background: #fef2f2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
-      padding: 13px 15px;
-      border-radius: 12px;
-      font-weight: bold;
-      margin-top: 16px;
-    }
-
+    .confirmed-message,
+    .cancelled-message,
     .pending-message {
-      background: #fff7ed;
-      color: #c2410c;
-      border: 1px solid #fed7aa;
       padding: 13px 15px;
       border-radius: 12px;
       font-weight: bold;
       margin-top: 16px;
     }
+
+    .confirmed-message { background: #ecfdf5; color: #15803d; border: 1px solid #bbf7d0; }
+    .cancelled-message { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .pending-message { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
 
     .order-products {
       background: white;
@@ -226,44 +264,14 @@
       transition: all 0.35s ease;
     }
 
-    .admin-toast.show {
-      transform: translateX(0);
-      opacity: 1;
-    }
-
-    .admin-toast.success {
-      background: linear-gradient(135deg, #16a34a, #22c55e);
-    }
-
-    .admin-toast.error {
-      background: linear-gradient(135deg, #dc2626, #ef4444);
-    }
-
-    .admin-toast.info {
-      background: linear-gradient(135deg, #0b5ed7, #2563eb);
-    }
-
-    .admin-toast.warning {
-      background: linear-gradient(135deg, #f97316, #fb923c);
-    }
-
-    .admin-toast-icon {
-      font-size: 24px;
-      line-height: 1;
-    }
-
-    .admin-toast-content b {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 16px;
-    }
-
-    .admin-toast-content p {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.4;
-      opacity: 0.95;
-    }
+    .admin-toast.show { transform: translateX(0); opacity: 1; }
+    .admin-toast.success { background: linear-gradient(135deg, #16a34a, #22c55e); }
+    .admin-toast.error { background: linear-gradient(135deg, #dc2626, #ef4444); }
+    .admin-toast.info { background: linear-gradient(135deg, #0b5ed7, #2563eb); }
+    .admin-toast.warning { background: linear-gradient(135deg, #f97316, #fb923c); }
+    .admin-toast-icon { font-size: 24px; line-height: 1; }
+    .admin-toast-content b { display: block; margin-bottom: 4px; font-size: 16px; }
+    .admin-toast-content p { margin: 0; font-size: 14px; line-height: 1.4; opacity: 0.95; }
 
     .confirm-overlay {
       position: fixed;
@@ -288,103 +296,42 @@
       transition: all 0.25s ease;
     }
 
-    .confirm-overlay.show .confirm-box {
-      transform: scale(1);
-      opacity: 1;
-    }
+    .confirm-overlay.show .confirm-box { transform: scale(1); opacity: 1; }
+    .confirm-box h3 { color: #dc2626; margin: 0 0 10px; font-size: 24px; }
+    .confirm-box p { line-height: 1.5; margin-bottom: 18px; }
+    .confirm-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
 
-    .confirm-box h3 {
-      color: #dc2626;
-      margin-bottom: 10px;
-      font-size: 24px;
-    }
-
-    .confirm-box p {
-      line-height: 1.5;
-      margin-bottom: 18px;
-    }
-
-    .confirm-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      flex-wrap: wrap;
+    @media (max-width: 900px) {
+      .admin-dashboard,
+      .admin-tools,
+      .order-grid { grid-template-columns: 1fr; }
+      .header { padding: 18px 20px; }
+      .admin-login h1, .admin-panel h1 { font-size: 28px; }
     }
 
     @media (max-width: 700px) {
-      .admin-container {
-        margin: 20px auto;
-        padding: 0 12px;
-      }
-
-      .admin-login,
-      .admin-panel {
-        padding: 20px;
-      }
-
-      .admin-login h1,
-      .admin-panel h1 {
-        font-size: 28px;
-      }
-
-      .order-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .admin-actions {
-        flex-direction: column;
-      }
-
-      .admin-btn {
-        width: 100%;
-      }
-
-      .ticket-code {
-        display: block;
-        margin-left: 0;
-        margin-top: 8px;
-        width: fit-content;
-      }
-
-      #adminToastContainer {
-        left: 12px;
-        right: 12px;
-        top: 14px;
-      }
-
-      .admin-toast {
-        min-width: auto;
-        max-width: none;
-        width: 100%;
-      }
-
-      .confirm-actions {
-        flex-direction: column;
-      }
+      .admin-container { margin: 20px auto; padding: 0 12px; }
+      .admin-login, .admin-panel { padding: 20px; }
+      .admin-actions { flex-direction: column; }
+      .admin-btn { width: 100%; }
+      .ticket-code { display: block; margin-left: 0; margin-top: 8px; width: fit-content; }
+      #adminToastContainer { left: 12px; right: 12px; top: 14px; }
+      .admin-toast { min-width: auto; max-width: none; width: 100%; }
+      .confirm-actions { flex-direction: column; }
     }
   </style>
 </head>
 <body>
 
 <header class="header">
-  <a href="/" class="logo">
-  <img src="assets/logo.png" alt="TravelSmart">
-</a>
+  <a href="index.html" class="logo">TravelSmart</a>
   <nav>
-  <a href="/">Trang chủ</a>
-  <a href="/products">Sản phẩm</a>
-  <a href="/cart">Giỏ hàng</a>
-  <a href="/checkout">Thanh toán</a>
-
-  <div class="nav-account admin-account">
-    <span class="nav-account-name">Xin chào, Admin</span>
-
-    <div class="account-dropdown">
-      <a href="/admin">Quản lý đơn hàng</a>
-      <button type="button" class="account-logout" onclick="adminLogout()">Đăng xuất</button>
-    </div>
-  </div>
-</nav>
+    <a href="index.html">Trang chủ</a>
+    <a href="products.html">Sản phẩm</a>
+    <a href="cart.html">Giỏ hàng</a>
+    <a href="checkout.html">Thanh toán</a>
+    <a href="admin.html">Admin</a>
+  </nav>
 </header>
 
 <div id="adminToastContainer"></div>
@@ -393,7 +340,6 @@
   <div class="confirm-box">
     <h3 id="confirmTitle">Xác nhận thao tác</h3>
     <p id="confirmMessage">Bạn có chắc muốn thực hiện thao tác này không?</p>
-
     <div class="confirm-actions">
       <button class="admin-btn gray" onclick="closeConfirmBox()">Hủy</button>
       <button class="admin-btn red" id="confirmActionButton">Đồng ý</button>
@@ -402,78 +348,84 @@
 </div>
 
 <section class="admin-container">
-
   <div class="admin-login" id="adminLoginBox">
     <h1>Đăng nhập Admin</h1>
     <p>Chỉ quản trị viên mới có quyền kiểm tra, xác nhận hoặc hủy vé.</p>
-
     <input id="adminPassword" type="password" placeholder="Nhập mật khẩu admin">
-
-    <button class="admin-btn" onclick="adminLogin()">Đăng nhập</button>
-
+    <button type="button" class="admin-btn" onclick="adminLogin()">Đăng nhập</button>
     <p id="loginStatus"></p>
   </div>
 
   <div class="admin-panel" id="adminPanel" style="display: none;">
     <h1>Quản lý xác nhận vé</h1>
-    <p>Admin có thể kiểm tra đơn hàng, xác nhận vé, hủy vé, xuất vé và xuất hóa đơn.</p>
+    <p>Admin có thể kiểm tra đơn hàng, xác nhận vé, gửi vé qua Gmail bằng n8n, hủy vé, xuất vé và xuất hóa đơn.</p>
 
-    <div class="admin-actions">
-      <button class="admin-btn" onclick="renderAdminOrders()">Tải lại danh sách</button>
-      <button class="admin-btn gray" onclick="exportOrders()">Xuất dữ liệu đơn hàng</button>
-      <button class="admin-btn red" onclick="adminLogout()">Đăng xuất</button>
+    <div class="admin-dashboard">
+      <div class="admin-stat-card"><h3>Tổng đơn hàng</h3><p id="statTotalOrders">0</p></div>
+      <div class="admin-stat-card"><h3>Chờ xác nhận</h3><p id="statPendingOrders">0</p></div>
+      <div class="admin-stat-card"><h3>Đã xác nhận</h3><p id="statConfirmedOrders">0</p></div>
+      <div class="admin-stat-card"><h3>Doanh thu xác nhận</h3><p id="statRevenue">0đ</p></div>
+    </div>
+
+    <div class="admin-report-box">
+      <h3>Gợi ý hỗ trợ ra quyết định</h3>
+      <p id="decisionSuggestion">Hệ thống sẽ tự phân tích đơn hàng và gợi ý cách xử lý.</p>
+    </div>
+
+    <div class="admin-quick-links">
+      <h3>Liên kết hệ thống</h3>
+      <div class="admin-actions">
+        <button class="admin-btn" onclick="renderAdminOrders()">Tải lại danh sách</button>
+        <button class="admin-btn gray" onclick="exportOrders()">Xuất dữ liệu đơn hàng</button>
+        <button class="admin-btn purple" onclick="openN8NWorkflow()">Mở n8n gửi vé</button>
+        <button class="admin-btn orange" onclick="openGoogleSheet()">Mở Google Sheet</button>
+        <button class="admin-btn green" onclick="createDemoOrder()">Tạo đơn demo</button>
+        <button class="admin-btn red" onclick="adminLogout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="admin-tools">
+      <input id="adminSearchInput" placeholder="Tìm theo mã đơn, tên khách, SĐT hoặc email..." oninput="renderAdminOrders()">
+      <select id="adminStatusFilter" onchange="renderAdminOrders()">
+        <option value="all">Tất cả trạng thái</option>
+        <option value="pending">Chờ xác nhận</option>
+        <option value="confirmed">Đã xác nhận vé</option>
+        <option value="cancelled">Đã hủy vé</option>
+      </select>
     </div>
 
     <div id="adminOrdersList"></div>
   </div>
-
 </section>
 
 <script>
   const ADMIN_PASSWORD = "admin123";
+  const SEND_TICKET_WEBHOOK_URL = "https://dykp2013.app.n8n.cloud/webhook/travelsmart-send-ticket";
+  const N8N_WORKFLOW_URL = "https://dykp2013.app.n8n.cloud/workflow";
+  const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets";
   let pendingConfirmAction = null;
 
   function showAdminToast(title, message, type = "success") {
     const container = document.getElementById("adminToastContainer");
-
     const toast = document.createElement("div");
     toast.className = `admin-toast ${type}`;
 
     let icon = "✅";
-
-    if (type === "error") {
-      icon = "⚠️";
-    }
-
-    if (type === "info") {
-      icon = "ℹ️";
-    }
-
-    if (type === "warning") {
-      icon = "🔔";
-    }
+    if (type === "error") icon = "⚠️";
+    if (type === "info") icon = "ℹ️";
+    if (type === "warning") icon = "🔔";
 
     toast.innerHTML = `
       <div class="admin-toast-icon">${icon}</div>
-      <div class="admin-toast-content">
-        <b>${title}</b>
-        <p>${message}</p>
-      </div>
+      <div class="admin-toast-content"><b>${title}</b><p>${message}</p></div>
     `;
 
     container.appendChild(toast);
-
-    setTimeout(function () {
-      toast.classList.add("show");
-    }, 50);
-
-    setTimeout(function () {
+    setTimeout(() => toast.classList.add("show"), 50);
+    setTimeout(() => {
       toast.classList.remove("show");
-
-      setTimeout(function () {
-        toast.remove();
-      }, 350);
-    }, 3200);
+      setTimeout(() => toast.remove(), 350);
+    }, 3300);
   }
 
   function openConfirmBox(title, message, onConfirm) {
@@ -487,33 +439,25 @@
     pendingConfirmAction = onConfirm;
 
     actionButton.onclick = function () {
-      if (typeof pendingConfirmAction === "function") {
-        pendingConfirmAction();
-      }
-
+      if (typeof pendingConfirmAction === "function") pendingConfirmAction();
       closeConfirmBox();
     };
 
     overlay.style.display = "flex";
-
-    setTimeout(function () {
-      overlay.classList.add("show");
-    }, 30);
+    setTimeout(() => overlay.classList.add("show"), 30);
   }
 
   function closeConfirmBox() {
     const overlay = document.getElementById("confirmOverlay");
-
     overlay.classList.remove("show");
-
-    setTimeout(function () {
+    setTimeout(() => {
       overlay.style.display = "none";
       pendingConfirmAction = null;
     }, 250);
   }
 
   function adminLogin() {
-    const password = document.getElementById("adminPassword").value;
+    const password = document.getElementById("adminPassword").value.trim();
     const loginStatus = document.getElementById("loginStatus");
 
     if (password === ADMIN_PASSWORD) {
@@ -522,7 +466,7 @@
       showAdminPanel();
       showAdminToast("Đăng nhập thành công", "Bạn đã vào khu vực quản trị viên.", "success");
     } else {
-      loginStatus.innerText = "Sai mật khẩu admin.";
+      loginStatus.innerText = "Sai mật khẩu admin. Mật khẩu đúng là admin123.";
       loginStatus.style.color = "#dc2626";
       loginStatus.style.fontWeight = "bold";
       showAdminToast("Đăng nhập thất bại", "Mật khẩu admin không chính xác.", "error");
@@ -543,7 +487,11 @@
   }
 
   function getOrders() {
-    return JSON.parse(localStorage.getItem("travelOrders")) || [];
+    try {
+      return JSON.parse(localStorage.getItem("travelOrders")) || [];
+    } catch (error) {
+      return [];
+    }
   }
 
   function saveOrders(orders) {
@@ -551,75 +499,63 @@
   }
 
   function getOrderByCode(orderCode) {
-    const orders = getOrders();
-    return orders.find(order => order.orderCode === orderCode);
+    return getOrders().find(order => order.orderCode === orderCode);
+  }
+
+  function formatPriceAdmin(price) {
+    return Number(price || 0).toLocaleString("vi-VN") + "đ";
+  }
+
+  function normalizeStatus(status) {
+    return status || "Đang chờ xác nhận";
   }
 
   function getStatusClass(status) {
-    if (status === "Đã xác nhận vé") {
-      return "status-confirmed";
-    }
-
-    if (status === "Đã hủy vé") {
-      return "status-cancelled";
-    }
-
+    if (status === "Đã xác nhận vé") return "status-confirmed";
+    if (status === "Đã hủy vé") return "status-cancelled";
     return "status-pending";
   }
 
   function getCardClass(status) {
-    if (status === "Đã xác nhận vé") {
-      return "confirmed";
-    }
-
-    if (status === "Đã hủy vé") {
-      return "cancelled";
-    }
-
+    if (status === "Đã xác nhận vé") return "confirmed";
+    if (status === "Đã hủy vé") return "cancelled";
     return "";
   }
 
   function getStatusMessage(order) {
     if (order.orderStatus === "Đã xác nhận vé") {
-      return `
-        <div class="confirmed-message">
-          Vé đã được admin xác nhận.
-          ${order.confirmedAt ? `<br>Thời gian xác nhận: ${order.confirmedAt}` : ""}
-        </div>
-      `;
+      return `<div class="confirmed-message">Vé đã được admin xác nhận.${order.confirmedAt ? `<br>Thời gian xác nhận: ${order.confirmedAt}` : ""}</div>`;
     }
-
     if (order.orderStatus === "Đã hủy vé") {
-      return `
-        <div class="cancelled-message">
-          Vé đã bị hủy.
-          ${order.cancelledAt ? `<br>Thời gian hủy: ${order.cancelledAt}` : ""}
-        </div>
-      `;
+      return `<div class="cancelled-message">Vé đã bị hủy.${order.cancelledAt ? `<br>Thời gian hủy: ${order.cancelledAt}` : ""}</div>`;
     }
+    return `<div class="pending-message">Đơn hàng đang chờ admin kiểm tra và xác nhận vé.</div>`;
+  }
 
-    return `
-      <div class="pending-message">
-        Đơn hàng đang chờ admin kiểm tra và xác nhận vé.
-      </div>
-    `;
+  function getProductsText(order) {
+    const cart = Array.isArray(order.cart) ? order.cart : [];
+    if (cart.length === 0) return "Không có thông tin tour.";
+    return cart.map(item => `${item.name || "Tour"} x ${item.quantity || 1}`).join("<br>");
+  }
+
+  function getProductsHtml(order) {
+    const cart = Array.isArray(order.cart) ? order.cart : [];
+    if (cart.length === 0) {
+      return `<tr><td colspan="4">Không có thông tin tour</td></tr>`;
+    }
+    return cart.map(item => {
+      const itemTotal = Number(item.price || 0) * Number(item.quantity || 1);
+      return `<tr><td>${item.name || "Tour"}</td><td>${formatPriceAdmin(item.price)}</td><td>${item.quantity || 1}</td><td>${formatPriceAdmin(itemTotal)}</td></tr>`;
+    }).join("");
   }
 
   function getActionButtons(order) {
     if (order.orderStatus === "Đã xác nhận vé") {
       return `
         <div class="admin-actions">
-          <button class="admin-btn purple" onclick="printTicket('${order.orderCode}')">
-            Xuất vé
-          </button>
-
-          <button class="admin-btn orange" onclick="printInvoice('${order.orderCode}')">
-            Xuất hóa đơn
-          </button>
-
-          <button class="admin-btn red" onclick="requestCancelTicket('${order.orderCode}')">
-            Hủy vé đã xác nhận
-          </button>
+          <button class="admin-btn purple" onclick="printTicket('${order.orderCode}')">Xuất vé</button>
+          <button class="admin-btn orange" onclick="printInvoice('${order.orderCode}')">Xuất hóa đơn</button>
+          <button class="admin-btn red" onclick="requestCancelTicket('${order.orderCode}')">Hủy vé đã xác nhận</button>
         </div>
       `;
     }
@@ -627,153 +563,184 @@
     if (order.orderStatus === "Đã hủy vé") {
       return `
         <div class="admin-actions">
-          <button class="admin-btn green" onclick="confirmTicket('${order.orderCode}')">
-            Xác nhận lại vé
-          </button>
+          <button class="admin-btn green" onclick="confirmTicket('${order.orderCode}')">Xác nhận lại vé & gửi Gmail</button>
         </div>
       `;
     }
 
     return `
       <div class="admin-actions">
-        <button class="admin-btn green" onclick="confirmTicket('${order.orderCode}')">
-          Xác nhận vé
-        </button>
-
-        <button class="admin-btn red" onclick="requestCancelTicket('${order.orderCode}')">
-          Hủy vé
-        </button>
+        <button class="admin-btn green" onclick="confirmTicket('${order.orderCode}')">Xác nhận vé & gửi Gmail</button>
+        <button class="admin-btn red" onclick="requestCancelTicket('${order.orderCode}')">Hủy vé</button>
       </div>
     `;
   }
 
+  function renderAdminDashboard(orders) {
+    const totalOrders = orders.length;
+    const pendingOrders = orders.filter(order => order.orderStatus !== "Đã xác nhận vé" && order.orderStatus !== "Đã hủy vé").length;
+    const confirmedOrders = orders.filter(order => order.orderStatus === "Đã xác nhận vé").length;
+    const revenue = orders
+      .filter(order => order.orderStatus === "Đã xác nhận vé")
+      .reduce((sum, order) => sum + Number(order.total || 0), 0);
+
+    document.getElementById("statTotalOrders").innerText = totalOrders;
+    document.getElementById("statPendingOrders").innerText = pendingOrders;
+    document.getElementById("statConfirmedOrders").innerText = confirmedOrders;
+    document.getElementById("statRevenue").innerText = formatPriceAdmin(revenue);
+
+    const suggestion = document.getElementById("decisionSuggestion");
+    if (totalOrders === 0) {
+      suggestion.innerText = "Chưa có đơn hàng. Hãy đặt thử một tour ở trang checkout hoặc bấm Tạo đơn demo để kiểm tra quy trình.";
+    } else if (pendingOrders > 0) {
+      suggestion.innerText = `Hiện có ${pendingOrders} đơn đang chờ xác nhận. Nên ưu tiên kiểm tra thanh toán và bấm xác nhận vé để gửi email cho khách.`;
+    } else {
+      suggestion.innerText = "Các đơn hiện tại đã được xử lý. Có thể theo dõi doanh thu và xuất dữ liệu để báo cáo.";
+    }
+  }
+
   function renderAdminOrders() {
     const ordersList = document.getElementById("adminOrdersList");
-    const orders = getOrders();
+    const orders = getOrders().map(order => ({ ...order, orderStatus: normalizeStatus(order.orderStatus) }));
+    renderAdminDashboard(orders);
 
-    if (orders.length === 0) {
-      ordersList.innerHTML = `
-        <div class="empty-admin">
-          Chưa có đơn hàng nào được lưu trên trình duyệt này.
-        </div>
-      `;
+    const keywordInput = document.getElementById("adminSearchInput");
+    const statusFilter = document.getElementById("adminStatusFilter");
+    const keyword = keywordInput ? keywordInput.value.toLowerCase().trim() : "";
+    const status = statusFilter ? statusFilter.value : "all";
+
+    let filteredOrders = orders;
+
+    if (keyword) {
+      filteredOrders = filteredOrders.filter(order => {
+        const searchText = `${order.orderCode || ""} ${order.customerName || ""} ${order.customerPhone || ""} ${order.customerEmail || ""}`.toLowerCase();
+        return searchText.includes(keyword);
+      });
+    }
+
+    if (status === "pending") {
+      filteredOrders = filteredOrders.filter(order => order.orderStatus !== "Đã xác nhận vé" && order.orderStatus !== "Đã hủy vé");
+    }
+    if (status === "confirmed") {
+      filteredOrders = filteredOrders.filter(order => order.orderStatus === "Đã xác nhận vé");
+    }
+    if (status === "cancelled") {
+      filteredOrders = filteredOrders.filter(order => order.orderStatus === "Đã hủy vé");
+    }
+
+    if (filteredOrders.length === 0) {
+      ordersList.innerHTML = `<div class="empty-admin">Không có đơn hàng phù hợp.</div>`;
       return;
     }
 
     ordersList.innerHTML = "";
 
-    orders
-      .slice()
-      .reverse()
-      .forEach(order => {
-        const productsText = order.cart.map(item => {
-          return `${item.name} x ${item.quantity}`;
-        }).join("<br>");
+    filteredOrders.slice().reverse().forEach(order => {
+      const productsText = getProductsText(order);
+      ordersList.innerHTML += `
+        <div class="order-card-admin ${getCardClass(order.orderStatus)}">
+          <h3>Đơn hàng: <span class="ticket-code">${order.orderCode || "Không có mã"}</span></h3>
 
-        ordersList.innerHTML += `
-          <div class="order-card-admin ${getCardClass(order.orderStatus)}">
-            <h3>
-              Đơn hàng:
-              <span class="ticket-code">${order.orderCode}</span>
-            </h3>
+          <p><b>Trạng thái:</b> <span class="status-badge ${getStatusClass(order.orderStatus)}">${order.orderStatus}</span></p>
 
-            <p>
-              <b>Trạng thái:</b>
-              <span class="status-badge ${getStatusClass(order.orderStatus)}">
-                ${order.orderStatus}
-              </span>
-            </p>
+          ${getStatusMessage(order)}
 
-            ${getStatusMessage(order)}
-
-            <div class="order-grid">
-              <p><b>Khách hàng:</b> ${order.customerName}</p>
-              <p><b>Số điện thoại:</b> ${order.customerPhone}</p>
-              <p><b>Email:</b> ${order.customerEmail}</p>
-              <p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p>
-              <p><b>Thanh toán:</b> ${order.paymentMethod}</p>
-              <p><b>Giao vé:</b> ${order.deliveryMethod}</p>
-              <p><b>Tổng tiền:</b> ${formatPriceAdmin(order.total)}</p>
-              <p><b>Thời gian đặt:</b> ${order.createdAt}</p>
-            </div>
-
-            <div class="order-products">
-              <b>Sản phẩm:</b><br>
-              ${productsText}
-            </div>
-
-            <p><b>Ghi chú:</b> ${order.note || "Không có"}</p>
-
-            ${getActionButtons(order)}
+          <div class="order-grid">
+            <p><b>Khách hàng:</b> ${order.customerName || "Không có"}</p>
+            <p><b>Số điện thoại:</b> ${order.customerPhone || "Không có"}</p>
+            <p><b>Email:</b> ${order.customerEmail || "Không có"}</p>
+            <p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p>
+            <p><b>Thanh toán:</b> ${order.paymentMethod || "Không có"}</p>
+            <p><b>Giao vé:</b> ${order.deliveryMethod || "Gửi vé qua email"}</p>
+            <p><b>Tổng tiền:</b> ${formatPriceAdmin(order.total)}</p>
+            <p><b>Thời gian đặt:</b> ${order.createdAt || "Không có"}</p>
           </div>
-        `;
-      });
+
+          <div class="order-products"><b>Sản phẩm:</b><br>${productsText}</div>
+          <p><b>Ghi chú:</b> ${order.note || "Không có"}</p>
+          ${getActionButtons(order)}
+        </div>
+      `;
+    });
   }
 
-  function confirmTicket(orderCode) {
+  async function confirmTicket(orderCode) {
     const orders = getOrders();
+    const order = orders.find(item => item.orderCode === orderCode);
 
-    const updatedOrders = orders.map(order => {
-      if (order.orderCode === orderCode) {
-        return {
-          ...order,
-          orderStatus: "Đã xác nhận vé",
-          confirmedAt: new Date().toLocaleString("vi-VN"),
-          cancelledAt: ""
-        };
+    if (!order) {
+      showAdminToast("Không tìm thấy đơn hàng", "Vui lòng tải lại danh sách đơn hàng.", "error");
+      return;
+    }
+
+    if (!order.customerEmail) {
+      showAdminToast("Thiếu email khách hàng", "Đơn hàng này chưa có email nên chưa thể gửi vé.", "error");
+      return;
+    }
+
+    try {
+      showAdminToast("Đang gửi vé", `Hệ thống đang gửi vé cho đơn hàng ${orderCode} qua Gmail.`, "info");
+
+      const response = await fetch(SEND_TICKET_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId: order.orderCode,
+          email: order.customerEmail,
+          customerName: order.customerName,
+          customerPhone: order.customerPhone,
+          address: order.customerAddress || "Không có",
+          paymentMethod: order.paymentMethod,
+          deliveryMethod: order.deliveryMethod || "Gửi vé qua email",
+          totalText: formatPriceAdmin(order.total),
+          itemsText: getProductsText(order),
+          note: order.note || "Không có",
+          confirmedAt: new Date().toLocaleString("vi-VN")
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error("n8n chưa gửi được Gmail.");
       }
 
-      return order;
-    });
+      const updatedOrders = orders.map(item => {
+        if (item.orderCode === orderCode) {
+          return { ...item, orderStatus: "Đã xác nhận vé", confirmedAt: new Date().toLocaleString("vi-VN"), cancelledAt: "" };
+        }
+        return item;
+      });
 
-    saveOrders(updatedOrders);
-    renderAdminOrders();
-
-    showAdminToast(
-      "Xác nhận vé thành công",
-      `Đơn hàng ${orderCode} đã được chuyển sang trạng thái Đã xác nhận vé.`,
-      "success"
-    );
+      saveOrders(updatedOrders);
+      renderAdminOrders();
+      showAdminToast("Xác nhận vé thành công", `Đơn hàng ${orderCode} đã được xác nhận và gửi vé qua Gmail.`, "success");
+    } catch (error) {
+      console.error(error);
+      showAdminToast("Gửi vé thất bại", "Không gửi được vé qua Gmail. Hãy kiểm tra workflow n8n hoặc CORS.", "error");
+    }
   }
 
   function requestCancelTicket(orderCode) {
-    openConfirmBox(
-      "Xác nhận hủy vé",
-      `Bạn có chắc muốn hủy vé của đơn hàng ${orderCode} không?`,
-      function () {
-        cancelTicket(orderCode);
-      }
-    );
+    openConfirmBox("Xác nhận hủy vé", `Bạn có chắc muốn hủy vé của đơn hàng ${orderCode} không?`, function () {
+      cancelTicket(orderCode);
+    });
   }
 
   function cancelTicket(orderCode) {
     const orders = getOrders();
-
     const updatedOrders = orders.map(order => {
       if (order.orderCode === orderCode) {
-        return {
-          ...order,
-          orderStatus: "Đã hủy vé",
-          cancelledAt: new Date().toLocaleString("vi-VN")
-        };
+        return { ...order, orderStatus: "Đã hủy vé", cancelledAt: new Date().toLocaleString("vi-VN") };
       }
-
       return order;
     });
-
     saveOrders(updatedOrders);
     renderAdminOrders();
-
-    showAdminToast(
-      "Đã hủy vé",
-      `Đơn hàng ${orderCode} đã được chuyển sang trạng thái Đã hủy vé.`,
-      "warning"
-    );
+    showAdminToast("Đã hủy vé", `Đơn hàng ${orderCode} đã được chuyển sang trạng thái Đã hủy vé.`, "warning");
   }
 
   function exportOrders() {
     const orders = getOrders();
-
     if (orders.length === 0) {
       showAdminToast("Không có dữ liệu", "Chưa có đơn hàng để xuất.", "error");
       return;
@@ -782,634 +749,118 @@
     const data = JSON.stringify(orders, null, 2);
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement("a");
     a.href = url;
     a.download = "travelsmart-orders.json";
     a.click();
-
     URL.revokeObjectURL(url);
-
     showAdminToast("Xuất dữ liệu thành công", "File dữ liệu đơn hàng đã được tải xuống.", "success");
   }
 
-  function formatPriceAdmin(price) {
-    return Number(price || 0).toLocaleString("vi-VN") + "đ";
+  function openN8NWorkflow() {
+    window.open(N8N_WORKFLOW_URL, "_blank");
   }
 
-  function getProductsHtml(order) {
-    return order.cart.map(item => {
-      const itemTotal = Number(item.price || 0) * Number(item.quantity || 1);
-
-      return `
-        <tr>
-          <td>${item.name}</td>
-          <td>${formatPriceAdmin(item.price)}</td>
-          <td>${item.quantity}</td>
-          <td>${formatPriceAdmin(itemTotal)}</td>
-        </tr>
-      `;
-    }).join("");
+  function openGoogleSheet() {
+    window.open(GOOGLE_SHEET_URL, "_blank");
   }
 
-  function getProductsText(order) {
-    return order.cart.map(item => {
-      return `${item.name} x ${item.quantity}`;
-    }).join("<br>");
+  function createDemoOrder() {
+    const email = prompt("Nhập email nhận vé để test:", "emailcuaban@gmail.com");
+    if (!email) return;
+
+    const orders = getOrders();
+    const orderCode = "TS-DEMO-" + Math.floor(1000 + Math.random() * 9000);
+    orders.push({
+      orderCode,
+      orderStatus: "Đang chờ xác nhận",
+      customerName: "Nguyễn Văn An",
+      customerPhone: "0912345678",
+      customerEmail: email,
+      customerAddress: "Hà Nội",
+      paymentMethod: "Chuyển khoản ngân hàng",
+      deliveryMethod: "Gửi vé qua email",
+      total: 5140000,
+      createdAt: new Date().toLocaleString("vi-VN"),
+      note: "Đơn demo để test admin gửi vé",
+      cart: [{ name: "Tour Đà Nẵng 3 ngày 2 đêm - Gói 1", price: 5140000, quantity: 1 }]
+    });
+    saveOrders(orders);
+    renderAdminOrders();
+    showAdminToast("Đã tạo đơn demo", `Mã đơn ${orderCode} đã được thêm vào danh sách.`, "success");
   }
 
   function printTicket(orderCode) {
     const order = getOrderByCode(orderCode);
-
     if (!order) {
       showAdminToast("Không tìm thấy đơn hàng", "Vui lòng tải lại danh sách đơn hàng.", "error");
       return;
     }
-
     if (order.orderStatus !== "Đã xác nhận vé") {
       showAdminToast("Chưa thể xuất vé", "Chỉ có thể xuất vé khi đơn hàng đã được xác nhận.", "warning");
       return;
     }
 
+    const html = `
+      <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>Vé tour ${order.orderCode}</title>
+      <style>
+        body{font-family:Arial,sans-serif;background:#f3f6fb;padding:30px;color:#111827}.ticket{max-width:850px;margin:auto;background:white;border-radius:18px;overflow:hidden;border:1px solid #dbeafe;box-shadow:0 10px 30px rgba(0,0,0,.08)}.ticket-header{background:linear-gradient(135deg,#0b5ed7,#7c3aed);color:white;padding:28px}.ticket-header h1{margin:0;font-size:34px}.ticket-body{padding:28px}.ticket-code-large{display:inline-block;padding:12px 18px;border:2px dashed #0b5ed7;color:#0b5ed7;border-radius:12px;font-size:26px;font-weight:bold;margin:14px 0}.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;margin-top:18px}.box{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:18px}.confirmed{color:#15803d;font-weight:bold}.footer{background:#f0f7ff;padding:18px 28px;color:#0b5ed7;font-weight:bold}.print-btn{margin:20px auto;display:block;padding:12px 20px;border:none;background:#0b5ed7;color:white;border-radius:10px;font-weight:bold;cursor:pointer}@media print{.print-btn{display:none}body{background:white;padding:0}.ticket{box-shadow:none;border:1px solid #ddd}}
+      </style></head><body>
+      <button class="print-btn" onclick="window.print()">In / Lưu vé PDF</button>
+      <div class="ticket"><div class="ticket-header"><h1>VÉ XÁC NHẬN TOUR</h1><p>TravelSmart - Đặt tour thông minh</p></div>
+      <div class="ticket-body"><p><b>Mã vé / mã đơn hàng:</b></p><div class="ticket-code-large">${order.orderCode}</div><p class="confirmed">Trạng thái: ${order.orderStatus}</p><p><b>Thời gian xác nhận:</b> ${order.confirmedAt || "Chưa có"}</p>
+      <div class="info-grid"><p><b>Khách hàng:</b> ${order.customerName}</p><p><b>Số điện thoại:</b> ${order.customerPhone}</p><p><b>Email:</b> ${order.customerEmail}</p><p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p><p><b>Hình thức giao vé:</b> ${order.deliveryMethod}</p><p><b>Thanh toán:</b> ${order.paymentMethod}</p></div>
+      <div class="box"><h3>Thông tin tour</h3><p>${getProductsText(order)}</p></div><div class="box"><h3>Lưu ý</h3><p>Khách hàng vui lòng xuất trình mã vé khi nhân viên liên hệ xác nhận hoặc khi tham gia tour.</p><p>Vé chỉ có hiệu lực khi trạng thái là <b>Đã xác nhận vé</b>.</p></div></div><div class="footer">TravelSmart cảm ơn quý khách đã đặt tour.</div></div>
+      </body></html>`;
+
     const ticketWindow = window.open("", "_blank");
-
-    ticketWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="vi">
-      <head>
-        <meta charset="UTF-8">
-        <title>Vé tour ${order.orderCode}</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            padding: 30px;
-            color: #111827;
-          }
-
-          .ticket {
-            max-width: 850px;
-            margin: auto;
-            background: white;
-            border-radius: 18px;
-            overflow: hidden;
-            border: 1px solid #dbeafe;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-          }
-
-          .ticket-header {
-            background: linear-gradient(135deg, #0b5ed7, #7c3aed);
-            color: white;
-            padding: 28px;
-          }
-
-          .ticket-header h1 {
-            margin: 0;
-            font-size: 34px;
-          }
-
-          .ticket-body {
-            padding: 28px;
-          }
-
-          .ticket-code-large {
-            display: inline-block;
-            padding: 12px 18px;
-            border: 2px dashed #0b5ed7;
-            color: #0b5ed7;
-            border-radius: 12px;
-            font-size: 26px;
-            font-weight: bold;
-            margin: 14px 0;
-          }
-
-          .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 28px;
-            margin-top: 18px;
-          }
-
-          .box {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 18px;
-          }
-
-          .confirmed {
-            color: #15803d;
-            font-weight: bold;
-          }
-
-          .footer {
-            background: #f0f7ff;
-            padding: 18px 28px;
-            color: #0b5ed7;
-            font-weight: bold;
-          }
-
-          .print-btn {
-            margin: 20px auto;
-            display: block;
-            padding: 12px 20px;
-            border: none;
-            background: #0b5ed7;
-            color: white;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-          }
-
-          @media print {
-            .print-btn {
-              display: none;
-            }
-
-            body {
-              background: white;
-              padding: 0;
-            }
-
-            .ticket {
-              box-shadow: none;
-              border: 1px solid #ddd;
-            }
-          }
-        </style>
-      </head>
-      <body>
-        <button class="print-btn" onclick="window.print()">In / Lưu vé PDF</button>
-
-        <div class="ticket">
-          <div class="ticket-header">
-            <h1>VÉ XÁC NHẬN TOUR</h1>
-            <p>TravelSmart - Đặt tour thông minh</p>
-          </div>
-
-          <div class="ticket-body">
-            <p><b>Mã vé / mã đơn hàng:</b></p>
-            <div class="ticket-code-large">${order.orderCode}</div>
-
-            <p class="confirmed">Trạng thái: ${order.orderStatus}</p>
-            <p><b>Thời gian xác nhận:</b> ${order.confirmedAt || "Chưa có"}</p>
-
-            <div class="info-grid">
-              <p><b>Khách hàng:</b> ${order.customerName}</p>
-              <p><b>Số điện thoại:</b> ${order.customerPhone}</p>
-              <p><b>Email:</b> ${order.customerEmail}</p>
-              <p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p>
-              <p><b>Hình thức giao vé:</b> ${order.deliveryMethod}</p>
-              <p><b>Thanh toán:</b> ${order.paymentMethod}</p>
-            </div>
-
-            <div class="box">
-              <h3>Thông tin tour</h3>
-              <p>${getProductsText(order)}</p>
-            </div>
-
-            <div class="box">
-              <h3>Lưu ý</h3>
-              <p>Khách hàng vui lòng xuất trình mã vé khi nhân viên liên hệ xác nhận hoặc khi tham gia tour.</p>
-              <p>Vé chỉ có hiệu lực khi trạng thái là <b>Đã xác nhận vé</b>.</p>
-            </div>
-          </div>
-
-          <div class="footer">
-            TravelSmart cảm ơn quý khách đã đặt tour.
-          </div>
-        </div>
-      </body>
-      </html>
-    `);
-
+    ticketWindow.document.open();
+    ticketWindow.document.write(html);
     ticketWindow.document.close();
-
     showAdminToast("Đã mở vé", `Vé của đơn hàng ${orderCode} đã được mở ở tab mới.`, "info");
   }
 
   function printInvoice(orderCode) {
     const order = getOrderByCode(orderCode);
-
     if (!order) {
       showAdminToast("Không tìm thấy đơn hàng", "Vui lòng tải lại danh sách đơn hàng.", "error");
       return;
     }
-
     if (order.orderStatus !== "Đã xác nhận vé") {
       showAdminToast("Chưa thể xuất hóa đơn", "Chỉ có thể xuất hóa đơn khi đơn hàng đã được xác nhận.", "warning");
       return;
     }
 
+    const html = `
+      <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>Hóa đơn ${order.orderCode}</title>
+      <style>
+        body{font-family:Arial,sans-serif;background:#f3f6fb;padding:30px;color:#111827}.invoice{max-width:900px;margin:auto;background:white;border-radius:18px;overflow:hidden;border:1px solid #dbeafe;box-shadow:0 10px 30px rgba(0,0,0,.08)}.invoice-header{background:#0b5ed7;color:white;padding:28px;display:flex;justify-content:space-between;gap:20px}.invoice-header h1{margin:0;font-size:34px}.invoice-body{padding:28px}.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;margin-top:18px}table{width:100%;border-collapse:collapse;margin-top:24px}th,td{border:1px solid #e5e7eb;padding:12px;text-align:left}th{background:#f0f7ff;color:#0b5ed7}.total{text-align:right;font-size:24px;color:#dc2626;font-weight:bold;margin-top:20px}.box{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-top:18px}.print-btn{margin:20px auto;display:block;padding:12px 20px;border:none;background:#0b5ed7;color:white;border-radius:10px;font-weight:bold;cursor:pointer}@media print{.print-btn{display:none}body{background:white;padding:0}.invoice{box-shadow:none;border:1px solid #ddd}}
+      </style></head><body>
+      <button class="print-btn" onclick="window.print()">In / Lưu hóa đơn PDF</button>
+      <div class="invoice"><div class="invoice-header"><div><h1>HÓA ĐƠN ĐẶT TOUR</h1><p>TravelSmart</p></div><div><p><b>Mã hóa đơn:</b> ${order.orderCode}</p><p><b>Ngày lập:</b> ${new Date().toLocaleString("vi-VN")}</p></div></div>
+      <div class="invoice-body"><div class="info-grid"><p><b>Khách hàng:</b> ${order.customerName}</p><p><b>Số điện thoại:</b> ${order.customerPhone}</p><p><b>Email:</b> ${order.customerEmail}</p><p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p><p><b>Thanh toán:</b> ${order.paymentMethod}</p><p><b>Trạng thái:</b> ${order.orderStatus}</p><p><b>Thời gian đặt:</b> ${order.createdAt}</p><p><b>Thời gian xác nhận:</b> ${order.confirmedAt || "Chưa có"}</p></div>
+      <table><thead><tr><th>Sản phẩm</th><th>Đơn giá</th><th>Số lượng</th><th>Thành tiền</th></tr></thead><tbody>${getProductsHtml(order)}</tbody></table><p class="total">Tổng thanh toán: ${formatPriceAdmin(order.total)}</p><div class="box"><p><b>Ghi chú:</b> ${order.note || "Không có"}</p><p>Hóa đơn này được tạo từ hệ thống TravelSmart sau khi admin xác nhận vé.</p></div></div></div>
+      </body></html>`;
+
     const invoiceWindow = window.open("", "_blank");
-
-    invoiceWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="vi">
-      <head>
-        <meta charset="UTF-8">
-        <title>Hóa đơn ${order.orderCode}</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fb;
-            padding: 30px;
-            color: #111827;
-          }
-
-          .invoice {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            border-radius: 18px;
-            overflow: hidden;
-            border: 1px solid #dbeafe;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-          }
-
-          .invoice-header {
-            background: #0b5ed7;
-            color: white;
-            padding: 28px;
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-          }
-
-          .invoice-header h1 {
-            margin: 0;
-            font-size: 34px;
-          }
-
-          .invoice-body {
-            padding: 28px;
-          }
-
-          .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 28px;
-            margin-top: 18px;
-          }
-
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 24px;
-          }
-
-          th,
-          td {
-            border: 1px solid #e5e7eb;
-            padding: 12px;
-            text-align: left;
-          }
-
-          th {
-            background: #f0f7ff;
-            color: #0b5ed7;
-          }
-
-          .total {
-            text-align: right;
-            font-size: 24px;
-            color: #dc2626;
-            font-weight: bold;
-            margin-top: 20px;
-          }
-
-          .box {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 18px;
-          }
-
-          .print-btn {
-            margin: 20px auto;
-            display: block;
-            padding: 12px 20px;
-            border: none;
-            background: #0b5ed7;
-            color: white;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-          }
-
-          @media print {
-            .print-btn {
-              display: none;
-            }
-
-            body {
-              background: white;
-              padding: 0;
-            }
-
-            .invoice {
-              box-shadow: none;
-              border: 1px solid #ddd;
-            }
-          }
-        </style>
-      </head>
-      <body>
-        <button class="print-btn" onclick="window.print()">In / Lưu hóa đơn PDF</button>
-
-        <div class="invoice">
-          <div class="invoice-header">
-            <div>
-              <h1>HÓA ĐƠN ĐẶT TOUR</h1>
-              <p>TravelSmart</p>
-            </div>
-
-            <div>
-              <p><b>Mã hóa đơn:</b> ${order.orderCode}</p>
-              <p><b>Ngày lập:</b> ${new Date().toLocaleString("vi-VN")}</p>
-            </div>
-          </div>
-
-          <div class="invoice-body">
-            <div class="info-grid">
-              <p><b>Khách hàng:</b> ${order.customerName}</p>
-              <p><b>Số điện thoại:</b> ${order.customerPhone}</p>
-              <p><b>Email:</b> ${order.customerEmail}</p>
-              <p><b>Địa chỉ:</b> ${order.customerAddress || "Không có"}</p>
-              <p><b>Thanh toán:</b> ${order.paymentMethod}</p>
-              <p><b>Trạng thái:</b> ${order.orderStatus}</p>
-              <p><b>Thời gian đặt:</b> ${order.createdAt}</p>
-              <p><b>Thời gian xác nhận:</b> ${order.confirmedAt || "Chưa có"}</p>
-            </div>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Sản phẩm</th>
-                  <th>Đơn giá</th>
-                  <th>Số lượng</th>
-                  <th>Thành tiền</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                ${getProductsHtml(order)}
-              </tbody>
-            </table>
-
-            <p class="total">Tổng thanh toán: ${formatPriceAdmin(order.total)}</p>
-
-            <div class="box">
-              <p><b>Ghi chú:</b> ${order.note || "Không có"}</p>
-              <p>Hóa đơn này được tạo từ hệ thống TravelSmart sau khi admin xác nhận vé.</p>
-            </div>
-          </div>
-        </div>
-      </body>
-      </html>
-    `);
-
+    invoiceWindow.document.open();
+    invoiceWindow.document.write(html);
     invoiceWindow.document.close();
-
     showAdminToast("Đã mở hóa đơn", `Hóa đơn của đơn hàng ${orderCode} đã được mở ở tab mới.`, "info");
   }
 
-  window.addEventListener("load", function () {
+  document.addEventListener("DOMContentLoaded", function () {
+    const passwordInput = document.getElementById("adminPassword");
+    if (passwordInput) {
+      passwordInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") adminLogin();
+      });
+    }
+
     if (localStorage.getItem("isAdmin") === "true") {
       showAdminPanel();
     }
   });
 </script>
-<script>
-  function adminLogout() {
-    localStorage.removeItem("isAdmin");
-    localStorage.removeItem("adminLoggedIn");
-    window.location.href = "/login";
-  }
-</script>
 </body>
 </html>
-<script>
-  /* =====================================================
-     GỬI VÉ TỰ ĐỘNG QUA GMAIL BẰNG N8N
-     Dán nguyên đoạn này trước </body>
-     ===================================================== */
-
-  const SEND_TICKET_WEBHOOK_URL = "https://dykp2013.app.n8n.cloud/webhook/travelsmart-send-ticket";
-
-  function ticketNotify(message, type = "success") {
-    if (typeof showToast === "function") {
-      showToast(message, type);
-      return;
-    }
-
-    if (typeof showAdminToast === "function") {
-      showAdminToast(message, type);
-      return;
-    }
-
-    console.log(message);
-  }
-
-  function formatMoneyForTicket(value) {
-    const number = Number(String(value || "").replace(/[^\d]/g, "")) || 0;
-    return number.toLocaleString("vi-VN") + "đ";
-  }
-
-  function cleanText(value) {
-    return String(value || "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-  function findOrderCardById(orderId) {
-    const cards = document.querySelectorAll(".admin-order-card, .order-card, .ticket-card, .card, div");
-
-    for (const card of cards) {
-      const text = card.innerText || "";
-
-      if (text.includes(orderId) && text.includes("Khách hàng")) {
-        return card;
-      }
-    }
-
-    return null;
-  }
-
-  function getValueFromCard(card, label) {
-    if (!card) return "";
-
-    const text = card.innerText || "";
-    const lines = text.split("\n").map(line => line.trim()).filter(Boolean);
-
-    for (const line of lines) {
-      if (line.toLowerCase().startsWith(label.toLowerCase())) {
-        return cleanText(line.replace(label, "").replace(":", ""));
-      }
-    }
-
-    const regex = new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*:?\\s*(.+)", "i");
-    const match = text.match(regex);
-
-    return match ? cleanText(match[1].split("\n")[0]) : "";
-  }
-
-  function buildItemsTextFromCard(card) {
-    if (!card) {
-      return "<p>Không có thông tin tour.</p>";
-    }
-
-    const text = card.innerText || "";
-    const productMatch = text.match(/Sản phẩm:\s*([\s\S]*?)(Ghi chú:|Xác nhận|Hủy|Xuất|$)/i);
-
-    if (productMatch && productMatch[1]) {
-      return `<p>${cleanText(productMatch[1])}</p>`;
-    }
-
-    return "<p>Không có thông tin tour.</p>";
-  }
-
-  function getOrderDataForTicket(orderId) {
-    const card = findOrderCardById(orderId);
-
-    const customerName =
-      getValueFromCard(card, "Khách hàng") ||
-      getValueFromCard(card, "Họ tên") ||
-      "Khách hàng";
-
-    const phone =
-      getValueFromCard(card, "Số điện thoại") ||
-      getValueFromCard(card, "Điện thoại") ||
-      "Chưa có";
-
-    const email =
-      getValueFromCard(card, "Email") ||
-      "";
-
-    const address =
-      getValueFromCard(card, "Địa chỉ") ||
-      "Chưa có";
-
-    const departureDate =
-      getValueFromCard(card, "Ngày khởi hành") ||
-      "Chưa chọn";
-
-    const paymentMethod =
-      getValueFromCard(card, "Thanh toán") ||
-      "Chưa có";
-
-    const deliveryMethod =
-      getValueFromCard(card, "Giao vé") ||
-      getValueFromCard(card, "Giao hàng") ||
-      "Gửi qua email";
-
-    const totalRaw =
-      getValueFromCard(card, "Tổng tiền") ||
-      "0";
-
-    const note =
-      getValueFromCard(card, "Ghi chú") ||
-      "Không có";
-
-    return {
-      orderId: orderId,
-      customerName: customerName,
-      phone: phone,
-      email: email,
-      address: address,
-      departureDate: departureDate,
-      paymentMethod: paymentMethod,
-      deliveryMethod: deliveryMethod,
-      totalText: totalRaw,
-      itemsText: buildItemsTextFromCard(card),
-      note: note,
-      confirmedAt: new Date().toLocaleString("vi-VN")
-    };
-  }
-
-  async function sendTicketEmailByN8N(orderId) {
-    if (!SEND_TICKET_WEBHOOK_URL || SEND_TICKET_WEBHOOK_URL.includes("DAN_LINK")) {
-      throw new Error("Bạn chưa dán Production URL n8n gửi vé.");
-    }
-
-    const payload = getOrderDataForTicket(orderId);
-
-    if (!payload.email) {
-      throw new Error("Đơn hàng chưa có email khách hàng.");
-    }
-
-    const response = await fetch(SEND_TICKET_WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error("n8n chưa gửi được Gmail.");
-    }
-
-    return await response.json();
-  }
-
-  function isOrderConfirmedOnPage(orderId) {
-    const card = findOrderCardById(orderId);
-
-    if (!card) {
-      return false;
-    }
-
-    const text = card.innerText || "";
-
-    return (
-      text.includes("Đã xác nhận vé") ||
-      text.includes("Vé đã được admin xác nhận") ||
-      text.includes("trạng thái Đã xác nhận")
-    );
-  }
-
-  function wrapConfirmFunction(functionName) {
-    const oldFunction = window[functionName];
-
-    if (typeof oldFunction !== "function") {
-      return;
-    }
-
-    window[functionName] = async function(orderId) {
-      const result = oldFunction.apply(this, arguments);
-
-      await new Promise(resolve => setTimeout(resolve, 900));
-
-      if (!isOrderConfirmedOnPage(orderId)) {
-        return result;
-      }
-
-      try {
-        ticketNotify("Đang gửi vé qua Gmail cho khách...", "info");
-
-        await sendTicketEmailByN8N(orderId);
-
-        ticketNotify("Đã xác nhận vé và gửi Gmail cho khách thành công.", "success");
-      } catch (error) {
-        console.error(error);
-        ticketNotify("Đã xác nhận vé nhưng chưa gửi được Gmail. Kiểm tra lại n8n/Gmail.", "warning");
-      }
-
-      return result;
-    };
-  }
-
-  function initAutoSendTicketEmail() {
-    wrapConfirmFunction("confirmOrder");
-    wrapConfirmFunction("confirmTicket");
-    wrapConfirmFunction("approveOrder");
-    wrapConfirmFunction("confirmBooking");
-  }
-
-  window.addEventListener("load", function() {
-    setTimeout(initAutoSendTicketEmail, 500);
-  });
-</script>
