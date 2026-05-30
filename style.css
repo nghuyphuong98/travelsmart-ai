@@ -2712,3 +2712,51 @@ button,
     width: 100%;
   }
 }
+/* Sửa nút Xin chào không bị nền trắng */
+.nav-account-name {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  padding: 10px 0 !important;
+  font-family: inherit !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+/* Khi bấm vào trên điện thoại thì menu xổ xuống */
+.nav-account.open .account-dropdown {
+  display: block !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .nav-account {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .nav-account-name {
+    width: auto !important;
+    display: inline-block !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    padding: 8px 0 12px !important;
+  }
+
+  .account-dropdown {
+    position: static !important;
+    width: 90% !important;
+    margin: 8px auto 0 !important;
+    display: none !important;
+    background: #ffffff !important;
+    border-radius: 14px !important;
+    padding: 8px !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.2) !important;
+  }
+}
