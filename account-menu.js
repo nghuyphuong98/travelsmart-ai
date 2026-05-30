@@ -41,15 +41,17 @@ function renderAccountMenu() {
   const displayName = lastName || "bạn";
 
   navAccount.innerHTML = `
-    <span class="nav-account-name">Xin chào, ${displayName}</span>
+  <button type="button" class="nav-account-name" onclick="toggleAccountMenu(event)">
+    Xin chào, ${displayName}
+  </button>
 
-    <div class="account-dropdown">
-      <a href="/login">Thông tin cá nhân</a>
-      <a href="/cart">Giỏ hàng của tôi</a>
-      <a href="/checkout">Thanh toán</a>
-      <button type="button" class="account-logout" onclick="logoutFromNavbar()">Đăng xuất</button>
-    </div>
-  `;
+  <div class="account-dropdown" id="accountDropdown">
+    <a href="/login">Thông tin cá nhân</a>
+    <a href="/cart">Giỏ hàng của tôi</a>
+    <a href="/checkout">Thanh toán</a>
+    <button type="button" class="account-logout" onclick="logoutFromNavbar()">Đăng xuất</button>
+  </div>
+`;
 }
 
 function logoutFromNavbar() {
