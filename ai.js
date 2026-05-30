@@ -1,4 +1,10 @@
+
+
 const AI_WEBHOOK_URL = "https://dykp2013.app.n8n.cloud/webhook/travelsmart-ai";
+
+/* ===============================
+   TẠO GIAO DIỆN CHAT AI
+   =============================== */
 
 function createAIWidget() {
   let container = document.getElementById("aiWidget");
@@ -11,9 +17,13 @@ function createAIWidget() {
 
   container.innerHTML = `
     <button class="ai-float-button" onclick="openAiChat()" title="Tư vấn cùng Trần Hà Linh">
-  <img src="assets/ai-girl.png" alt="Trần Hà Linh" onerror="this.style.display='none'; this.parentElement.classList.add('ai-no-image');">
-  <span>Tư vấn</span>
-</button>
+      <img 
+        src="assets/ai-girl.png" 
+        alt="Trần Hà Linh"
+        onerror="this.style.display='none'; this.parentElement.classList.add('ai-no-image');"
+      >
+      <span>Tư vấn</span>
+    </button>
 
     <div class="ai-chat-box" id="aiChatBox">
       <div class="ai-chat-header">
@@ -26,29 +36,37 @@ function createAIWidget() {
 
       <div class="ai-messages" id="aiMessages">
         <div class="ai-bot">
-          Xin chào! Mình là Trần Hà Linh 💖 Bạn cần tư vấn tour nào?
+          Chào bạn, Linh có thể hỗ trợ bạn chọn tour, xem lịch trình, giá tour và hướng dẫn đặt tour trên TravelSmart.
         </div>
       </div>
 
       <div class="ai-input-area">
-        <input id="aiInput" type="text" placeholder="Nhập câu hỏi cho Trần Hà Linh..." onkeydown="handleAIEnter(event)">
+        <input 
+          id="aiInput" 
+          type="text" 
+          placeholder="Nhập câu hỏi cho Trần Hà Linh..."
+          onkeydown="handleAIEnter(event)"
+        >
         <button type="button" onclick="sendAIMessage()">Gửi</button>
       </div>
     </div>
   `;
 }
 
+/* ===============================
+   MỞ / ĐÓNG CHAT
+   =============================== */
+
 function openAiChat() {
-  const chatBox = document.getElementById("aiChatBox");
+  let chatBox = document.getElementById("aiChatBox");
 
   if (!chatBox) {
     createAIWidget();
+    chatBox = document.getElementById("aiChatBox");
   }
 
-  const box = document.getElementById("aiChatBox");
-
-  if (box) {
-    box.classList.add("show");
+  if (chatBox) {
+    chatBox.classList.add("show");
   }
 
   setTimeout(function () {
@@ -56,7 +74,7 @@ function openAiChat() {
     if (input) {
       input.focus();
     }
-  }, 100);
+  }, 200);
 }
 
 function closeAiChat() {
@@ -74,6 +92,10 @@ function handleAIEnter(event) {
   }
 }
 
+/* ===============================
+   THÊM TIN NHẮN VÀO KHUNG CHAT
+   =============================== */
+
 function addAIMessage(type, text) {
   const messages = document.getElementById("aiMessages");
 
@@ -83,79 +105,108 @@ function addAIMessage(type, text) {
 
   const div = document.createElement("div");
   div.className = type === "user" ? "ai-user" : "ai-bot";
-  div.innerHTML = text.replace(/\n/g, "<br>");
+
+  const safeText = String(text || "")
+    .replace(/\n/g, "<br>");
+
+  div.innerHTML = safeText;
 
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
 
+/* ===============================
+   LẤY THÔNG TIN TOUR HIỆN TẠI
+   =============================== */
+
 function getCurrentTourInfo() {
   const title =
     document.querySelector(".product-info-box h1") ||
     document.querySelector(".product-title") ||
+    document.querySelector(".detail-title") ||
     document.querySelector("h1");
 
   const price =
     document.querySelector(".product-price") ||
-    document.querySelector(".price");
+    document.querySelector(".price") ||
+    document.querySelector(".detail-price");
 
   const meta =
     document.querySelector(".product-meta") ||
-    document.querySelector(".meta");
+    document.querySelector(".meta") ||
+    document.querySelector(".detail-meta");
+
+  const description =
+    document.querySelector(".product-desc") ||
+    document.querySelector(".description") ||
+    document.querySelector(".detail-description");
 
   return {
     name: title ? title.innerText.trim() : "",
     price: price ? price.innerText.trim() : "",
-    meta: meta ? meta.innerText.trim() : ""
+    meta: meta ? meta.innerText.trim() : "",
+    description: description ? description.innerText.trim() : ""
   };
 }
 
+/* ===============================
+   TRẢ LỜI DỰ PHÒNG NẾU N8N LỖI
+   =============================== */
+
 function createLocalAIReply(message) {
-  const lower = message.toLowerCase();
+  const lower = String(message || "").toLowerCase();
   const tour = getCurrentTourInfo();
+
+  const tourName = tour.name || "tour này";
+  const tourPrice = tour.price || "giá đang hiển thị trên website";
+  const tourMeta = tour.meta || "thông tin tour đang hiển thị trên website";
 
   if (
     lower.includes("tour") ||
     lower.includes("giá") ||
     lower.includes("lịch trình") ||
     lower.includes("tư vấn") ||
+    lower.includes("đặt") ||
     lower.includes("sapa") ||
     lower.includes("đà nẵng") ||
     lower.includes("phú quốc") ||
     lower.includes("hàn quốc") ||
-    lower.includes("nhật bản")
+    lower.includes("nhật bản") ||
+    lower.includes("thái lan") ||
+    lower.includes("singapore")
   ) {
-    const tourName = tour.name || "tour này";
-    const tourPrice = tour.price || "giá đang hiển thị trên website";
-    const tourMeta = tour.meta || "thời gian theo chương trình tour";
-
     return `
-      Mình gợi ý bạn tham khảo <b>${tourName}</b> nhé.<br><br>
-      <b>Giá:</b> ${tourPrice}<br>
-      <b>Thông tin:</b> ${tourMeta}<br><br>
-      Tour này phù hợp nếu bạn muốn đặt nhanh, xem thông tin rõ ràng và được hỗ trợ trước khi thanh toán.
-      Bạn có thể bấm <b>Thêm vào giỏ hàng</b>, sau đó vào phần <b>Thanh toán</b> để gửi đơn đặt tour.
+      Theo Linh, <b>${tourName}</b> khá phù hợp nếu bạn muốn xem thông tin rõ ràng và đặt tour nhanh trên TravelSmart.<br><br>
+
+      <b>Giá hiện tại:</b> ${tourPrice}<br>
+      <b>Thông tin tour:</b> ${tourMeta}<br><br>
+
+      Nếu bạn thấy lịch trình và mức giá phù hợp, bạn có thể bấm <b>Thêm vào giỏ hàng</b>, sau đó vào <b>Giỏ hàng</b> hoặc <b>Thanh toán</b> để gửi đơn đặt tour.
     `;
   }
 
   if (lower.includes("thanh toán") || lower.includes("qr") || lower.includes("chuyển khoản")) {
     return `
-      Bạn có thể thanh toán bằng chuyển khoản ngân hàng hoặc ví điện tử nếu website đã hiển thị mã QR.
-      Khi chuyển khoản, hãy kiểm tra đúng số tiền và nội dung chuyển khoản trước khi xác nhận đơn.
+      Bạn có thể vào trang <b>Thanh toán</b> để xem thông tin chuyển khoản hoặc mã QR nếu đơn hàng đã có trong giỏ. 
+      Trước khi thanh toán, bạn nên kiểm tra lại tên tour, số lượng và tổng tiền.
     `;
   }
 
   if (lower.includes("giỏ hàng")) {
     return `
-      Bạn có thể thêm nhiều tour vào giỏ hàng, kiểm tra lại số lượng và tổng tiền trước khi sang trang thanh toán.
+      Bạn có thể thêm tour vào giỏ hàng, kiểm tra lại thông tin tour, số lượng và tổng tiền trước khi chuyển sang bước thanh toán.
     `;
   }
 
   return `
-    Mình là Trần Hà Linh, mình có thể hỗ trợ bạn chọn tour, so sánh tour, xem giá, lịch trình và hướng dẫn đặt tour.
-    Bạn hãy nhập tên tour hoặc điểm đến bạn quan tâm nhé.
+    Linh có thể hỗ trợ bạn chọn tour, xem giá, lịch trình và gợi ý tour phù hợp với nhu cầu. 
+    Bạn có thể nói cho Linh biết bạn muốn đi đâu, đi mấy ngày, ngân sách khoảng bao nhiêu và đi cùng bao nhiêu người nhé.
   `;
 }
+
+/* ===============================
+   GỬI CÂU HỎI SANG N8N
+   =============================== */
 
 async function sendAIMessage() {
   const input = document.getElementById("aiInput");
@@ -173,50 +224,74 @@ async function sendAIMessage() {
   addAIMessage("user", message);
   input.value = "";
 
-  addAIMessage("bot", "Trần Hà Linh đang kiểm tra thông tin tour cho bạn...");
+  addAIMessage("bot", "Trần Hà Linh đang kiểm tra thông tin cho bạn...");
 
   const messages = document.getElementById("aiMessages");
   const loadingMessage = messages ? messages.lastElementChild : null;
 
   try {
-    if (AI_WEBHOOK_URL) {
-      const response = await fetch(AI_WEBHOOK_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: message,
-          page: window.location.href,
-          tour: getCurrentTourInfo()
-        })
-      });
+    if (
+      !AI_WEBHOOK_URL ||
+      AI_WEBHOOK_URL === "DAN_LINK_PRODUCTION_WEBHOOK_N8N_CUA_BAN_VAO_DAY"
+    ) {
+      setTimeout(function () {
+        if (loadingMessage) {
+          loadingMessage.remove();
+        }
 
-      const data = await response.json();
+        addAIMessage("bot", createLocalAIReply(message));
+      }, 500);
 
-      if (loadingMessage) {
-        loadingMessage.remove();
-      }
-
-      const reply =
-  data.reply ||
-  data.response_ai_agent ||
-  data.output ||
-  data.message ||
-  data.text ||
-  createLocalAIReply(message);
-
-      addAIMessage("bot", reply);
       return;
     }
 
-    setTimeout(function () {
-      if (loadingMessage) {
-        loadingMessage.remove();
-      }
+    const response = await fetch(AI_WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: message,
+        page: window.location.href,
+        tour: getCurrentTourInfo(),
+        brand: "TravelSmart",
+        assistant: "Trần Hà Linh"
+      })
+    });
 
-      addAIMessage("bot", createLocalAIReply(message));
-    }, 500);
+    const data = await response.json();
+
+    if (loadingMessage) {
+      loadingMessage.remove();
+    }
+
+    let reply = "";
+
+    if (Array.isArray(data)) {
+      reply =
+        data[0]?.reply ||
+        data[0]?.output ||
+        data[0]?.response ||
+        data[0]?.text ||
+        data[0]?.message ||
+        data[0]?.response_ai_agent ||
+        "";
+    } else {
+      reply =
+        data.reply ||
+        data.output ||
+        data.response ||
+        data.text ||
+        data.message ||
+        data.response_ai_agent ||
+        "";
+    }
+
+    if (!reply) {
+      reply = createLocalAIReply(message);
+    }
+
+    addAIMessage("bot", reply);
   } catch (error) {
     if (loadingMessage) {
       loadingMessage.remove();
@@ -226,26 +301,34 @@ async function sendAIMessage() {
   }
 }
 
+/* ===============================
+   NÚT "HỎI AI VỀ TOUR NÀY"
+   =============================== */
+
 function askAIAboutCurrentTour() {
   const tour = getCurrentTourInfo();
 
   openAiChat();
 
-  const input = document.getElementById("aiInput");
+  setTimeout(function () {
+    const input = document.getElementById("aiInput");
 
-  const tourName = tour.name || "tour này";
-  const tourPrice = tour.price ? ` Giá hiện tại là ${tour.price}.` : "";
-  const tourMeta = tour.meta ? ` Thông tin tour: ${tour.meta}.` : "";
+    const tourName = tour.name || "tour này";
+    const tourPrice = tour.price ? ` Giá hiện tại là ${tour.price}.` : "";
+    const tourMeta = tour.meta ? ` Thông tin tour: ${tour.meta}.` : "";
 
-  const question = `Hãy tư vấn chi tiết giúp tôi về ${tourName}.${tourPrice}${tourMeta} Tour này phù hợp với ai và có nên đặt không?`;
+    const question = `Hãy tư vấn giúp tôi về ${tourName}.${tourPrice}${tourMeta} Tour này phù hợp với ai và có nên đặt không?`;
 
-  if (input) {
-    input.value = question;
-    input.focus();
-  }
+    if (input) {
+      input.value = question;
+      input.focus();
+    }
+
+    showToast("Đã mở Trần Hà Linh để tư vấn tour này cho bạn.", "info", "Trần Hà Linh");
+  }, 260);
 }
 
-/* Tên hàm phụ để các file khác gọi đều chạy được */
+/* Các tên hàm phụ để nút cũ vẫn chạy */
 function askAiAboutProduct() {
   askAIAboutCurrentTour();
 }
@@ -258,13 +341,9 @@ function askAiForProduct() {
   askAIAboutCurrentTour();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  createAIWidget();
-});
-/* =====================================================
-   THÔNG BÁO ĐẸP TOÀN WEBSITE + MỞ AI MƯỢT
-   Dán ở CUỐI file ai.js
-   ===================================================== */
+/* ===============================
+   TOAST THÔNG BÁO ĐẸP
+   =============================== */
 
 function createToastContainer() {
   let container = document.querySelector(".site-toast-container");
@@ -336,7 +415,9 @@ function showToast(message, type = "success", title = "") {
 }
 
 function hideToast(toast) {
-  if (!toast) return;
+  if (!toast) {
+    return;
+  }
 
   toast.classList.remove("show");
 
@@ -347,84 +428,10 @@ function hideToast(toast) {
   }, 350);
 }
 
-/* Mở hộp AI mượt */
-function openAiChat() {
-  const chatBox = document.getElementById("aiChatBox");
+/* ===============================
+   KHỞI TẠO
+   =============================== */
 
-  if (!chatBox) {
-    if (typeof createAIWidget === "function") {
-      createAIWidget();
-    }
-  }
-
-  const box = document.getElementById("aiChatBox");
-
-  if (box) {
-    box.classList.add("show");
-  }
-
-  setTimeout(function () {
-    const input = document.getElementById("aiInput");
-
-    if (input) {
-      input.focus();
-    }
-  }, 220);
-}
-
-/* Đóng hộp AI mượt */
-function closeAiChat() {
-  const chatBox = document.getElementById("aiChatBox");
-
-  if (chatBox) {
-    chatBox.classList.remove("show");
-  }
-}
-
-/* Nút Hỏi AI về tour này */
-function askAIAboutCurrentTour() {
-  openAiChat();
-
-  setTimeout(function () {
-    const input = document.getElementById("aiInput");
-
-    const title =
-      document.querySelector(".product-info-box h1") ||
-      document.querySelector(".product-title") ||
-      document.querySelector("h1");
-
-    const price =
-      document.querySelector(".product-price") ||
-      document.querySelector(".price");
-
-    const meta =
-      document.querySelector(".product-meta") ||
-      document.querySelector(".meta");
-
-    const tourName = title ? title.innerText.trim() : "tour này";
-    const tourPrice = price ? price.innerText.trim() : "";
-    const tourMeta = meta ? meta.innerText.trim() : "";
-
-    const question = `Hãy tư vấn giúp tôi về ${tourName}. Giá ${tourPrice}. Thông tin: ${tourMeta}. Tour này phù hợp với ai và có nên đặt không?`;
-
-    if (input) {
-      input.value = question;
-      input.focus();
-    }
-
-    showToast("Đã mở Trần Hà Linh để tư vấn tour này cho bạn.", "info", "Trần Hà Linh");
-  }, 260);
-}
-
-/* Tên hàm phụ để nút cũ vẫn chạy */
-function askAiAboutProduct() {
-  askAIAboutCurrentTour();
-}
-
-function askAIForProduct() {
-  askAIAboutCurrentTour();
-}
-
-function askAiForProduct() {
-  askAIAboutCurrentTour();
-}
+document.addEventListener("DOMContentLoaded", function () {
+  createAIWidget();
+});
