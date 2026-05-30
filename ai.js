@@ -250,13 +250,15 @@ async function sendAIMessage() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        message: message,
-        page: window.location.href,
-        tour: getCurrentTourInfo(),
-        brand: "TravelSmart",
-        assistant: "Trần Hà Linh"
-      })
+     body: JSON.stringify({
+  message: message,
+  page: window.location.href,
+  tour: getCurrentTourInfo(),
+  brand: "TravelSmart",
+  assistant: "Trần Hà Linh",
+  sessionId: getOrCreateChatSessionId(),
+  history: getAIChatHistory()
+})
     });
 
     const data = await response.json();
