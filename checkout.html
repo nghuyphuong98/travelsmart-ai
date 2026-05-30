@@ -207,7 +207,7 @@
           <p class="transfer-amount" id="bankTransferAmount">0đ</p>
 
           <p class="payment-label">Nội dung chuyển khoản:</p>
-          <p class="transfer-note" id="bankTransferNote">TravelSmartAI</p>
+          <p class="transfer-note" id="bankTransferNote">TravelSmart</p>
 
           <p class="payment-warning">
             Khi quét mã QR ngân hàng, app ngân hàng sẽ tự điền số tài khoản, số tiền và nội dung chuyển khoản.
@@ -235,7 +235,7 @@
           <p class="transfer-amount" id="momoTransferAmount">0đ</p>
 
           <p class="payment-label">Nội dung cần nhập:</p>
-          <p class="transfer-note" id="momoTransferNote">TravelSmartAI</p>
+          <p class="transfer-note" id="momoTransferNote">TravelSmart</p>
 
           <p class="momo-warning">
             Lưu ý: QR MoMo cá nhân không tự điền số tiền và nội dung. Vui lòng nhập đúng số tiền và nội dung hiển thị bên trên.
@@ -364,10 +364,10 @@
     const phone = cleanPhone(phoneInput ? phoneInput.value : "");
 
     if (phone) {
-      return `TravelSmartAI ${phone}`;
+      return `TravelSmart ${phone}`;
     }
 
-    return "TravelSmartAI";
+    return "TravelSmart";
   }
 
   function updateBankQR() {
